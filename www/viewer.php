@@ -41,8 +41,8 @@ $func_array = array(
 		),
 	'valgrind' =>
 		array(
-			'file' => 'valgrind_summary',
-			'option' => 'text', 
+			//'file' => 'valgrind', //todo: removing this fixes it
+			'option' => 'phpinc', // or text
 			'pagetitle' => 'PHP: Valgrind Report for '.$version, 
 			'pagehead' => 'Valgrind Report'
 		),
