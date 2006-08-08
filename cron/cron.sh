@@ -1,9 +1,6 @@
 #!/bin/sh
 
-LC_ALL=C
-export LC_ALL
-
-VALGRIND=valgrind
+export LC_ALL=C
 
 # file that contains the PHP version tags
 filename=tags.inc
@@ -45,40 +42,19 @@ do
 
 	#test for success of the make operation
 	if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
-		#echo pass > ${OUTDIR}/last_make_status.inc
-
 		MAKESTATUS=pass
 
-		# note: start this enables valgrind
-		export NO_INTERACTION=1
-		export TEST_PHP_VALGRIND=${VALGRIND}
-		make test > ${TMPDIR}/php_test_valgrind.log
-		php ${WORKDIR}/valgrind.php ${TMPDIR} ${OUTDIR} ${PHPSRC}
-		# note: end this enables valgrind
+		export TEST_PHP_ARGS="-m -U -n -q -s ${TMPDIR}/php_test.log"
 
-		#rm .php_cov_info.ltpdata
-		#rm -r "*.gcov"
-		
-		make lcov --warn-undefined-variables
-		make lcov-html --warn-undefined-variables
-		#rm -fr ${OUTDIR}/lcov_html
+		make lcov
 		mv lcov_html ${OUTDIR}
+		php ${WORKDIR}/valgrind.php ${TMPDIR} ${OUTDIR} ${PHPSRC}
 
-		export NO_INTERACTION=1
-		#export TEST_PHP_VALGRIND=
-
-		# note: start this enables run-tests
-		export TEST_PHP_EXECUTABLE="./sapi/cli/php"
-		./sapi/cli/php run-tests.php -U -m > ${TMPDIR}/php_test.log
-		# note: end this enables run-tests
-			
-		echo make successful
+		echo "make successful"
 	else
-		#if make failed
-
 		MAKESTATUS=fail
+		echo "make failed"
+	fi
 
-		echo make failed
-	fi	
 	php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPVERSION}
 done

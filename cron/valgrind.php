@@ -21,7 +21,7 @@ require $workdir.'/template.php';
 $version = basename($phpdir, __FILE__); 
 
 // fix filename after the others are fixed
-$data  = file_get_contents("$tmpdir/php_test_valgrind.log");
+$data  = file_get_contents("$tmpdir/php_test.log");
 
 //$write = html_header('Valgrind Reports');
 
