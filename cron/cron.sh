@@ -39,36 +39,46 @@ do
 	# run the loop for each php version
 	cd ${PHPSRC}
 	./cvsclean
-	# cvs -q up
+	cvs -q up
 	./buildconf
 	./config.nice
 
 	#test for success of the make operation
-	#if ( make > ${OUTDIR}/make_log.inc 2> ${TMPDIR}/php_build.log ); then
 	if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
 		#echo pass > ${OUTDIR}/last_make_status.inc
 
 		MAKESTATUS=pass
 
+		# note: start this enables valgrind
 		export NO_INTERACTION=1
 		export TEST_PHP_VALGRIND=${VALGRIND}
 		make test > ${TMPDIR}/php_test_valgrind.log
 		php ${WORKDIR}/valgrind.php ${TMPDIR} ${OUTDIR} ${PHPSRC}
+		# note: end this enables valgrind
 
 		#rm .php_cov_info.ltpdata
 		#rm -r "*.gcov"
+		
 		make lcov --warn-undefined-variables
 		make lcov-html --warn-undefined-variables
-		rm -fr ${OUTDIR}/lcov_html
+		#rm -fr ${OUTDIR}/lcov_html
 		mv lcov_html ${OUTDIR}
-	
+
+		export NO_INTERACTION=1
+		#export TEST_PHP_VALGRIND=
+
+		# note: start this enables run-tests
+		export TEST_PHP_EXECUTABLE="./sapi/cli/php"
+		./sapi/cli/php run-tests.php -U -m > ${TMPDIR}/php_test.log
+		# note: end this enables run-tests
+			
 		echo make successful
 	else
 		#if make failed
 
-		#echo fail > ${OUTDIR}/last_make_status.inc
 		MAKESTATUS=fail
+
 		echo make failed
 	fi	
-	php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS}
+	php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPVERSION}
 done

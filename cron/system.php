@@ -2,20 +2,23 @@
 
 $write = html_header('System Info');
 
-// configure
+// configure (linker?)
 $write .= "<h2>Configure used:</h2>\n";
 $config = file("$phpdir/config.nice");
 $config = array_slice($config, 4); //remove inital comments
-$write .= "<pre>". implode('', $config) ."</pre>\n";
+$linkerinfo = implode('', $config);
+$write .= "<pre>".$linkerinfo."</pre>\n";
 
 // compiler
 $write .= "<h2>Compiler used</h2>\n";
 $compiler = explode("\n", `gcc --version`);
-$write .= '<p>' . $compiler[0] . "</p>\n";
+$compilerinfo = $compiler[0];
+$write .= '<p>'.$compilerinfo. "</p>\n";
 
-// SO
+// OS
 $write .= "<h2>Operating System:</h2>\n";
-$write .= '<p>' . `uname -srmi` . "</p>\n";
+$osinfo = `uname -srmi`;
+$write .= '<p>'.$osinfo."</p>\n";
 
 $write .= html_footer();
 

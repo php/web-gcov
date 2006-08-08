@@ -18,10 +18,8 @@ if(!defined('CRON_PHP'))
 	exit;
 }
 
-$result['numerrors'] = 0;
-$result['numwarnings'] = 0;
-$result['totalnumerrors'] = 0;
-$result['totalnumwarnings'] = 0;
+$totalnumerrors = 0;
+$totalnumwarnings = 0;
 
 require_once 'template.php';
 
@@ -29,10 +27,17 @@ $data = file_get_contents("$tmpdir/php_build.log");
 
 
 // REGEX to fetch the gcc errors/warnings. tuned for gcc 3.4.x and 4.0.x
+/*
 $gcc_regex = '/^(.+): In function [`\'](\w+)\':\s+'.
 	     '\1:(\d+):\s+(.+)'.
 	     str_repeat('(?:\s+\1:(\d+):\s+(.+))?', 99). // nick hack to capture up to 100 errors in the same function
 	     '/m';
+*/
+
+$gcc_regex = '/^(.+): In function [`\'](\w+)\':\s+'.
+		'\1:(\d+): (error|warning):\s+(.+)'.
+		str_repeat('(?:\s+\1:(\d+): (error|warning):\s+(.+))?', 99).
+		'/m';
 
 preg_match_all($gcc_regex, $data, $data, PREG_SET_ORDER);
 
@@ -50,44 +55,61 @@ foreach ($data as $error)
 	}
 	else // todo; fix the need for the additional / in front
 	{
-		$filepath = '/'.$file;
+		//$filepath = '/'.$file;
 		$file = '/'.$file;
 	}
+	
+        // If stats are not previously set for this file, initialize it to the default values
+        if(!isset($stats[$file]))
+        {
+	                @$stats[$file][0] = 0; // number of file errros
+	                @$stats[$file][1] = 0; // number of file warnings
+	                @$stats[$file][2] = '';   // data to write
+        }
+										
+	
 	
 	$function = $error[2];
 
 	$write = '';
 
-	for ($i = 3; isset($error[$i]); $i += 2) {
+	// increment +3 because of the addition of type
+	for ($i = 3; isset($error[$i]); $i += 3) {
 		$line = $error[$i];
-		$msg  = $error[$i+1];
+		$type = $error[$i+1]; // added
+		$msg  = $error[$i+2];
 
 		$write .= <<< HTML
  <tr>
   <td>$function</td>
   <td><a href="http://lxr.php.net/source/php-src{$filepath}#{$line}">$line</a></td>
-  <td>$msg</td>
+  <td>$type: $msg</td>
  </tr>
 HTML;
-		if(substr($msg, 0, strlen('error')) == 'error')
+		if($type == 'error')
 		{
-			$result['numerrors']++;
-			$result['totalnumerrors']++;
+			@$stats[$file][0] += 1; // number of file errros
+			$totalnumerrors++;
 		}		
-		elseif(substr($msg, 0, strlen('warning')) == 'warning')
+		elseif($type == 'warning')
 		{
-			$result['numwarnings']++;
-			$result['totalnumwarnings']++;
+			@$stats[$file][1] += 1; // number of file warnings
+			$totalnumwarnings++;
 		}
 		else 
 		{
 		}
-	
+
+		$t = array();
+		$t['file'] = $filepath;
+		$t['function'] = $function;
+		$t['line'] = $line;
+		$t['type'] = $type;
+		$t['msg'] = $msg;
+
+		$xmlarray['compile_results'][] = $t;
 	}
 
-	@$stats[$file][0] = $result['numerrors']; // number of file errros
-	@$stats[$file][1] = $result['numwarnings']; // number of file warnings
-	//@$stats[$file][0] += ($i-3)/2; // number of errors in this file
 	@$stats[$file][2] .= $write;   // data to write
 
 }
@@ -96,7 +118,7 @@ HTML;
 $fp = fopen("$outdir/compile_results.inc", 'w');
 //fwrite($fp, html_header('Compile errors/warnings'));
 
-fwrite($fp, "<p>Number of Errors: {$result['totalnumerrors']}<br />Number of Warnings: {$result['numwarnings']}<br />Total: ".($result['totalnumerrors']+$result['numwarnings'])."</p>");
+fwrite($fp, "<p>Number of Errors: {$totalnumerrors}<br />Number of Warnings: {$totalnumwarnings}<br />Total: ".($totalnumerrors+$totalnumwarnings)."</p>");
 
 fwrite($fp, '<table border="1"><tr><td>File</td><td>Number of errors</td><td>Number of warnings</td></tr>');
 
