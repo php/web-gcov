@@ -1,0 +1,29 @@
+# This is near verbatim of the original .htaccess file at this point
+
+Options +Indexes +FollowSymLinks +MultiViews +Includes
+
+ErrorDocument 300 /index.php
+ErrorDocument 404 /index.php
+
+<IfModule mod_dir.c>
+	DirectoryIndex index.php index.php4 index.php3 index.jsp default.htm index.html index.htm cover.html Overview.html
+</IfModule>
+
+<Files ~ "(^\.ht)|(\.apf$|\.awk$|\.inc$|\.ini$|\.sh$)">
+	Order allow,deny
+	Deny from all
+	Satisfy All
+</Files>
+
+<Files ~ ".*\.(html|php|pdf|pps|gif|png|jpeg|jpg|swf)">
+	Order deny,allow
+	Allow from all
+	Satisfy All
+</Files>
+
+#<IfModule mod_rewrite.c>
+	# note: start disabled only during the testing phases
+	#RewriteEngine On
+	#RewriteRule ^PHP_([_A-Z0-9]+)/?$ /PHP_$1/lcov/index.php [R,L]
+	# note: end disabled only during the testing phases
+#</IfModule>

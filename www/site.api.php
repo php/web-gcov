@@ -14,11 +14,7 @@ function api_init(&$appvars = array())
 
 	$appvars['site']['mytag'] = null;
 	
-	// Load tags from a file and trim new line elements from each element
-	
-	//$appvars['site']['tags'] = array_map('rtrim',file($appvars['site']['phpvtags'])); 
-
-	// start temp -- attempt to share same tag inc file between php and bash
+	// Start loading version tags
 	$filename = 'tags.inc';
 	$fh = fopen($filename, 'r');
 	$content = fread($fh, filesize($filename));
@@ -33,7 +29,7 @@ function api_init(&$appvars = array())
         	$elementname = explode(' ', $element);
 	        $appvars['site']['tags'][$elementname[0]] = $elementname[0];
 	}	
-	// end temp
+	// End version tag loading
 	
 	// Creates instances such as the database connection, if needed
 
@@ -57,11 +53,14 @@ if (isset($maindir))
 }
 // end content from main.inc
 
-/*	echo '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+/*
+echo '<?xml version="1.0" encoding="UTF-8"?>'."\n"
+.'<!DOCTYPE html'."\n\t"
+.'PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'."\n\t"
+.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 */
+
+echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 
 ?><html>
 <head>
@@ -109,7 +108,6 @@ if (isset($maindir))
 <tr><td colspan="2" bgcolor="#7777cc" class="header small">&nbsp;</td></tr>
 <tr><td colspan="2" bgcolor="#000000" height="1"><img src="gfx/spacer.gif" width="1" height="1" border="0" alt="" /></td></tr>
 
-
 </table>
 <!-- end header -->	
 
@@ -156,23 +154,10 @@ foreach($appvars['site']['tags'] as $tag)
 
 if (isset($appvars['site']['mytag']))
 {
-	$subitems = array(
-		'coverage'  => 'lcov',
-		//'Run Tests' => 'run_tests',
-		//'Make Log'  => 'make_log',
-		//'build.sh'  => 'build',
-		'compile-results' => 'compile_results',
-		'system' => 'system',
-		'compile-failures' => 'tests',
-		'valgrind' => 'valgrind'
-		);
 
-	foreach($subitems as $item => $href)
+	foreach($appvars['site']['sidebarsubitems'] as $item => $href)
 	{
 		$cls = " class='small'";
-		// was as below:
-		//echo "<li$cls><a href='viewer.php?version=$tag&amp;func=$href'>$item</a></li>\n";
-		// changed to following: (changes by Daniel Pronych on Jun 9)
 		echo "<li$cls><a href='viewer.php?version={$appvars['site']['mytag']}&amp;func=$href'>$item</a></li>\n";
 	}
 }

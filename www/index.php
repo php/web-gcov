@@ -31,8 +31,35 @@ function show_link($tag, $link, $path, $file = NULL, $l_time = false)
 	return $m_time;
 }
 
+$x = 0;
+$phptags = array();
+
+$sql = 'SELECT version_id, version_name, version_last_build_time, version_last_attempted_build_date, version_last_successful_build_date FROM versions WHERE';
+
+foreach($appvars['site']['tags'] as $tag)
+{
+	$sql .= ' version_name = ?';
+	
+	if($x < count($appvars['site']['tags'])-1)
+	{
+		$sql .= ' OR';
+	}
+
+	$phptags[] = $tag;
+	$x++;
+}
+
+//print_r($phptags);
+
+$stmt = $mysqlconn->prepare($sql);
+
+$stmt->execute($phptags);
+
 // Outputs the site header to the screen
+
 api_showheader($appvars);
+
+//die( $sql );
 
 ?>
 <p>
@@ -46,26 +73,32 @@ analysis.
 <table class="standard" border="1" cellspacing="0" cellpadding="4">
 <tr>
 <th>TAG</th>
-<th>coverage</th>
-<th>run-tests</th>
-<th>make log</th>
-<th>running make</th>
-<th>Last Make Status</th>
+<th>Code<br />Coverage</th>
+<th>Last Attempted<br />Build Date</th>
+<th>Last Successful<br />Build Date</th>
+<th>Last Build <br /> Time (seconds)</th>
 </tr>
 <?php
 	
 $path = $appvars['site']['basepath'];
 
 // Output PHP versions into a table
-foreach($appvars['site']['tags'] as $tag)
+//foreach($appvars['site']['tags'] as $tag)
+while($row = $stmt->fetch(PDO::FETCH_ORI_NEXT))
 {
+	list($version_id, $version_name, $version_last_build_time, $version_last_attempted_build_date, $version_last_successful_build_date) = $row;
+	
 	echo "<tr>";
-	echo "<th align='left'>$tag</th>";
-	show_link($tag, 'lcov', $path,'index.php');
-	show_link($tag, 'run_tests', $path, 'run-tests.html.inc');
-	$l_time = show_link($tag, 'make_log', $path, 'make.log');
-	show_link($tag, 'make_log_new', $path, 'make.log.new', $l_time);
-
+	echo "<th align='left'>$version_name</th>";
+	show_link($version_name, 'lcov', $path,'index.php');
+	//show_link($tag, 'run_tests', $path, 'run-tests.html.inc');
+	//$l_time = show_link($tag, 'make_log', $path, 'make.log');
+	//show_link($tag, 'make_log_new', $path, 'make.log.new', $l_time);
+	echo '<td>'.$version_last_attempted_build_date.'</td>'."\n";
+	echo '<td>'.$version_last_successful_build_date.'</td>'."\n";
+	echo '<td>'.$version_last_build_time.'</td>'."\n";
+	
+/*
 	// added for last make status
 	echo "<td>";
 	$filepath = $tag.'/last_make_status.inc';
@@ -85,6 +118,7 @@ foreach($appvars['site']['tags'] as $tag)
 		 $make_last_status = 'Failed - check Compile Results';
 	}
 	echo $make_last_status."</td>\n";
+*/
 	// End additions
 	echo "</tr>\n";
 }

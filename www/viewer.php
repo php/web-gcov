@@ -22,6 +22,21 @@ $incfile = '';
 $file = $_REQUEST['file'];
 $version = $_REQUEST['version'];
 
+if(isset($_REQUEST['date']))
+{
+	list($year, $month, $day) = split('[^0-9]', $_REQUEST['date'], 3);
+
+	// Ensure each variable is numeric before checking the date
+	if(is_numeric($month) && (is_numeric($day)) && (is_numeric($year)) 
+		&& ($year > 1909))
+	{
+		if(checkdate($month, $day, $year))
+		{
+			$date = $_REQUEST['date'];
+		}
+	}
+}
+
 // Define the function array
 // each array element starts with the name of the command
 // title: page title
@@ -33,16 +48,15 @@ $func_array = array(
 			'pagetitle' => 'PHP: Compile Results for '.$version, 
 			'pagehead' => 'Compile Results'
 		),
-	'make_log' =>
+	'php_test_log' =>
 		array(
-			'option' => 'html',
-			'pagetitle' => 'PHP: Make Log for'. $version,
-			'pagehead' => 'Make Log'
+			'option' => 'text',
+			'pagetitle' => 'PHP: Test Log for '. $version,
+			'pagehead' => 'Test Log'
 		),
 	'valgrind' =>
 		array(
-			//'file' => 'valgrind', //todo: removing this fixes it
-			'option' => 'phpinc', // or text
+			'option' => 'phpinc', // or text at this point
 			'pagetitle' => 'PHP: Valgrind Report for '.$version, 
 			'pagehead' => 'Valgrind Report'
 		),
@@ -67,6 +81,26 @@ if(isset($_REQUEST['func']))
 else
 {
 	$func = 'lcov';
+}
+
+// Accepts: date in format of YYYY_MM_DD (non-numeric separator character)
+// Returns: date in textual format of this example: Jan 1 2006
+function datestring_fromdate($date)
+{
+	//$retstring = '';
+	//if(strlen($date) > 9)
+	//{
+		list($year, $month, $day) = split('[^0-9]', $date, 3);
+	
+		// Hour, Minute, Second, Month, Day, Year
+		$time = mktime(0,0,0,$month,$day,$year);
+	return date('M j Y', $time);
+	//}
+	//else
+	//{
+		//$retstring = false;
+	//}
+	//return $retstring;
 }
 
 // Ensure the version specified is valid (todo: more security required?)
@@ -110,7 +144,7 @@ if(array_search($version, $appvars['site']['tags']) !== false)
 		} // End of content value check
 	}
 	
-	else if(array_key_exists($func,$func_array))
+	else if(@array_key_exists($func,$func_array))
 	{
 		// Determine the file to use
 		if(isset($func_array[$func]['file']))
@@ -175,51 +209,88 @@ if(array_search($version, $appvars['site']['tags']) !== false)
 	                $appvars['page']['head'] = $func_array[$func]['pagehead'];
 	                $appvars['page']['headtitle'] = $version;
 		}
+
+		// todo: is this correct?
 		$content = str_replace($phpdir, 'replaced', $content);
 	}
-/*
-	else if($func == 'compile_results')
-	{		
-		if($file == '')
+	else if($func == 'graph')
+	{
+		// If date is not set display all available dates
+		// todo: format date as the actual date instead of numbers
+		if(!isset($date))
 		{
-			$incfile = 'compile_results';
-			$appvars['page']['head'] = $version.': Compile Results';
-		}
-		else // todo: ensure path changing is prohibited
-		{ 
-			$incfile = basename($file);
-		}
-		
-		ob_start();
-		if(file_exists($version.'/gcc/'.$incfile.'.inc'))
-		{
-			include_once $version.'/gcc/'.$incfile.'.inc';
-		}
-		$content = ob_get_clean();
-		ob_end_flush();
+			$file = $version.DIRECTORY_SEPARATOR.'graph.inc';
 
-		// Check if the file could be opened
-		if($content == '')
-		{
-			// Define page variables		
-			$appvars['page']['title'] = 'PHP: No Compile Result File Available for '
-				.$version;
-			$appvars['page']['head'] = $version.': Unable to Locate Compile Information File';
+			$dates = @file_get_contents($file);
+
+			$temp_date = '';
+			$x = 0;
+
+			while($x < strlen($dates))
+			{
+				//$date = '';
+				if(($dates[$x] != "\n") && ($x < strlen($dates)))
+				{	
+					$temp_date .= $dates[$x];
+				}
+				else
+				{
+					$content .= '<a href="viewer.php?version='.$version.'&amp;func=graph&date='.$temp_date.'">'.datestring_fromdate($temp_date).'</a>'.'<br />';
+					$temp_date = '';
+				}
+				$x++;
+			}
+
+			if($dates === false)
+			{
+				$content = 'No graphs currently exist for this version.';
+			}
+
+			else
+			{
+				$content = 'Choose a date to view the associated graphs:<br />'.$content;
+			}
+			
+			$appvars['page']['title'] = 'PHP: '.$version.' Graphs';
+			$appvars['page']['head'] = 'Graphs';
 			$appvars['page']['headtitle'] = $version;
 
-			$content = 'There is no compile result file to open at this time.  Please try again in a few iminutes.';
 		}
-		else
+		else // Display the graphs for the specified PHP version and date
 		{
-			// Define page variables		
-			$appvars['page']['title'] = 'PHP: Compile Results for '.$version;
-			if($incfile != 'compile_results')
-				$appvars['page']['head'] = $version.': Compile Results for \''.$filename.'\'';
-			//$appvars['page']['head'] = $version.': Compile Errors/Warnings';
-			$appvars['page']['headtitle'] = $version;
+			$datestring = datestring_fromdate($date);
+			// todo: if graphs don't exist display something else like a not found
+			if($datestring === false) 
+			{
+
+				$appvars['page']['title'] = 'PHP: '.$version.' Graphs Not Found For '.$datestring;
+				$appvars['page']['head'] = 'Graphs Not Found For '.$datestring;
+				$appvars['page']['headtitle'] = $version;
+
+				$content = 'No graphs could be located for this PHP version for the specified date.';
+
+			}
+			else
+			{
+				$appvars['page']['title'] = 'PHP: '.$version.' Graphs For '.$datestring;
+				$appvars['page']['head'] = 'Graphs For '.$datestring;
+				$appvars['page']['headtitle'] = $version;
+
+				$date = basename($date); // ensure a path is not specified here
+				$content .= '<p>The following images show the changes in number of compile errors, compile warnings, memory leaks and test failures over the past week up to the date of '.$datestring.'.</p>';
+
+				if(file_exists($version.'/graphs/'.'errors_'.$date.'.png'))
+					$content .= '<img src="'.$version.'/graphs/'.'errors_'.$date.'.png" />&nbsp;';
+				if(file_exists($version.'/graphs/'.'failures_'.$date.'.png'))
+					$content .= '<img src="'.$version.'/graphs/'.'failures_'.$date.'.png" /><br />';
+				if(file_exists($version.'/graphs/'.'memleaks_'.$date.'.png'))
+					$content .= '<img src="'.$version.'/graphs/'.'memleaks_'.$date.'.png" />&nbsp;';
+				if(file_exists($version.'/graphs/'.'warnings_'.$date.'.png'))
+					$content .= '<img src="'.$version.'/graphs/'.'warnings_'.$date.'.png" /><br />';
+			}
 		}
-	}	
-*/
+	}
+
 	else if($func == 'run_tests') 
 	// Displays run-tests content for this version
 	{		
@@ -249,38 +320,6 @@ if(array_search($version, $appvars['site']['tags']) !== false)
 			$appvars['page']['headtitle'] = $version;			
 		} // End of content value check
 	}
-/*
-	else if($func == 'make_log')
-	// Displays the make log content for this version
-	{
-		// Collect file content
-		$fn = $appvars['site']['basepath'].'/'.$version
-		.'/make.log';
-		
-		// Open file handle
-		$fh = @fopen($fn, 'r');
-		// Obtain file size
-		$content = @fread($fh, filesize($fn));
-		@fclose($fh);
-		
-		// If the file is not readable, set up error content and header
-		if($content === false)
-		{
-			// Define page variables		
-			$appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis of '.$version;
-			$appvars['page']['head'] = $version.': no make log';
-			$appvars['page']['headtitle'] = $version;
-			$content = 'There is no make log available to be read.  Please try again in a few minutes.';
-		}
-		else // If the file was readable, set up page headers
-		{
-			// Define page variables		
-			$appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis of '.$version;
-			$appvars['page']['head'] = $version.': make log (finished)';
-			$appvars['page']['headtitle'] = $version;
-		} // End of content value check
-	}
-*/
 	else if($func == 'lcov') 
 	// Displays the lcov content for this version
 	{
