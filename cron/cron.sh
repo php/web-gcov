@@ -44,9 +44,9 @@ do
 	if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
 		MAKESTATUS=pass
 
-		export TEST_PHP_ARGS="-m -U -n -q -s ${TMPDIR}/php_test.log"
+		export TEST_PHP_ARGS="-m -U -n -q"
 
-		make lcov
+		make lcov > ${TMPDIR}/php_test.log
 		mv lcov_html ${OUTDIR}
 		php ${WORKDIR}/valgrind.php ${TMPDIR} ${OUTDIR} ${PHPSRC}
 
