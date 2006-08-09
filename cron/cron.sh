@@ -44,7 +44,7 @@ do
 	if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
 		MAKESTATUS=pass
 
-		export TEST_PHP_ARGS="-m -U -n -q"
+		export TEST_PHP_ARGS="-m -U -n -q --keep-all"
 
 		make lcov > ${TMPDIR}/php_test.log
 		mv lcov_html ${OUTDIR}
