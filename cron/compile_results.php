@@ -14,7 +14,7 @@
 
 if(!defined('CRON_PHP'))
 {
-	echo 'Sorry this file must be called by a cron script'."\n";
+	echo basename($_SERVER['PHP_SELF']).': Sorry this file must be called by a cron script.'."\n";
 	exit;
 }
 

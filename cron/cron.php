@@ -1,6 +1,9 @@
 <?php
 
-if ($argc != 6) die("cron.php requires 5 arguments: [tmp] [out] [phpsrc] [makestatus] [phpversion]\n\n");
+if ($argc != 6) 
+{
+	die("cron.php requires 5 arguments: [tmp] [out] [phpsrc] [makestatus] [phpversion]\n\n");
+}
 
 define('CRON_PHP',true);
 
@@ -23,6 +26,8 @@ $totalnumfailures = 0;	// Total number of test failures (tests.php)
 $linkerinfo = 'N/A';	// Information regarding linker (system.php)
 $compilerinfo = 'N/A';	// Information regarding compiler (system.php)
 $osinfo = 'N/A';	// Information regarding operating system (system.php)
+
+$codecoverage_percent = -1; // Information regarding the code coverage
 
 $version_id = 0;
 
@@ -83,7 +88,14 @@ if($version_id > 0)
 
 	if($makestatus == 'pass')
 	{
+
+		// Run the PHP tests
 	        require $workdir.'/tests.php';
+
+		// Run the valgrind code
+		require $workdir.'/valgrind.php';
+
+		// Get the time it took to create the build
 	        require $workdir.'/build_time.php';
 
 		// todo: if a Sunday, call graphs otherwise skip
@@ -108,7 +120,7 @@ if($version_id > 0)
 
 	// Update the existing version information
 	echo 'Build Time: '.$build_time."\n";
-
+	echo 'Code Coverage: '.$codecoverage_percent.'%'."\n";
 
 }
 else
@@ -123,22 +135,15 @@ file_put_contents($outdir.DIRECTORY_SEPARATOR.'last_make_status.inc', $makestatu
 
 //$xml_array = array('php_build.log','php_test.log');
 
+// start test log
+$contents = file_get_contents($tmpdir.'/php_test.log');
 
-// Parse valgrind output file
-$valgrind_serialized = file_get_contents("$outdir/valgrind.txt") or $valgrind_serialized = null;
+$search_for = array($phpdir, $tmpdir, 'quadra23');
+$replace_with = array('/'.$phpver,'/'.$phpver, 'user');
 
-if(!is_null($valgrind_serialized))
-{
-	//$xml_array['valgrind'] = array();
-	$xmlarray['valgrind'] = unserialize($valgrind_serialized);
-
-	//$valgrind = unserialize($valgrind_serialized);
-
-}
-else
-{
-	echo 'no valgrind to read'."\n";
-}
+$contents = str_replace($search_for, $replace_with, $contents);
+file_put_contents($outdir.'/php_test.log.txt', $contents);
+// end test log
 
 $xml_out = '<?xml version="1.0" encoding="UTF-8"?>'."\n"
 	.'<build>'."\n"
@@ -146,6 +151,8 @@ $xml_out = '<?xml version="1.0" encoding="UTF-8"?>'."\n"
 	.'<username>johndoe'.'</username>'."\n"
 	.'<version>'.$phpver.'</version>'."\n"
 	.'<buildstatus>'.$makestatus.'</buildstatus>'."\n"
+	.'<buildtime>'.$build_time.'</buildtime>'."\n"
+	.'<codecoverage>'.$codecoverage_percent.'</codecoverage>'."\n"
 	.'<compiler>'.$compilerinfo.'</compiler>'."\n"
 	.'<linker>'.$linkerinfo.'</linker>'."\n"
 	.'<os>'.$osinfo.'</os>'."\n"
@@ -155,11 +162,9 @@ $xml_out = '<?xml version="1.0" encoding="UTF-8"?>'."\n"
 $xml_search_for = array($phpdir);
 $xml_replace_with = array('');
 
-
 if(isset($xmlarray['compile_results']))
 {
 	$xml_out .= '<compile_results>'."\n";
-	//$xml_out .= '<files>'."\n";
 
 	foreach($xmlarray['compile_results'] as $res)
 	{
@@ -183,22 +188,27 @@ if(isset($xmlarray['tests']))
 		$xml_out .= '<test status="'.$test['status'].'" '
 			.'file="'.$test['file'].'">';
 
+		// Since more info is available for failed tests
 		if(strtolower($test['status']) == 'fail')
 		{
 			$xml_out .= "\n"
 				.'<expected>'
-				.htmlspecialchars($test['expected'])
+				.'<![CDATA['
+				.$test['expected']
+				.']]>'
 				.'</expected>'."\n"
 				.'<output>'
-				.htmlspecialchars($test['output'])
+				.'<![CDATA['
+				.$test['output']
+				.']]>'
 				.'</output>'."\n"
 				.'<difference>'."\n"
-				.htmlspecialchars($test['difference'])
+				.'<![CDATA['
+				.$test['difference']
+				.']]>'
 				.'</difference>';
 		}
-		else
-		{
-		}
+
 		$xml_out .= '</test>'."\n";
 	}
 
@@ -206,28 +216,80 @@ if(isset($xmlarray['tests']))
 
 } // End check for tests
 
+if(isset($xmlarray['valgrind']))
+{
+	$xml_out .= '<valgrind>'."\n";
+
+       	foreach($xmlarray['valgrind'] as $valgrind)
+	{
+		$xml_out .= '<leak file="'
+				.$valgrind['file'].'">'."\n"
+			.'<script>'
+			.'<![CDATA['
+				.$valgrind['script']
+			.']]>'
+			.'</script>'."\n"
+			.'<report>'
+			.'<![CDATA['
+				.$valgrind['report']
+			.']]>'
+			.'</report>'."\n"
+			.'</leak>'."\n";
+	}
+
+	$xml_out .= '</valgrind>'."\n";
+}
 
 $xml_out .= '</builddata>'."\n"
 		.'</build>'."\n";
 
-if(file_put_contents($tmpdir.'/build.new.xml', $xml_out))
+if(file_put_contents($tmpdir.'/build.xml', $xml_out))
 {
 	echo 'XML file written'."\n";
 }
 
 
-file_put_contents($outdir.'/build.new.xml', $xml_out);
+// todo: this file would be gzipped and then sent to server
+file_put_contents($outdir.'/build.xml', $xml_out);
 
 
-
+// Get the array for output (testing only)
 ob_start();
 
 print_r($xmlarray);
 
 $contents = ob_get_clean();
 
-file_put_contents($outdir.'/build.new.txt', $contents);
+file_put_contents($outdir.'/build.txt', $contents);
 
+// Setup for data post to remote server
+$contents = bzcompress($xml_out);
+$contents = base64_encode($contents);
+
+$postdata = array('username' => 'johndoe',
+                        'password' => 'abcd',
+                        'contents' => $contents
+	        );
+
+$uri = 'http://gcov.aristotle.dlitz.net/post.php';
+
+$result = file_get_contents($uri, false, 
+		stream_context_create(
+			array('http' =>
+				array(
+				'method'=>'POST',
+				'headers'=> 'Content-type: application/x-www-form-urlencoded', 
+				'content' => http_build_query($postdata)
+				)
+			)
+		)
+	);
+
+if($result === false)
+	echo 'not posted';
+else
+        echo 'posted';
+echo "\n";
 
 //require $workdir.'/make-index.php'; // make the index file
 ?>

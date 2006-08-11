@@ -7,9 +7,12 @@ class MyMailer extends PHPMailer
 
         var $CharSet = 'iso-8859-1';
 	var $ContentType = 'text/html';
-
+/*
 	var $From     	= 'someaddress@example.com';
 	var $FromName 	= 'Some Address';
+*/
+	var $From = 'some.address@example.com';
+	var $FromName = 'Some Address';
 
 	var $Host = 'localhost';
 
@@ -21,11 +24,6 @@ class MyMailer extends PHPMailer
 
 	var $WordWrap = 75;
 
-	function Subject($subject)
-	{
-		$this->Subject($subject);
-	}
-
 	function MyMailer()
 	{
 		// Handles SMTPAuth (if enabled)
@@ -34,6 +32,10 @@ class MyMailer extends PHPMailer
 			$Username = 'username';
 			$Password = 'password';
 		}
+
+		$From = 'pronych@php.net';
+		$FromName = 'Daniel Pronych';
+
 	}
 
 }

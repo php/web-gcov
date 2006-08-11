@@ -1,24 +1,19 @@
 <?php
 
+if(!defined('CRON_PHP'))
+{
+        echo basename($_SERVER['PHP_SELF']).': Sorry this file must be called by a cron script.'."\n";
+	        exit;
+}
+
 // Ensure the write variable is empty before inserting content
 $write = '';
 
 $data  = file_get_contents("$tmpdir/php_test.log");
 //$write = html_header('Test Failures');
 
-$test_regex = '/Number of tests :\s*\d+\s+\d+\n'.
-	       'Tests skipped   :\s*\d+\s*\(\s*\d+\.\d+%\) --------\n'.
-	       'Tests warned    :\s*\d+\s*\(\s*\d+\.\d+%\) \(\s*\d+\.\d+%\)\n'.
-	       'Tests failed    :\s*\d+\s*\(\s*\d+\.\d+%\) \(\s*\d+\.\d+%\)\n'.
-	       'Tests passed    :\s*\d+\s*\(\s*\d+\.\d+%\) \(\s*\d+\.\d+%\)/';
-
-preg_match($test_regex, $data, $m);
-$test_summary = $m[0];
-
 // Grab the results according to failure or pass
 preg_match_all('/(?P<status>FAIL|PASS) (?P<title>.+) \[(?P<file>[^\]]+)\]/', $data, $tests, PREG_SET_ORDER);
-
-//print_r($tests);
 
 // todo: do a count instead of a bloated get all failures
 preg_match_all('/FAIL (?P<title>.+) \[(?P<file>[^\]]+)\]/', $data, $failed, PREG_SET_ORDER);
@@ -67,6 +62,7 @@ foreach ($tests as $test) {
 		$t['status'] = 'pass';
 		$t['file'] = $test['file'];
 	}
+
 	$xmlarray['tests'][] = $t;
 
 	// This loop writes the content for a failed test
