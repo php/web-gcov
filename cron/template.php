@@ -16,32 +16,41 @@ HTML;
 }
 
 
-function html_footer() {
-
+function html_footer($closehtml=true) 
+{
 	date_default_timezone_set('UTC');
 	$timestamp = time();
 	$date      = date('r', $timestamp);
 
 	return <<< HTML
 <?php
-function time_diff() {
-	date_default_timezone_set('UTC');
-	\$diff = time() - $timestamp;
+	function time_diff() 
+	{
+		date_default_timezone_set('UTC');
+		\$diff = time() - $timestamp;
 
-	if (\$diff < 60) {
-		echo "\$diff seconds";
-	} elseif(\$diff < 3600) {
-		echo intval(\$diff/60) ." minutes";
-	} else {
-		echo intval(\$diff/3600) ." hours";
+		if (\$diff < 60) 
+		{
+			echo "\$diff seconds";
+		}
+		elseif(\$diff < 3600) 
+		{
+			echo intval(\$diff/60) ." minutes";
+		} else 
+		{
+			echo intval(\$diff/3600) ." hours";
+		}
 	}
-}
 ?>
 
 <p>&nbsp;</p>
-<p align="center"><small>Generated at $date (<?php time_diff() ?> ago)</small></p>
-</body>
-</html>
+<p align="center"><small>Generated at $date (<?php time_diff(); ?> ago)</small></p>
+
+<?php if(\$closehtml)
+{
+	echo '</body>'."\n".'</html>'."\n";
+}
+?>
 
 HTML;
 }

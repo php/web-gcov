@@ -1,5 +1,9 @@
 <?php
 
+
+// data: contains the contents of $tmpdir/php_test.log
+// unicode: true if unicode is included
+
 if(!defined('CRON_PHP'))
 {
         echo basename($_SERVER['PHP_SELF']).': Sorry this file must be called by a cron script.'."\n";
@@ -9,43 +13,63 @@ if(!defined('CRON_PHP'))
 // Ensure the write variable is empty before inserting content
 $write = '';
 
-$data  = file_get_contents("$tmpdir/php_test.log");
-//$write = html_header('Test Failures');
+// Regular expression used to find a single failure
+$fail_re = '/FAIL(:(?P<testtype>[a-z|A-Z]))?/';
 
-// Grab the results according to failure or pass
-preg_match_all('/(?P<status>FAIL|PASS) (?P<title>.+) \[(?P<file>[^\]]+)\]/', $data, $tests, PREG_SET_ORDER);
+// Regular expression to find all tests with a pass or failure
+$tests_re = '/(?P<status>FAIL|PASS)(:(?P<testtype>[a-z|A-Z]))? (?P<title>.+) \[(?P<file>[^\]]+)\]/';
 
-// todo: do a count instead of a bloated get all failures
-preg_match_all('/FAIL (?P<title>.+) \[(?P<file>[^\]]+)\]/', $data, $failed, PREG_SET_ORDER);
+// Grab all tests that match the tests regular expression
+preg_match_all($tests_re, $data, $tests, PREG_SET_ORDER);
 
 $old_dir = '';
 
-if (count($failed) < 1) {
+
+// A single failure is enough to verify that a failure occurred
+if (preg_match($fail_re, $data) < 1) 
+{
 	$write .= "<p>Congratulations! Currently there are no test failures!</p>\n";
 } else {
-	$totalnumfailures = count($failed);
-
 	$write .= <<< HTML
 <table border="1">
  <tr>
   <td>File</td>
+  <td>Test Type</td>
   <td>Name</td>
  </tr>
 HTML;
 }
 
+foreach ($tests as $test) 
+{
 
-foreach ($tests as $test) {
-
-	$file  = basename($test['file']);
-	$status = $test['status'];
-	$title = $test['title'];
 	$dir   = dirname($test['file']);
-	$hash  = md5($test['file']);
+	$file  = basename($test['file']);
+	$status = $test['status']; // FAIL or PASS
+	$title = $test['title'];
 
+	// Note: that the following period is preserved
 	$base = "$phpdir/".substr($test['file'],0,-4);
 
 	$t = array();
+	$t['script'] = file_get_contents($base.'php')
+		or $t['script'] = 'Script contents not available.';
+
+	if((isset($test['testtype'])) 
+			&& (strtolower($test['testtype']) == 'u'))
+	{
+		$t['testtype'] = 'Unicode';
+		$base .= 'u.';
+	}
+	else
+	{
+		$t['testtype'] = 'Native';
+	}
+
+	// Note: the hash reflects the exact filename for native
+	// i.e. unicode would be file.u.phpt and native file.phpt
+	$hash  = md5($base.'phpt'); 
+
 	if(strtolower($status) == 'fail')
 	{
 		$t['status'] = 'fail';
@@ -72,31 +96,36 @@ foreach ($tests as $test) {
         	if ($old_dir != $dir) 
 		{
 			$old_dir = $dir;
-			$write .= "<tr><td colspan='2' align='center'><b>$dir</b></td></tr>\n";
+			$write .= "<tr><td colspan='3' align='center'><b>$dir</b></td></tr>\n";
 		}
 
-		        $write .= "<tr><td><a href='viewer.php?version=$version&func=tests&file=$hash'>$file</a></td><td>$title</td></tr>\n";
+	        $write .= "<tr><td><a href='viewer.php?version=$version&func=tests&file=$hash'>$file</a></td><td>{$t['testtype']}</td><td>$title</td></tr>\n";
 
-			$additional =
- 				"<h2>Script</h2><pre>\n" . highlight_file($base.'php', true).
-				"\n</pre><h2>Expected</h2><pre>\n" . htmlspecialchars(file_get_contents($base.'exp')).
-				"\n</pre><h2>Output</h2><pre>\n" .htmlspecialchars(str_replace($phpdir,'',file_get_contents($base.'out'))).
-				"\n</pre><h2>Diff</h2><pre>\n".htmlspecialchars(str_replace($phpdir,'',file_get_contents($base.'diff')))."\n</pre>";
+		$additional =
+			"<h2>Script</h2><pre>\n" 
+			.highlight_string($t['script'], true)
+			."\n</pre><h2>Expected</h2><pre>\n" 
+			.htmlspecialchars($t['expected'])
+			."\n</pre><h2>Output</h2><pre>\n" 
+			.htmlspecialchars(str_replace($phpdir,'',$t['output']))
+			."\n</pre><h2>Diff</h2><pre>\n"
+			.htmlspecialchars(str_replace($phpdir,'',$t['difference']))."\n</pre>";
 
-			// now create the test's page
-			file_put_contents("$outdir/$hash.inc",
-			//html_header("Test Failure: $file").
-			'<?php $filename="'.htmlspecialchars(basename($file)).'"; ?>'.
+		// now create the Page for the test
+		file_put_contents("$outdir/$hash.inc",
+		'<?php $filename="'.htmlspecialchars(basename($file)).'"; ?>'.
 			$additional.
 			html_footer()
 		);
+
+		$totalnumfailures += 1;
 	}
 }
 
-if (count($failed))
+if ($totalnumfailures > 0)
 	$write .= "</table>\n";
 
-$write .= html_footer();
+$write .= html_footer(false);
 
 file_put_contents("$outdir/tests.inc", $write);
 ?>

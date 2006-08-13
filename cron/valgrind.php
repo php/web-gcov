@@ -6,29 +6,17 @@ if(!defined('CRON_PHP'))
 	exit;
 }
 
-$unicode = false;		// assume unicode is disabled
+// data: contains the contents of $tmpdir/php_test.log
+// unicode: true if unicode is included in the log files
 
 $write = '';
 
 require_once $workdir.'/template.php';
-// -----------------
 
-
-// fix filename after the others are fixed
-$data  = file_get_contents("$tmpdir/php_test.log");
-
-// Check if unicode testing is enabled (is this sufficient for PHP > 6?)
-if(preg_match('/UNICODE[ ]*:[ ]*ON[ ]?/', $data))
-{
-	// Easy way to track that unicode is enabled
-	$unicode = true;
-}
-
-///LEAK(:(?P<testtype>[a-z|A-Z]))? (?P<title>.+) \[(?P<file>[^\]]+)\]/
 
 $leak_re = '/LEAK(:(?P<testtype>[a-z|A-Z]))? (?P<title>.+) \[(?P<file>[^\]]+)\]/';
 
-// Check for Leaks
+// Find memory leaks in the data
 preg_match_all($leak_re, $data, $leaks, PREG_SET_ORDER);
 
 $old_dir = '';
@@ -58,18 +46,19 @@ foreach ($leaks as $test)
 	// If test mode is not unicode it is native
 	if((isset($test['testtype'])) && (strtolower($test['testtype']) == 'u'))
 	{
-		$testtype = 'Unicode';
+		$t['testtype'] = 'Unicode';
 		$report_file = $base.'u.mem';
 	}
 	else
 	{
-		$testtype = 'Native';
+		$t['testtype'] = 'Native';
 		$report_file = $base.'mem';
 	}
 
 	$title = $test['title'];
 	$dir   = dirname($test['file']);
-	$hash  = 'v' . md5($test['file']);
+
+	$hash  = 'v' . md5($report_file);
 
 	if ($old_dir != $dir) 
 	{
@@ -82,12 +71,10 @@ foreach ($leaks as $test)
 	}
 	
 	// todo: urlencode
-	$write .= "<tr><td><a href='viewer.php?version=$phpver&func=valgrind&file=$hash'>$file</a></td><td>$testtype</td><td>$title</td></tr>\n";
+	$write .= "<tr><td><a href='viewer.php?version=$phpver&func=valgrind&file=$hash'>$file</a></td><td>{$t['testtype']}</td><td>$title</td></tr>\n";
 
 	// todo: added str_replace to individual report output
 	
-	$base = "$phpdir/".substr($test['file'],0,-4);
-
 	$script_php = highlight_file($base.'php', true);
 	$script_text = '';
 
