@@ -7,7 +7,7 @@
 // If is_master = true; after build, stores the outcome locally
 // If is_master = false; after build, sends data to remote server
 // Note: if is_master = false; a valid user and pass is required
-$is_master = true;
+$is_master = false;
 
 // Note: these options are specific to is_master = false
 $server_submit_url = 'http://gcov.aristotle.dlitz.net/post.php';

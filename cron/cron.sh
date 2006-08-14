@@ -3,58 +3,78 @@
 export LC_ALL=C
 
 # file that contains the PHP version tags
-filename=tags.inc
-
-# the maximum number of elements for a single php version
-php_max_version_elements=4
+FILENAME=tags.inc
 
 WORKDIR=`dirname "$0"`
 echo "$WORKDIR" | grep -q '^/' || WORKDIR="`pwd`/$WORKDIR"  # get absolute path
 
-. ${WORKDIR}/config.sh
-
 # set up a one dimensional array to store all php version information
-declare -a php_version_array
-php_version_array=( `cat "$filename"` )
+declare -a TAGS_ARRAY
+TAGS_ARRAY=( `cat "$FILENAME"` )
 
 # Calculate how many elements there are in a php version array
-php_version_totalcount=${#php_version_array[@]}
+TAGS_COUNT=${#TAGS_ARRAY[@]}
+
+PHPROOT=${TAGS_ARRAY[0]}
+OUTROOT=${TAGS_ARRAY[1]}
+
+# Check for a build version passed to the script
+if [ $# -eq 1 ]; then
+	BUILD=$1
+else
+	BUILD="_all_"
+fi
 
 # loop through each PHP version and perform the required builds
-for (( i = 0 ; i < ${php_version_totalcount} ; i += ${php_max_version_elements} ))
+for (( i = 2 ; i < $TAGS_COUNT ; i += 1 ))
 do
-	#set up the php version information
-	echo ${php_version_array[i]}
-	PHPVERSION=${php_version_array[i]}
-	echo ${php_version_array[i+1]}
-	PHPSRC=${php_version_array[i+1]}
-        echo ${php_version_array[i+2]}
-	TMPDIR=${php_version_array[i+2]}
-        echo ${php_version_array[i+3]}
-	OUTDIR=${php_version_array[i+3]}
+	PHPTAG=${TAGS_ARRAY[i]}
 
-	# run the loop for each php version
-	cd ${PHPSRC}
-	./cvsclean
-	cvs -q up
-	./buildconf
-	./config.nice
-
-	#test for success of the make operation
-	if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
-		MAKESTATUS=pass
-
-		export TEST_PHP_ARGS="-m -U -n -q --keep-all"
-
-		make lcov > ${TMPDIR}/php_test.log
-		mv lcov_html ${OUTDIR}
-		php ${WORKDIR}/valgrind.php ${TMPDIR} ${OUTDIR} ${PHPSRC}
-
-		echo "make successful"
+	# Build all has no exceptions
+	if [ $BUILD = "_all_" ]; then
+		BUILD_VERSION=1
 	else
-		MAKESTATUS=fail
-		echo "make failed"
+		if [ $BUILD = $PHPTAG ]; then
+			BUILD_VERSION=1
+			#todo: if tag does not exist, output error
+		else
+			BUILD_VERSION=0
+		fi
 	fi
 
-	php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPVERSION}
+	# If this version should be built
+	if [ $BUILD_VERSION = 1 ]; then
+
+		# todo: make sure all the following directories exist
+		OUTDIR=${OUTROOT}/${PHPTAG}
+		PHPSRC=${PHPROOT}/${PHPTAG}
+		TMPDIR=${PHPROOT}/tmp/${PHPTAG}
+
+		cd ${PHPSRC}
+		./cvsclean
+		cvs -q up
+		./buildconf
+		./config.nice
+
+		if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
+
+			#test for success of the make operation
+			MAKESTATUS=pass
+
+			export TEST_PHP_ARGS="-m -U -n -q --keep-all"
+
+			# LCOV operations
+			make lcov > ${TMPDIR}/php_test.log
+			rm -r ${OUTDIR}/lcov_html
+			mv lcov_html ${OUTDIR}
+
+			echo "make successful"
+		else
+			MAKESTATUS=fail
+			echo "make failed"
+		fi # End build failure or success
+
+		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG}
+
+	fi # End verify build PHP version
 done

@@ -24,9 +24,13 @@ $totalnumwarnings = 0;	// Total number of warnings (compile_errors.php)
 $totalnumleaks = 0;	// Total number of memory leaks (valgrind.php)
 $totalnumfailures = 0;	// Total number of test failures (tests.php)
 
-$linkerinfo = 'N/A';	// Information regarding linker (system.php)
+$configureinfo = 'N/A';	// Information regarding configure (system.php)
+
 $compilerinfo = 'N/A';	// Information regarding compiler (system.php)
+
 $osinfo = 'N/A';	// Information regarding operating system (system.php)
+
+$valgrindinfo = 'N/A'; // Information regarding valgrind (system.php)
 
 $codecoverage_percent = -1; // Information regarding the code coverage
 
@@ -181,14 +185,15 @@ else
 
 <build>
 <buildinfo>
-<username>johndoe</username>
+<username>$server_submit_user</username>
 <version>$phpver</version>
 <buildstatus>$makestatus</buildstatus>
 <buildtime>$build_time</buildtime>
 <codecoverage>$codecoverage_percent</codecoverage>
 <compiler>$compilerinfo</compiler>
-<linker>$linkerinfo</linker>
+<configure>$configureinfo</configure>
 <os>$osinfo</os>
+<valgrind>$valgrindinfo</valgrind>
 </buildinfo>
 <builddata>
 XML;

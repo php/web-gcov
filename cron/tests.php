@@ -24,7 +24,6 @@ preg_match_all($tests_re, $data, $tests, PREG_SET_ORDER);
 
 $old_dir = '';
 
-
 // A single failure is enough to verify that a failure occurred
 if (preg_match($fail_re, $data) < 1) 
 {
@@ -51,19 +50,19 @@ foreach ($tests as $test)
 	// Note: that the following period is preserved
 	$base = "$phpdir/".substr($test['file'],0,-4);
 
-	$t = array();
-	$t['script'] = file_get_contents($base.'php')
-		or $t['script'] = 'Script contents not available.';
+	$newtest = array();
+	$newtest['script'] = file_get_contents($base.'php')
+		or $newtest['script'] = 'Script contents not available.';
 
 	if((isset($test['testtype'])) 
 			&& (strtolower($test['testtype']) == 'u'))
 	{
-		$t['testtype'] = 'Unicode';
+		$newtest['testtype'] = 'Unicode';
 		$base .= 'u.';
 	}
 	else
 	{
-		$t['testtype'] = 'Native';
+		$newtest['testtype'] = 'Native';
 	}
 
 	// Note: the hash reflects the exact filename for native
@@ -72,22 +71,22 @@ foreach ($tests as $test)
 
 	if(strtolower($status) == 'fail')
 	{
-		$t['status'] = 'fail';
-		$t['file'] = $test['file'];
-		$t['expected'] = file_get_contents($base.'exp')
-			or $t['expected'] = 'N\A';
-                $t['output'] = file_get_contents($base.'out')
-			or $t['output'] = 'N\A';
-		$t['difference'] = file_get_contents($base.'diff')
-			or $t['difference'] = 'N\A';
+		$newtest['status'] = 'fail';
+		$newtest['file'] = $test['file'];
+		$newtest['expected'] = file_get_contents($base.'exp')
+			or $newtest['expected'] = 'N\A';
+                $newtest['output'] = file_get_contents($base.'out')
+			or $newtest['output'] = 'N\A';
+		$newtest['difference'] = file_get_contents($base.'diff')
+			or $newtest['difference'] = 'N\A';
 	}
 	else // status == 'PASS'
 	{
-		$t['status'] = 'pass';
-		$t['file'] = $test['file'];
+		$newtest['status'] = 'pass';
+		$newtest['file'] = $test['file'];
 	}
 
-	$xmlarray['tests'][] = $t;
+	$xmlarray['tests'][] = $newtest;
 
 	// This loop writes the content for a failed test
 	if(strtolower($status) == 'fail')
@@ -99,17 +98,17 @@ foreach ($tests as $test)
 			$write .= "<tr><td colspan='3' align='center'><b>$dir</b></td></tr>\n";
 		}
 
-	        $write .= "<tr><td><a href='viewer.php?version=$version&func=tests&file=$hash'>$file</a></td><td>{$t['testtype']}</td><td>$title</td></tr>\n";
+	        $write .= "<tr><td><a href='viewer.php?version=$version&func=tests&file=$hash'>$file</a></td><td>{$newtest['testtype']}</td><td>$title</td></tr>\n";
 
 		$additional =
 			"<h2>Script</h2><pre>\n" 
-			.highlight_string($t['script'], true)
+			.highlight_string($newtest['script'], true)
 			."\n</pre><h2>Expected</h2><pre>\n" 
-			.htmlspecialchars($t['expected'])
+			.htmlspecialchars($newtest['expected'])
 			."\n</pre><h2>Output</h2><pre>\n" 
-			.htmlspecialchars(str_replace($phpdir,'',$t['output']))
+			.htmlspecialchars(str_replace($phpdir,'',$newtest['output']))
 			."\n</pre><h2>Diff</h2><pre>\n"
-			.htmlspecialchars(str_replace($phpdir,'',$t['difference']))."\n</pre>";
+			.htmlspecialchars(str_replace($phpdir,'',$newtest['difference']))."\n</pre>";
 
 		// now create the Page for the test
 		file_put_contents("$outdir/$hash.inc",
