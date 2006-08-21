@@ -74,21 +74,19 @@ foreach ($tests as $test)
 		$testtype = 'Native';
 	}
 
-	$report_file .= 'phpt';
-
 	// Note: the hash reflects the exact filename for native
 	// i.e. unicode would be file.u.phpt and native file.phpt
-	$hash  = md5($report_file); 
+	$hash  = md5($report_file.'phpt'); 
 
 	// Failed tests provide more content then passed tests
 	if($status == 'fail')
 	{
 		// These variables are only used for failed tests
-		$difference = file_get_contents($base.'diff')
+		$difference = file_get_contents($report_file.'diff')
       or $difference = 'N\A';
-	  $expected = file_get_contents($base.'exp')
+	  $expected = file_get_contents($report_file.'exp')
 			or $expected = 'N\A';
-		$output = file_get_contents($base.'out')
+		$output = file_get_contents($report_file.'out')
 			or $output = 'N\A';		
 		$script = file_get_contents($base.'php')
     	or $script = 'Script contents not available.';
