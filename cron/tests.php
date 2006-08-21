@@ -1,16 +1,22 @@
 <?php
 
+// Tests generation file
+
+if(!defined('CRON_PHP'))
+{
+	echo basename($_SERVER['PHP_SELF']).': Sorry this file must be called by a cron script.'."\n";
+	exit;
+}
+
+require_once $workdir.'/template.php';
 
 // data: contains the contents of $tmpdir/php_test.log
 // unicode: true if unicode is included
 
-if(!defined('CRON_PHP'))
-{
-        echo basename($_SERVER['PHP_SELF']).': Sorry this file must be called by a cron script.'."\n";
-	        exit;
-}
+// Clear the variable that stores the output file for the core file
+$index_write = '';
 
-// Ensure the write variable is empty before inserting content
+// Clear the variable that stores the output content for the individual files
 $write = '';
 
 // Regular expression used to find a single failure
@@ -22,109 +28,178 @@ $tests_re = '/(?P<status>FAIL|PASS)(:(?P<testtype>[a-z|A-Z]))? (?P<title>.+) \[(
 // Grab all tests that match the tests regular expression
 preg_match_all($tests_re, $data, $tests, PREG_SET_ORDER);
 
+// Clear old directory variable
 $old_dir = '';
 
 // A single failure is enough to verify that a failure occurred
 if (preg_match($fail_re, $data) < 1) 
 {
-	$write .= "<p>Congratulations! Currently there are no test failures!</p>\n";
-} else {
-	$write .= <<< HTML
-<table border="1">
- <tr>
-  <td>File</td>
-  <td>Test Type</td>
-  <td>Name</td>
- </tr>
-HTML;
-}
+	$index_write .= "<p>Congratulations! Currently there are no test failures!</p>\n";
+} 
+else 
+{
+	// If there are leaks start the table
 
+	$index_write .= <<< HTML
+<table border="1">
+HTML;
+
+} 
+
+// Loop through each result
 foreach ($tests as $test) 
 {
 
 	$dir   = dirname($test['file']);
 	$file  = basename($test['file']);
-	$status = $test['status']; // FAIL or PASS
+
+	$status = strtolower($test['status']); // fail or pass
+
+	$testtype = ''; // test type will be determined later
+
 	$title = $test['title'];
 
-	// Note: that the following period is preserved
+	// Note: that the following period is maintained
 	$base = "$phpdir/".substr($test['file'],0,-4);
 
-	$newtest = array();
-	$newtest['script'] = file_get_contents($base.'php')
-		or $newtest['script'] = 'Script contents not available.';
+	$report_file = $base;
 
-	if((isset($test['testtype'])) 
-			&& (strtolower($test['testtype']) == 'u'))
+	if((isset($test['testtype'])) && (strtolower($test['testtype']) == 'u'))
 	{
-		$newtest['testtype'] = 'Unicode';
-		$base .= 'u.';
+		$testtype = 'Unicode';
+		$report_file .= 'u.';
 	}
 	else
 	{
-		$newtest['testtype'] = 'Native';
+		$testtype = 'Native';
 	}
+
+	$report_file .= 'phpt';
 
 	// Note: the hash reflects the exact filename for native
 	// i.e. unicode would be file.u.phpt and native file.phpt
-	$hash  = md5($base.'phpt'); 
+	$hash  = md5($report_file); 
 
-	if(strtolower($status) == 'fail')
+	// Failed tests provide more content then passed tests
+	if($status == 'fail')
 	{
-		$newtest['status'] = 'fail';
-		$newtest['file'] = $test['file'];
-		$newtest['expected'] = file_get_contents($base.'exp')
-			or $newtest['expected'] = 'N\A';
-                $newtest['output'] = file_get_contents($base.'out')
-			or $newtest['output'] = 'N\A';
-		$newtest['difference'] = file_get_contents($base.'diff')
-			or $newtest['difference'] = 'N\A';
-	}
-	else // status == 'PASS'
-	{
-		$newtest['status'] = 'pass';
-		$newtest['file'] = $test['file'];
-	}
-
-	$xmlarray['tests'][] = $newtest;
-
-	// This loop writes the content for a failed test
-	if(strtolower($status) == 'fail')
-	{
-
-        	if ($old_dir != $dir) 
-		{
-			$old_dir = $dir;
-			$write .= "<tr><td colspan='3' align='center'><b>$dir</b></td></tr>\n";
-		}
-
-	        $write .= "<tr><td><a href='viewer.php?version=$version&func=tests&file=$hash'>$file</a></td><td>{$newtest['testtype']}</td><td>$title</td></tr>\n";
-
-		$additional =
-			"<h2>Script</h2><pre>\n" 
-			.highlight_string($newtest['script'], true)
-			."\n</pre><h2>Expected</h2><pre>\n" 
-			.htmlspecialchars($newtest['expected'])
-			."\n</pre><h2>Output</h2><pre>\n" 
-			.htmlspecialchars(str_replace($phpdir,'',$newtest['output']))
-			."\n</pre><h2>Diff</h2><pre>\n"
-			.htmlspecialchars(str_replace($phpdir,'',$newtest['difference']))."\n</pre>";
-
-		// now create the Page for the test
-		file_put_contents("$outdir/$hash.inc",
-		'<?php $filename="'.htmlspecialchars(basename($file)).'"; ?>'.
-			$additional.
-			html_footer()
-		);
-
+		// These variables are only used for failed tests
+		$difference = file_get_contents($base.'diff')
+      or $difference = 'N\A';
+	  $expected = file_get_contents($base.'exp')
+			or $expected = 'N\A';
+		$output = file_get_contents($base.'out')
+			or $output = 'N\A';		
+		$script = file_get_contents($base.'php')
+    	or $script = 'Script contents not available.';
+			
+		// Currently only used by master server but may also be useful here
 		$totalnumfailures += 1;
-	}
-}
 
-if ($totalnumfailures > 0)
-	$write .= "</table>\n";
+		// Ensure content is running on a master server before writing up with the output files
+		if($is_master)
+		{
+			if ($old_dir != $dir) 
+			{
+				$old_dir = $dir;
 
-$write .= html_footer(false);
+				$index_write .= <<< HTML
+				<tr>
+<td colspan="3" align="center"><b>$dir</b></td>
+</tr>
+<tr>
+<td width="190">File</td>
+<td width="80">Test Type</td>
+<td width="*">Name</td>
+</tr>
+HTML;
 
-file_put_contents("$outdir/tests.inc", $write);
+			} // End check for change of directory location
+
+			$title_html = htmlspecialchars($title);
+
+			$index_write .= <<< HTML
+<tr>
+<td>
+<a href="viewer.php?version=$version&func=tests&file=$hash">$file</a></td>
+<td>{$testtype}</td>
+<td>{$title_html}</td>
+</tr>
+HTML;
+
+		// Manipulate the data to work with HTML formatting
+		$script_html = highlight_string($script, true);
+		$expected_html = htmlspecialchars($expected);
+		$difference_html = htmlspecialchars(str_replace($phpdir,'',$difference));
+		$output_html = htmlspecialchars(str_replace($phpdir,'',$output));
+
+		$write = <<< HTML
+
+<h2>Script</h2>
+<pre>$script_html</pre>
+<h2>Expected</h2>
+<pre>$expected_html</pre>
+<h2>Output</h2>
+<pre>$output_html</pre>
+<h2>Diff</h2>
+<pre>$difference_html</pre>
+HTML;
+
+			// output the content for the individual test failure
+			file_put_contents("$outdir/$hash.inc",
+			'<?php $filename="'.htmlspecialchars(basename($file)).'"; ?>'."\n"
+				.$write.
+				html_footer(false)
+			);
+
+		} 
+		else
+		{
+			// If not master server, add to output array
+
+			$newtest = array();
+			$newtest['difference'] = $difference;
+			$newtest['expected'] = $expected;
+			$newtest['file'] = $test['file'];
+			$newtest['output'] = $output;
+			$newtest['script'] = $script;
+			$newtest['status'] = $status;
+			$newtest['testtype'] = $testtype;
+			$newtest['title'] = $title;
+
+			$xmlarray['tests'][] = $newtest;
+		} // End check for master server
+
+	} // End check for loop through failed tests
+	else
+	{
+		// So far passed tests are not used locally but are used for output
+
+		if(!$is_master)
+		{
+			// test title might be useful for passed tests
+
+			$newtest = array();
+			$newtest['file'] = $test['file'];
+			$newtest['status'] = $status;
+			$newtest['testtype'] = $testtype;
+
+			$xmlarray['tests'][] = $newtest;
+
+		} // End check for not master server
+
+	} // End loop through pass tests
+
+} // End loop through tests
+
+// Continue master server check for output of the core tests file
+if($is_master)
+{
+	if ($totalnumfailures > 0)
+		$index_write .= "</table>\n";
+
+	file_put_contents("$outdir/tests.inc", $index_write.html_footer(false));
+
+} // End check for master server for core tests file output
+
 ?>

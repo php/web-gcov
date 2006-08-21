@@ -1,32 +1,45 @@
 <?php
 
-$write = html_header('System Info');
+// File that generates the system.inc file
+// This file gathers the essential information regarding the configuration for the build
 
-// configure (linker?)
-$write .= "<h2>Configure Used:</h2>\n";
+// For client the information is gathered here for use in the XML generation
+// for server the information is gathered here and output to the system.inc file
+
+// Configure Section
 $config = file("$phpdir/config.nice");
 $config = array_slice($config, 4); //remove inital comments
 $configureinfo = implode('', $config);
-$write .= "<pre>".$configureinfo."</pre>\n";
 
-// Compiler
-$write .= "<h2>Compiler Used:</h2>\n";
+// Compiler Section
 $compiler = explode("\n", `cc --version`);
 $compilerinfo = $compiler[0];
-$write .= '<p>'.$compilerinfo. "</p>\n";
 
-// OS
-// todo:os info should work for Windows and other systems without uname
-$write .= "<h2>Operating System:</h2>\n";
+// Operating System Section
+// Todo: this section need to be revised for systems without the uname command
 $osinfo = `uname -srmi`;
-$write .= '<p>'.$osinfo."</p>\n";
 
 // Valgrind (calculated but not displayed)
-$valgrind = explode("\n", `valgrind --version`);
-$valgrindinfo = $valgrind[0];
+// Todo: This section is diabled since it needs tweaking for Windows installations
+//$valgrind = @explode("\n", `valgrind --version`);
+//$valgrindinfo = $valgrind[0];
 
+// If master server, updated system.inc in addition to gathering the information
+if($is_master)
+{
+	$write = '';
 
-$write .= html_footer();
+	$write .= "<h2>Configure Used:</h2>\n";
+	$write .= "<pre>".$configureinfo."</pre>\n";
 
-file_put_contents("$outdir/system.inc", $write);
+	$write .= "<h2>Compiler Used:</h2>\n";
+	$write .= '<p>'.$compilerinfo. "</p>\n";
+
+	$write .= "<h2>Operating System:</h2>\n";
+	$write .= '<p>'.$osinfo."</p>\n";
+
+	file_put_contents("$outdir/system.inc", 
+			$write
+			.html_footer(false));
+}
 ?>

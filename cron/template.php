@@ -21,6 +21,7 @@ function html_footer($closehtml=true)
 	date_default_timezone_set('UTC');
 	$timestamp = time();
 	$date      = date('r', $timestamp);
+	$current_time_zone = date_default_timezone_get();
 
 	return <<< HTML
 <?php
@@ -44,7 +45,7 @@ function html_footer($closehtml=true)
 ?>
 
 <p>&nbsp;</p>
-<p align="center"><small>Generated at $date (<?php time_diff(); ?> ago)</small></p>
+<p align="center"><small>Generated at $date $current_time_zone (<?php time_diff(); ?> ago)</small></p>
 
 <?php if(\$closehtml)
 {
