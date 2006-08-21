@@ -2,6 +2,8 @@
 // Include the site API
 include_once 'site.api.php';
 
+include_once 'config.php';
+
 // Initialize the core components
 api_init($appvars);
 
@@ -90,35 +92,13 @@ while($row = $stmt->fetch(PDO::FETCH_ORI_NEXT))
 	
 	echo "<tr>";
 	echo "<th align='left'>$version_name</th>";
-	show_link($version_name, 'lcov', $path,'index.php');
-	//show_link($tag, 'run_tests', $path, 'run-tests.html.inc');
-	//$l_time = show_link($tag, 'make_log', $path, 'make.log');
-	//show_link($tag, 'make_log_new', $path, 'make.log.new', $l_time);
+	// todo: select last modified date from an lcov file
+	echo "<td><a href='viewer.php?version=$version_name'>View</a></td>\n";
+	//show_link($version_name, 'lcov', $path,'index.php');
 	echo '<td>'.$version_last_attempted_build_date.'</td>'."\n";
 	echo '<td>'.$version_last_successful_build_date.'</td>'."\n";
 	echo '<td>'.$version_last_build_time.'</td>'."\n";
 	
-/*
-	// added for last make status
-	echo "<td>";
-	$filepath = $tag.'/last_make_status.inc';
-	$fh = @fopen($filepath, 'r');
-	// Read file contents
-	$content = @fread($fh, filesize($filepath));
-	if(($content === false) || ($content == ''))
-	{
-		$make_last_status = 'N\A';
-	}
-	elseif(trim($content) == strtolower('pass'))
-	{
-		 $make_last_status = 'Success';
-	}
-	else
-	{
-		 $make_last_status = 'Failed - check Compile Results';
-	}
-	echo $make_last_status."</td>\n";
-*/
 	// End additions
 	echo "</tr>\n";
 }
@@ -126,15 +106,24 @@ while($row = $stmt->fetch(PDO::FETCH_ORI_NEXT))
 </table>
 <!-- end links -->
 </p>
-<h1>ToDo</h1>
+
+<h1>How to Help</h1>
 <p>
 <ul>
-<li>Integrate gcov testing into PHP_4_4 (<a href='PHP_4_4-gcov-20060323.diff.txt.bz2'>patch</a>)</li>
-<li>Running the tests from a cron job (5.1 takes ~25 hours, HEAD takes ~52 hours).</li>
-<li>Enable all core extensions.</li>
-<li>Integrate PECL extensions.</li>
-<li>Integrate PEAR classes.</li>
-<li>Integrate external components.</li>
+<li>You can search and view the results collected on user-submitted platforms and versions by accessing the <a href="viewer.php?func=search">other platforms</a> section.</li>
+<li>If you would like to be involved please start by visiting the <a href="http://qa.php.net/">PHP QA website</a> and read the section on <a href="http://qa.php.net/howtohelp.php">How You Can Help</a>.</li>
+<li>You can also read the section on <a href="http://qa.php.net/write-test.php">how to write tests</a> to help us improve the testing process on any areas you see not covered.</li>
+</ul>
+<h2>Downloads</h2>
+<ul>
+<li>Integrate GCOV testing into PHP_4_4 by applying this <a href="downloads/PHP_4_4-gcov-20060810.diff.txt.bz2">patch</a>.</li>
+<li>Integrate PHP/GCOV testing by applying one of the following lcov 1.5 patches:
+<ul>
+<li><a href="downloads/lcov_1.5-1_all.deb">lcov_1.5-1_all.deb</a></li>
+<li><a href="downloads/lcov-1.5-pre1.noarch.rpm">lcov-1.5-pre1.noarch.rpm</a></li>
+</ul>
+</li>
+<li>After installing the above lcov update, replace genhtml with this <a href="downloads/genhtml.gcov-php-net">patch</a>.
 </ul>
 </p>
 </td>

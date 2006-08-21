@@ -3,7 +3,14 @@
 // Name: GCOV Viewer page
 
 // Desc: page for view PHP version information such as code coverage
-	
+
+/*
+Irregular Variable Usage:
+$filename	= used for php include files where a filename is specified in PHP code
+$os 			= used only when func=search
+
+*/
+
 // Include the site API
 include_once 'site.api.php';
 
@@ -14,27 +21,36 @@ $content = ''; // Stores content collected during execution
 $error = ''; // Start by assuming no error has occurred
 $file = '';
 
-$fn = '';
+$fn = ''; // represents the file name
 
-$incfile = '';
+$incfile = ''; // used for php includes of files
 
 // Pull in defined variables
 $file = $_REQUEST['file'];
 $version = $_REQUEST['version'];
 
-if(isset($_REQUEST['date']))
+// todo: in testing phase
+if(isset($_REQUEST['username']))
 {
-	list($year, $month, $day) = split('[^0-9]', $_REQUEST['date'], 3);
-
-	// Ensure each variable is numeric before checking the date
-	if(is_numeric($month) && (is_numeric($day)) && (is_numeric($year)) 
-		&& ($year > 1909))
+	if(file_exists('other_platforms/'.$_REQUEST['username']))
 	{
-		if(checkdate($month, $day, $year))
+		if(file_exists('other_platforms/'.$_REQUEST['username'].'/'.$version))
 		{
-			$date = $_REQUEST['date'];
+			$fileroot = 'other_platforms/'.$_REQUEST['username'].'/';
+			$username = $_REQUEST['username'];
+
+			$appvars['site']['builderusername'] = $username;
 		}
+		else
+			$fileroot = '';
 	}
+	else
+		$fileroot = '';
+}
+
+if(isset($_REQUEST['mode']))
+{
+	$mode = $_REQUEST['mode'];
 }
 
 // Define the function array
@@ -48,6 +64,7 @@ $func_array = array(
 			'pagetitle' => 'PHP: Compile Results for '.$version, 
 			'pagehead' => 'Compile Results'
 		),
+	// todo: remove php_test_log
 	'php_test_log' =>
 		array(
 			'option' => 'text',
@@ -74,76 +91,149 @@ $func_array = array(
 		)
 	);
 
+// Define the acceptable modes for the graphs
+$graph_mode_array = array(
+		'weekly' => 
+			array(
+				'name' => 'weekly',
+				'title' => 'Weekly'
+			),
+		'monthly' =>
+			array(
+				'name' => 'monthly',
+				'title' => 'Monthly'
+			)
+		);
+
+$graph_types_array = array('codecoverage','failures','memleaks','warnings');
+
+
 if(isset($_REQUEST['func']))
 {
 	$func = $_REQUEST['func'];
+
 }
 else
 {
-	$func = 'lcov';
+	// If username is not set, show lcov, if it is set, default to system
+	if(!isset($username))
+	{
+		$func = 'lcov';
+	}
+	else
+	{
+		$func = 'system';
+	}
 }
-
-// Accepts: date in format of YYYY_MM_DD (non-numeric separator character)
-// Returns: date in textual format of this example: Jan 1 2006
-function datestring_fromdate($date)
-{
-	//$retstring = '';
-	//if(strlen($date) > 9)
-	//{
-		list($year, $month, $day) = split('[^0-9]', $date, 3);
-	
-		// Hour, Minute, Second, Month, Day, Year
-		$time = mktime(0,0,0,$month,$day,$year);
-	return date('M j Y', $time);
-	//}
-	//else
-	//{
-		//$retstring = false;
-	//}
-	//return $retstring;
-}
+$appvars['site']['func'] = $func;
 
 // Ensure the version specified is valid (todo: more security required?)
 // note: !== false is required since PHP_4.4.1 has the 0th place
-if(array_search($version, $appvars['site']['tags']) !== false)
+if((array_search($version, $appvars['site']['tags']) !== false) || ($func == 'search'))
 {
 	$appvars['site']['mytag'] = $version;
 
 	// todo: make functions an array or similiar
 	$func_element = array_search($func, $func_array);
-	
-	if($func == 'build')
-	// Displays the build content for this version
-	{
-		// Collect file content
-		$fn = $version.'/build.sh';
-		// Open file handle
-		$fh = @fopen($fn, 'r');
-		// Obtain file size
-		$content = @fread($fh, filesize($fn));
-		@fclose($fh);		
 
-		// If the file is not readable, set up error content and header
-		if($content === false)
+	// todo: this function is experimental
+	if($func == 'search')
+	{
+		if(isset($_REQUEST['os']))
 		{
-			// Define page variables		
-			$appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis of '.$version;
-			$appvars['page']['head'] = $version.': no build file';
-			$appvars['page']['headtitle'] = $version;
-			$content = 'There is no build file available to be read.  Please try again in a few minutes.';
-		}
+			$count = 0;
+			$os = $_REQUEST['os'];
+			$stmt = null;
+			$stmtarray = array();
+
+			$appvars['page']['title'] = 'PHP: Other Platform Search Results';
+      $appvars['page']['head'] = 'Other Platform Search Results';
+			$appvars['page']['headtitle'] = 'Search Results';
+
+			if($os == 'all')
+			{
+      	$sql = 'SELECT user_name, last_user_os FROM remote_builds';
+			}
+			else
+			{
+				$sql = 'SELECT user_name, last_user_os FROM remote_builds WHERE last_user_os=?';
+				$stmtarray = array($os);
+			}
+      $stmt = $mysqlconn->prepare($sql);
+ 	    $stmt->execute($stmtarray);
+
+			// todo: allow check to be narrowed down to a specific PHP version
+			while($row = $stmt->fetch())
+			{
+				list($user_name, $last_user_os) = $row;
+
+				$dirroot = 'other_platforms/'.$user_name;
+
+				foreach($appvars['site']['tags'] as $phpvertag)
+				{
+
+					if(file_exists($dirroot.'/'.$phpvertag.'/system.inc'))
+					{
+						$content .= <<< HTML
+<a href="viewer.php?username=$user_name&version=$phpvertag">$user_name</a> (PHP Version: $phpvertag, OS: $last_user_os)<br />
+HTML;
+						$count++;
+					} // End check if tag is active for this user
+
+				} // End loop through each accepted PHP version
+
+			} // End loop through results
+
+			if($count == 0)
+			{
+				$content = 'Your search seems too narrow to have any results.';
+			} // End check for no results
+
+		} // End check if OS is set
 		else
 		{
-			// Define page variables		
-			$appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis of '.$version;
-			$appvars['page']['head'] = $version.': build.sh';
-			$appvars['page']['headtitle'] = $version;
-			$content = "<pre>\n".$content
-					."</pre>\n";
-			
-		} // End of content value check
-	}
-	
+			$stmt = null;
+			$sql = 'SELECT DISTINCT last_user_os FROM remote_builds';
+			$stmt = $mysqlconn->prepare($sql);
+			$stmt->execute();
+
+			$appvars['page']['title'] = 'PHP: Search Other Platforms';
+			$appvars['page']['head'] = 'Other Platform Search';
+			$appvars['page']['headtitle'] = 'Search';
+
+			$content .= <<< HTML
+<p>Select the platforms you wish to search for existing builds.</p>
+<form method="post" action="viewer.php">
+<input type="hidden" name="func" value="search" />
+<table border="0">
+<tr>
+<td>Operating System(s):</td>
+<td><select name="os">
+<option value="all">All Platforms</option>
+HTML;
+
+			while($row = $stmt->fetch())
+			{
+		  	list($os) = $row;
+
+		  	$content .= <<< HTML
+<option value="$os">$os</option>
+HTML;
+
+			}
+
+			$content .= <<< HTML
+</select></td>
+</table>
+<input type="submit" value="Search" />
+</form>
+HTML;
+
+HTML;
+		} // End check for Operating System set
+
+	} // End check for function search	
+
 	else if(@array_key_exists($func,$func_array))
 	{
 		// Determine the file to use
@@ -161,7 +251,7 @@ if(array_search($version, $appvars['site']['tags']) !== false)
 		}
 
 		// Determine the file path
-		$filepath = $version.'/'.$incfile.'.inc';
+		$filepath = $fileroot.$version.'/'.$incfile.'.inc';
 
 		// Obtain file contents by the required method
 		if($func_array[$func]['option'] == 'phpinc') // Parse file as a PHP script
@@ -181,8 +271,6 @@ if(array_search($version, $appvars['site']['tags']) !== false)
 		}
 		else // Treat the file contents as regular text file
 		{
-	                // Collect file content
-        	        $fn = $version.'/build.sh';
 			// Open file handle
 			$fh = @fopen($filepath, 'r');
 			// Read file contents
@@ -202,124 +290,73 @@ if(array_search($version, $appvars['site']['tags']) !== false)
 			$appvars['page']['headtitle'] = $version;
 
 			$content = 'File could not be opened.  Please try again in a few minutes, or return to the <a href="viewer.php?version='.$version.'&func='.$func.'">listing</a> page.';
-		}
+		} // End check for no content or failure
 		else
 		{
-                        $appvars['page']['title'] = $func_array[$func]['pagetitle'];
-	                $appvars['page']['head'] = $func_array[$func]['pagehead'];
-	                $appvars['page']['headtitle'] = $version;
-		}
+			$appvars['page']['title'] = $func_array[$func]['pagetitle'];
 
-		// todo: is this correct?
-		$content = str_replace($phpdir, 'replaced', $content);
-	}
-	else if($func == 'graph')
+			$appvars['page']['head'] = $func_array[$func]['pagehead'];
+
+			if(isset($username))
+			{
+				$appvars['page']['head'] .= ' (builder: '.$username.')';
+			} // End check if username is set
+
+			$appvars['page']['headtitle'] = $version;
+		} // End check for content
+
+	} // End check for func defined in func_array
+
+	else if($func == 'graph') // todo: revamp this section entirely
 	{
 		// If date is not set display all available dates
 		// todo: format date as the actual date instead of numbers
-		if(!isset($date))
+		if(!@array_key_exists($mode, $graph_mode_array))
 		{
-			$file = $version.DIRECTORY_SEPARATOR.'graph.inc';
 
-			$dates = @file_get_contents($file);
-
-			$temp_date = '';
-			$x = 0;
-
-			while($x < strlen($dates))
-			{
-				//$date = '';
-				if(($dates[$x] != "\n") && ($x < strlen($dates)))
-				{	
-					$temp_date .= $dates[$x];
-				}
-				else
-				{
-					$content .= '<a href="viewer.php?version='.$version.'&amp;func=graph&date='.$temp_date.'">'.datestring_fromdate($temp_date).'</a>'.'<br />';
-					$temp_date = '';
-				}
-				$x++;
-			}
-
-			if($dates === false)
-			{
-				$content = 'No graphs currently exist for this version.';
-			}
-
-			else
-			{
-				$content = 'Choose a date to view the associated graphs:<br />'.$content;
-			}
-			
 			$appvars['page']['title'] = 'PHP: '.$version.' Graphs';
-			$appvars['page']['head'] = 'Graphs';
-			$appvars['page']['headtitle'] = $version;
+      $appvars['page']['head'] = 'Graphs';
+      $appvars['page']['headtitle'] = $version;
+
+			$content .= <<< HTML
+<p>Select the period of time you wish to view as a graphical progression.</p>
+HTML;
+
+			foreach($graph_mode_array as $graph_mode)
+			{
+				$content .= <<< HTML
+<a href="viewer.php?version=$version&func=graph&mode=$graph_mode[name]">Last $graph_mode[title]</a><br />
+HTML;
+			}
 
 		}
 		else // Display the graphs for the specified PHP version and date
 		{
-			$datestring = datestring_fromdate($date);
-			// todo: if graphs don't exist display something else like a not found
-			if($datestring === false) 
-			{
-
-				$appvars['page']['title'] = 'PHP: '.$version.' Graphs Not Found For '.$datestring;
-				$appvars['page']['head'] = 'Graphs Not Found For '.$datestring;
-				$appvars['page']['headtitle'] = $version;
-
-				$content = 'No graphs could be located for this PHP version for the specified date.';
-
-			}
-			else
-			{
-				$appvars['page']['title'] = 'PHP: '.$version.' Graphs For '.$datestring;
-				$appvars['page']['head'] = 'Graphs For '.$datestring;
-				$appvars['page']['headtitle'] = $version;
-
-				$date = basename($date); // ensure a path is not specified here
-				$content .= '<p>The following images show the changes in number of compile errors, compile warnings, memory leaks and test failures over the past week up to the date of '.$datestring.'.</p>';
-
-				if(file_exists($version.'/graphs/'.'errors_'.$date.'.png'))
-					$content .= '<img src="'.$version.'/graphs/'.'errors_'.$date.'.png" />&nbsp;';
-				if(file_exists($version.'/graphs/'.'failures_'.$date.'.png'))
-					$content .= '<img src="'.$version.'/graphs/'.'failures_'.$date.'.png" /><br />';
-				if(file_exists($version.'/graphs/'.'memleaks_'.$date.'.png'))
-					$content .= '<img src="'.$version.'/graphs/'.'memleaks_'.$date.'.png" />&nbsp;';
-				if(file_exists($version.'/graphs/'.'warnings_'.$date.'.png'))
-					$content .= '<img src="'.$version.'/graphs/'.'warnings_'.$date.'.png" /><br />';
-			}
-		}
-	}
-
-	else if($func == 'run_tests') 
-	// Displays run-tests content for this version
-	{		
-		// Collect file content
-		$fn = $appvars['site']['basepath'].'/'.$version
-		.'/run-tests.html.inc';
-		// Open file handle
-		$fh = @fopen($fn, 'r');
-		// Obtain file size
-		$content = @fread($fh, filesize($fn));
-		@fclose($fh);
-
-		// If the file is not readable, set up error content and header
-		if($content === false)
-		{
-			// Define page variables		
-			$appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis of '.$version;
-			$appvars['page']['head'] = $version.': no run-tests log';
+			$appvars['page']['title'] = 'PHP: '.$version.' Last '.$graph_mode_array[$mode]['title'] . ' Graphs';
+			$appvars['page']['head'] = 'Last '.$graph_mode_array[$mode]['title']. ' Graphs';
 			$appvars['page']['headtitle'] = $version;
-			$content = 'There is no run tests log available to be read.  Please try again in a few minutes.';
-		}
-		else // If the file was readable, set up page headers
-		{
-			// Define page variables
-			$appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis of '.$version;
-			$appvars['page']['head'] = $version.': run-tests.php report';
-			$appvars['page']['headtitle'] = $version;			
-		} // End of content value check
-	}
+
+			$content .= '<p>The following images show the changes in code coverage, compile warnings, memory leaks and test failures.</p>';
+
+			$graph_count = 0;
+
+			foreach($graph_types_array as $graph_type)
+			{
+				if(file_exists($version.'/graphs/'.$graph_type.'_'.$mode.'.png'))
+				{
+					$content .= '<img src="'.$version.'/graphs/'.$graph_type.'_'.$mode.'.png" />&nbsp;'."\n";
+
+					if(++$graph_count == 2)
+						$content .= '<br />'."\n";
+
+				} // End check for graph file
+
+			} // End loop through graph types
+			
+		} // End check for valid graph mode
+
+	} // End check for func=graph
+
 	else if($func == 'lcov') 
 	// Displays the lcov content for this version
 	{

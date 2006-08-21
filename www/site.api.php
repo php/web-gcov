@@ -1,11 +1,24 @@
 <?php
+
+/*
 // Project: PHP QA GCOV Website
-// File: Core API
-// Desc: contains core display functions, essential for all pages to include this file
+// File: Core Site API File
+// Desc: contains core display functions, it is essential for all pages to include this file.
+*/
 	
-// Include core files
+// Include other core files
 include_once 'config.php'; // Includes configuration settings
 include_once 'site.funcs.php'; // Includes the site functions
+
+// Include the database connection file
+include_once $appvars['site']['dbcsfile'];
+
+if(!$mysqlconn)
+{
+	echo 'Unable to access the database at this time.  Please try again in a few minutes';
+	exit;
+}
+
 
 // Application Initialization Function
 // appsvars is passed to the script by reference
@@ -15,19 +28,19 @@ function api_init(&$appvars = array())
 	$appvars['site']['mytag'] = null;
 	
 	// Start loading version tags
-	$filename = 'tags.inc';
-	$fh = fopen($filename, 'r');
-	$content = fread($fh, filesize($filename));
-	fclose($fh);
+
+	// todo: if this fails then the tags can not be loaded
+	$content = file_get_contents($appvars['site']['tagsfile']);
 
 	$content = trim($content);
 
 	$elements = explode("\n", $content);
-	$tagarray = array();
-	foreach($elements as $element) 
+	$numelements = count($elements);
+
+	// Recall: the first two elements are only used by the cron scripts
+	for($i = 2; $i < $numelements; $i++)
 	{
-        	$elementname = explode(' ', $element);
-	        $appvars['site']['tags'][$elementname[0]] = $elementname[0];
+	        $appvars['site']['tags'][$elements[$i]] = trim($elements[$i]);
 	}	
 	// End version tag loading
 	
@@ -130,10 +143,13 @@ foreach($appvars['site']['tags'] as $tag)
 {
 
 	$cls = '';
+	// Find the last tag
 	if (!--$cnt && isset($appvars['site']['mytag']))
 	{
 		$cls = 'last';
 	}
+
+	// Find the current active tag
 	if ($tag == $appvars['site']['mytag'])
 	{
 		if (strlen($cls))
@@ -155,10 +171,33 @@ foreach($appvars['site']['tags'] as $tag)
 if (isset($appvars['site']['mytag']))
 {
 
-	foreach($appvars['site']['sidebarsubitems'] as $item => $href)
+	// This section determines which sidebarsubitems appear
+	$sidebarsubitems = array();
+	if(isset($appvars['site']['builderusername']))
+		$sidebarsubitems = $appvars['site']['sidebarsubitems_otherplatforms'];
+	else
+		$sidebarsubitems = $appvars['site']['sidebarsubitems_localbuilds'];
+
+	foreach($sidebarsubitems as $item => $href)
 	{
-		$cls = " class='small'";
-		echo "<li$cls><a href='viewer.php?version={$appvars['site']['mytag']}&amp;func=$href'>$item</a></li>\n";
+		
+		if($appvars['site']['func'] == $href)
+		{
+			$cls = " class='active'";
+		}
+		else
+		{
+			$cls = " class='small'";
+		}
+		
+		$link = '';
+
+		if(isset($appvars['site']['builderusername']))
+			$link = "<li$cls><a href='viewer.php?username={$appvars['site']['builderusername']}&version={$appvars['site']['mytag']}&amp;func=$href'>$item</a></li>\n";
+		else
+			$link = "<li$cls><a href='viewer.php?version={$appvars['site']['mytag']}&amp;func=$href'>$item</a></li>\n";
+
+		echo $link;
 	}
 }
 
