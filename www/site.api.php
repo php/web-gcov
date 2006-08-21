@@ -8,7 +8,6 @@
 	
 // Include other core files
 include_once 'config.php'; // Includes configuration settings
-include_once 'site.funcs.php'; // Includes the site functions
 
 // Include the database connection file
 include_once $appvars['site']['dbcsfile'];
