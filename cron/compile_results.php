@@ -23,9 +23,10 @@ if($data === false)
 else
 {
 	// Regular expression to select the error and warning information
+	// tuned for gcc 3.4 and 4.0
 	$gcc_regex = '/^(.+): In function [`\'](\w+)\':\s+'.
 		'\1:(\d+): (error|warning):\s+(.+)'.
-		str_repeat('(?:\s+\1:(\d+): (error|warning):\s+(.+))?', 99).
+		str_repeat('(?:\s+\1:(\d+): (error|warning):\s+(.+))?', 99). // capture up to 100 errors
 		'/m';
 
 	preg_match_all($gcc_regex, $data, $data, PREG_SET_ORDER);
@@ -184,7 +185,7 @@ HTML;
 
 			file_put_contents("$outdir/$hash.inc",
 				'<?php $filename="'.basename($file).'"; ?>'.
-				$write.$data[2].'</table>'.html_footer(false));
+				$write.$data[2].'</table>'.html_footer());
 			} // End check for master server
 
 	} // End loop through errors and warnings
@@ -192,7 +193,7 @@ HTML;
 	if($is_master)
 	{
 		file_put_contents("$outdir/compile_results.inc", 
-			$index_write.'</table>'.html_footer(false));
+			$index_write.'</table>'.html_footer());
 
 	} // End final check for master server
 

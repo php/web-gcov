@@ -1,27 +1,10 @@
 <?php
 
-function html_header($title = '') {
-
-	$h1 = $title ? $title : 'PHP Q&amp;A Server';
-	return <<< HTML
-
-<html>
-<head>
-<title> :: PHP Q&amp;A server :: $title</title>
-</head>
-<body>
-<h1 align="center">$h1</h1>
-
-HTML;
-}
-
-
-function html_footer($closehtml=true) 
+function html_footer()
 {
 	date_default_timezone_set('UTC');
 	$timestamp = time();
 	$date      = date('r', $timestamp);
-	$current_time_zone = date_default_timezone_get();
 
 	return <<< HTML
 <?php
@@ -45,13 +28,7 @@ function html_footer($closehtml=true)
 ?>
 
 <p>&nbsp;</p>
-<p align="center"><small>Generated at $date $current_time_zone (<?php time_diff(); ?> ago)</small></p>
-
-<?php if(\$closehtml)
-{
-	echo '</body>'."\n".'</html>'."\n";
-}
-?>
+<p align="center"><small>Generated at $date (<?php time_diff(); ?> ago)</small></p>
 
 HTML;
 }

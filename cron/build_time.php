@@ -5,11 +5,8 @@
 $content = file_get_contents($tmpdir.DIRECTORY_SEPARATOR.'php_test.log');
 
 // Grab the build time
-preg_match('/Time taken[ ]*:[ ]* ([0-9]+) seconds/', $content, $matches);
-
-if((is_array($matches)) && (is_numeric($matches[1])))
+if(preg_match('/Time taken\s*:\s*(\d+)\s*seconds/', $content, $matches))
 {
-	//echo $matches[1]."\n";
 	$build_time = $matches[1];
 }
 else
@@ -19,9 +16,7 @@ else
 }
 
 // Grab the code coverage rate
-preg_match('/Overall coverage rate: .+ \((.+)%\)/', $content, $matches);
-
-if((is_array($matches)) && (is_numeric($matches[1])))
+if(preg_match('/Overall coverage rate: .+ \((.+)%\)/', $content, $matches))
 {
 	$codecoverage_percent = $matches[1];
 }

@@ -147,7 +147,7 @@ HTML;
 			file_put_contents("$outdir/$hash.inc",
 			'<?php $filename="'.htmlspecialchars(basename($file)).'"; ?>'."\n"
 				.$write.
-				html_footer(false)
+				html_footer()
 			);
 
 		} 
@@ -196,7 +196,7 @@ if($is_master)
 	if ($totalnumfailures > 0)
 		$index_write .= "</table>\n";
 
-	file_put_contents("$outdir/tests.inc", $index_write.html_footer(false));
+	file_put_contents("$outdir/tests.inc", $index_write.html_footer());
 
 } // End check for master server for core tests file output
 

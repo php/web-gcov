@@ -139,7 +139,7 @@ HTML;
 		file_put_contents("$outdir/$hash.inc",
 			'<?php $filename="'.basename($file).'"; ?>'."\n"
 			.$write.
-			html_footer(false)
+			html_footer()
 		);
 
 	} 
@@ -168,7 +168,7 @@ if($is_master)
 	}
 
 	file_put_contents("$outdir/valgrind.inc", 
-		$index_write.html_footer(false));
+		$index_write.html_footer());
 
 } // End check for master server
 
