@@ -53,7 +53,7 @@ do
 		cd ${PHPSRC}
 		./cvsclean
 		cvs -q up
-		./buildconf
+		./buildconf --force
 		./config.nice
 
 		if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
@@ -65,7 +65,7 @@ do
 
 			# LCOV operations
 			make lcov > ${TMPDIR}/php_test.log
-			rm -r ${OUTDIR}/lcov_html
+			rm -fr ${OUTDIR}/lcov_html
 			mv lcov_html ${OUTDIR}
 
 			echo "make successful"
