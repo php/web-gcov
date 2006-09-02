@@ -1,8 +1,6 @@
 <?php 
 // Include the site API
-include_once 'site.api.php';
-
-include_once 'config.php';
+include 'site.api.php';
 
 // Initialize the core components
 api_init($appvars);
@@ -10,28 +8,6 @@ api_init($appvars);
 // Define page variables
 $appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis';
 $appvars['page']['head'] = 'PHP: Test and Code Coverage Analysis';
-
-// Function for displaying the tags
-function show_link($tag, $link, $path, $file = NULL, $l_time = false)
-{
-
-	if (is_null($file))
-	{
-		$file = $link;
-	}
-	$m_time = @filemtime($path. "/$tag/$file");
-	if (file_exists($path. "/$tag/$file") && ($l_time === false || $m_time > $l_time))
-	{
-		echo '<td align="left">'
-		.'<a href="viewer.php?version='.$tag.'&amp;func='.$link.'">'
-		.date("M d Y H:i:s", $m_time).'</a></td>';
-	}
-	else
-	{
-		echo "<td>&nbsp;N/A</td>";
-	}
-	return $m_time;
-}
 
 $x = 0;
 $phptags = array();
@@ -48,20 +24,14 @@ foreach($appvars['site']['tags'] as $tag)
 	}
 
 	$phptags[] = $tag;
-	$x++;
+	++$x;
 }
 
-//print_r($phptags);
-
 $stmt = $mysqlconn->prepare($sql);
-
 $stmt->execute($phptags);
 
 // Outputs the site header to the screen
-
 api_showheader($appvars);
-
-//die( $sql );
 
 ?>
 <p>
@@ -80,11 +50,8 @@ analysis.
 <th>Last Build <br /> Time (seconds)</th>
 </tr>
 <?php
-	
-$path = $appvars['site']['basepath'];
 
 // Output PHP versions into a table
-//foreach($appvars['site']['tags'] as $tag)
 while($row = $stmt->fetch(PDO::FETCH_ORI_NEXT))
 {
 	list($version_id, $version_name, $version_last_build_time, $version_last_attempted_build_date, $version_last_successful_build_date) = $row;
@@ -128,4 +95,3 @@ while($row = $stmt->fetch(PDO::FETCH_ORI_NEXT))
 <?php
 // Outputs the site footer to the screen
 api_showfooter($appvars);
-

@@ -7,10 +7,10 @@
 */
 	
 // Include other core files
-include_once 'config.php'; // Includes configuration settings
+include 'config.php'; // Includes configuration settings
 
 // Include the database connection file
-include_once $appvars['site']['dbcsfile'];
+include $appvars['site']['dbcsfile'];
 
 if(!$mysqlconn)
 {
