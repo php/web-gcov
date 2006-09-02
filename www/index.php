@@ -75,7 +75,6 @@ analysis.
 <table class="standard" border="1" cellspacing="0" cellpadding="4">
 <tr>
 <th>TAG</th>
-<th>Code<br />Coverage</th>
 <th>Last Attempted<br />Build Date</th>
 <th>Last Successful<br />Build Date</th>
 <th>Last Build <br /> Time (seconds)</th>
@@ -91,10 +90,7 @@ while($row = $stmt->fetch(PDO::FETCH_ORI_NEXT))
 	list($version_id, $version_name, $version_last_build_time, $version_last_attempted_build_date, $version_last_successful_build_date) = $row;
 	
 	echo "<tr>";
-	echo "<th align='left'>$version_name</th>";
-	// todo: select last modified date from an lcov file
-	echo "<td><a href='viewer.php?version=$version_name'>View</a></td>\n";
-	//show_link($version_name, 'lcov', $path,'index.php');
+	echo "<th align='left'><a href='viewer.php?version=$version_name'>$version_name</a></th>";
 	echo '<td>'.$version_last_attempted_build_date.'</td>'."\n";
 	echo '<td>'.$version_last_successful_build_date.'</td>'."\n";
 	echo '<td>'.$version_last_build_time.'</td>'."\n";
