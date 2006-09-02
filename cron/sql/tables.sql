@@ -55,11 +55,9 @@ PRIMARY KEY  (`user_id`)
 
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
-`version_id` tinyint(4) NOT NULL auto_increment,
 `version_name` varchar(30) collate latin1_general_ci NOT NULL,
 `version_last_build_time` int(11) NOT NULL,
 `version_last_attempted_build_date` datetime NOT NULL,
 `version_last_successful_build_date` datetime NOT NULL,
-PRIMARY KEY  (`version_id`)
+PRIMARY KEY  (`version_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Store the PHP versions accepted and local build information';
-

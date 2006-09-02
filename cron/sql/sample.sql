@@ -57,12 +57,11 @@ INSERT INTO `remote_builds` (`user_id`, `user_name`, `user_pass`, `user_email`, 
 
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
-`version_id` tinyint(4) NOT NULL auto_increment,
 `version_name` varchar(30) collate latin1_general_ci NOT NULL,
 `version_last_build_time` int(11) NOT NULL,
 `version_last_attempted_build_date` datetime NOT NULL,
 `version_last_successful_build_date` datetime NOT NULL,
-PRIMARY KEY  (`version_id`)
+PRIMARY KEY  (`version_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Store the PHP versions accepted and local build information';
 
 INSERT INTO `versions` (`version_id`, `version_name`, `version_last_build_time`, `version_last_attempted_build_date`, `version_last_successful_build_date`) VALUES (1, 'PHP_4_4', 1716, '2006-08-21 00:13:23', '2006-08-21 00:13:23'),
