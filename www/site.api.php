@@ -52,29 +52,8 @@ function api_init(&$appvars = array())
 function api_showheader($appvars=array())
 {
 
-// start content from main.inc
-//$tags = array('PHP_4_4', 'PHP_5_1', 'PHP_5_2', 'PHP_HEAD'); $mytag = NULL;
-if (isset($maindir))
-{
-	$sub = substr(dirname($_SERVER['SCRIPT_FILENAME']), strlen($maindir) + 1);
-	$pos = strpos($sub, '/');
-	if ($pos)
-	{
-		$mytag = substr($sub, 0, $pos);
-	}
-}
-// end content from main.inc
-
-/*
-echo '<?xml version="1.0" encoding="UTF-8"?>'."\n"
-.'<!DOCTYPE html'."\n\t"
-.'PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'."\n\t"
-.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-*/
-
-echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
-
-?><html>
+?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
 <head>
 <title><?php
 	// Output the header for the web browser title

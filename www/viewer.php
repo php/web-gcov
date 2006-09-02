@@ -26,8 +26,8 @@ $fn = ''; // represents the file name
 $incfile = ''; // used for php includes of files
 
 // Pull in defined variables
-$file = $_REQUEST['file'];
-$version = $_REQUEST['version'];
+$file = isset($_REQUEST['file']) ? $_REQUEST['file'] : '';
+$version = isset($_REQUEST['version']) ? $_REQUEST['version'] : '';
 
 // todo: in testing phase
 if(isset($_REQUEST['username']))

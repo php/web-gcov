@@ -9,26 +9,16 @@ api_init($appvars);
 $appvars['page']['title'] = 'PHP: Test and Code Coverage Analysis';
 $appvars['page']['head'] = 'PHP: Test and Code Coverage Analysis';
 
-$x = 0;
-$phptags = array();
-
-$sql = 'SELECT version_id, version_name, version_last_build_time, version_last_attempted_build_date, version_last_successful_build_date FROM versions WHERE';
+$sql = 'SELECT version_name, version_last_build_time, version_last_attempted_build_date, version_last_successful_build_date FROM versions WHERE';
 
 foreach($appvars['site']['tags'] as $tag)
 {
-	$sql .= ' version_name = ?';
-	
-	if($x < count($appvars['site']['tags'])-1)
-	{
-		$sql .= ' OR';
-	}
-
-	$phptags[] = $tag;
-	++$x;
+	$sql .= " version_name = '$tag' OR";
 }
 
+$sql = substr($sql, 0, -3);
 $stmt = $mysqlconn->prepare($sql);
-$stmt->execute($phptags);
+$stmt->execute();
 
 // Outputs the site header to the screen
 api_showheader($appvars);
@@ -52,9 +42,9 @@ analysis.
 <?php
 
 // Output PHP versions into a table
-while($row = $stmt->fetch(PDO::FETCH_ORI_NEXT))
+while($row = $stmt->fetch(PDO::FETCH_NUM))
 {
-	list($version_id, $version_name, $version_last_build_time, $version_last_attempted_build_date, $version_last_successful_build_date) = $row;
+	list($version_name, $version_last_build_time, $version_last_attempted_build_date, $version_last_successful_build_date) = $row;
 	
 	echo "<tr>";
 	echo "<th align='left'><a href='viewer.php?version=$version_name'>$version_name</a></th>";
