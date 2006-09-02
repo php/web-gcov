@@ -10,7 +10,7 @@
 $is_master = false;
 
 // Note: these options are specific to is_master = false
-$server_submit_url = 'http://gcov.aristotle.dlitz.net/post.php';
+$server_submit_url = 'http://gcov.php.net/post.php';
 $server_submit_user = 'johndoe';
 $server_submit_pass = 'john';
 
@@ -19,7 +19,7 @@ if($is_master)
 {
 	// PHP Mailer configuration settings
 	$mail_from_name = 'GCOV Admin';
-	$mail_from_email = 'some.address@example.com';
+	$mail_from_email = 'internals@lists.php.net';
 
 	$mail_smtp_mode = 'disabled';
 	$mail_smtp_host = null;
