@@ -141,9 +141,7 @@ foreach($appvars['site']['tags'] as $tag)
 		$cls = " class='$cls'";
 	}	
 
-	echo "<li$cls><a href='viewer.php?version=$tag&amp;func=lcov'>$tag</a></li>\n";
-	
-	//echo "<li$cls><a href='/$tag'>$tag</a></li>\n";
+	echo "<li$cls><a href='viewer.php?version=$tag'>$tag</a></li>\n";
 }
 
 if (isset($appvars['site']['mytag']))

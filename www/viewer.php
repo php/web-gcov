@@ -228,8 +228,6 @@ HTML;
 <input type="submit" value="Search" />
 </form>
 HTML;
-
-HTML;
 		} // End check for Operating System set
 
 	} // End check for function search	
