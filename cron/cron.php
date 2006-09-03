@@ -85,9 +85,6 @@ if($makestatus == 'pass')
 	}
 } // End check for pass make status for both client and server
 
-// This file can be used as a reference in the future for the build status
-file_put_contents($tmpdir.DIRECTORY_SEPARATOR.'last_make_status.inc', $makestatus);
-
 // Start Master Only Section //
 if($is_master)
 {
@@ -161,9 +158,6 @@ if($is_master)
 		// Update the existing version information
 		echo 'Version Build Time: '.$build_time."\n";
 		echo 'Version Code Coverage: '.$codecoverage_percent.'%'."\n";
-
-		// Only the master server should have the last make status outputted to the outdir
-		file_put_contents($outdir.DIRECTORY_SEPARATOR.'last_make_status.inc', $makestatus);
 
 	} // End check for version > 0
 
