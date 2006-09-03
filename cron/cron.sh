@@ -15,6 +15,7 @@ TAGS_ARRAY=( `cat "$FILENAME"` )
 # Calculate how many elements there are in a php version array
 TAGS_COUNT=${#TAGS_ARRAY[@]}
 
+BUILT_SOME=0
 PHPROOT=${TAGS_ARRAY[0]}
 OUTROOT=${TAGS_ARRAY[1]}
 
@@ -36,7 +37,6 @@ do
 	else
 		if [ $BUILD = $PHPTAG ]; then
 			BUILD_VERSION=1
-			#todo: if tag does not exist, output error
 		else
 			BUILD_VERSION=0
 		fi
@@ -45,30 +45,55 @@ do
 	# If this version should be built
 	if [ $BUILD_VERSION = 1 ]; then
 
-		# todo: make sure all the following directories exist
+		BUILT_SOME=1
+
 		OUTDIR=${OUTROOT}/${PHPTAG}
 		PHPSRC=${PHPROOT}/${PHPTAG}
 		TMPDIR=${PHPROOT}/tmp/${PHPTAG}
 
-		cd ${PHPSRC}
+		mkdir -p $OUTDIR
+		mkdir -p $TMPDIR
+
+		cd ${PHPROOT}
+		if [ -d ${PHPTAG} ]; then
+			cd ${PHPTAG}
+			cvs -q up
+		else
+			cvs -q -d ${CVSROOT} co -d ${PHPTAG} -r ${PHPTAG} php-src
+			cd ${PHPTAG}
+		fi
 		./cvsclean
-		cvs -q up
-		./buildconf --force
-		./config.nice
+		./buildconf --force > /dev/null
+
+		if [ -x ./config.nice ]; then
+			./config.nice > /dev/null
+		else
+			# try to run with the default options
+			./configure > /dev/null
+		fi
 
 		if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
 
 			#test for success of the make operation
 			MAKESTATUS=pass
 
-			export TEST_PHP_ARGS="-m -U -n -q --keep-all"
+			TEST_PHP_ARGS="-U -n -q --keep-all"
 
-			# LCOV operations
-			make lcov > ${TMPDIR}/php_test.log
-			rm -fr ${OUTDIR}/lcov_html
-			mv lcov_html ${OUTDIR}
+			# only run valgrind testing if it is available
+			if (valgrind --version >/dev/null 2>&1 && test "$VALGRIND" ); then
+				TEST_PHP_ARGS+=" -m"
+			fi
 
-			echo "make successful"
+			# test for lcov support
+			if ( grep lcov Makefile ); then
+				make lcov > ${TMPDIR}/php_test.log
+				rm -fr ${OUTDIR}/lcov_html
+				mv lcov_html ${OUTDIR}
+			else
+				make test > ${TMPDIR}/php_test.log
+			fi
+
+			echo "make successful: ${PHPTAG}"
 		else
 			MAKESTATUS=fail
 			echo "make failed"
@@ -78,3 +103,11 @@ do
 
 	fi # End verify build PHP version
 done
+
+
+# display an error if the tag doesn't exist
+if [ $BUILT_SOME = 0 ]; then
+	echo "Invalid tag specified: '$BUILD'"
+	echo
+	exit 1
+fi

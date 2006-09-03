@@ -1,5 +1,5 @@
-/tmp
-/var/local/gcov/www
+/tmp/gcov
+/www/gcov
 PHP_4_4
 PHP_5_2
 PHP_HEAD
