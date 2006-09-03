@@ -84,6 +84,8 @@ do
 				TEST_PHP_ARGS+=" -m"
 			fi
 
+			export TEST_PHP_ARGS
+
 			# test for lcov support
 			if ( grep lcov Makefile ); then
 				make lcov > ${TMPDIR}/php_test.log
