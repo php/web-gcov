@@ -128,7 +128,9 @@ HTML;
 	if($is_master)
 	{
 		$total = $totalnumerrors+$totalnumwarnings;
-		$index_write .= <<< HTML
+		if ($total)
+		{
+			$index_write .= <<< HTML
 
 <p>Number of Errors: {$totalnumerrors}<br />
 Number of Warnings: {$totalnumwarnings}<br />
@@ -141,9 +143,9 @@ Total: {$total}</p>
 <td>Number of warnings</td>
 </tr>
 HTML;
-
-		$phpdir_len = strlen($phpdir)+1;
-		$total = 0;
+		} else {
+			$index_write = "<p>Congratulations! There are no compiler warnings/errors.</p>\n";
+		}
 	} // End check for master server
 
 	foreach ($stats as $file => $data) 
@@ -159,8 +161,6 @@ HTML;
 		{
 			$short_file = $file;
 		}
-		
-		$total     += $data[0];
 
 		if($is_master)
 		{
