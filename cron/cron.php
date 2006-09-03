@@ -1,8 +1,8 @@
 <?php
 
-if ($argc != 6) 
+if ($argc != 7) 
 {
-	die("cron.php requires 5 arguments: [tmp] [out] [phpsrc] [makestatus] [phpversion]\n\n");
+	die("cron.php requires 5 arguments: [tmp] [out] [phpsrc] [makestatus] [phpversion] [buildtime]\n\n");
 }
 
 define('CRON_PHP',true);
@@ -12,12 +12,11 @@ $outdir  = $argv[2];	// Output directory for this PHP version (set, but only use
 $phpdir  = $argv[3];	// Directory where the PHP build source files are located
 $makestatus = $argv[4]; // Make status from bash script (fail or pass)
 $phpver = $argv[5];	// The version identifier for this PHP build (i.e. PHP_4_4)
+$build_time = $argv[6];	// the build time (in seconds)
 
 $workdir = dirname(__FILE__); // Get the working directory to simplify php file includes
 
 // Initialize core variables
-$build_time = -1;	// Total time required for build (build_time.php)
-
 $totalnumerrors = 0; 	// Total number of errors (compile_errors.php)
 $totalnumwarnings = 0;	// Total number of warnings (compile_errors.php)
 
@@ -77,8 +76,12 @@ if($makestatus == 'pass')
 		require $workdir.'/tests.php';
 		// Run the valgrind code
 		require $workdir.'/valgrind.php';
-		// Get the time it took to create the build
-		require $workdir.'/build_time.php';
+
+		// Grab the code coverage rate
+		if(preg_match('/Overall coverage rate: .+ \((.+)%\)/', $data, $matches))
+		{
+			$codecoverage_percent = $matches[1];
+		}
 	}
 } // End check for pass make status for both client and server
 
@@ -98,8 +101,8 @@ if($is_master)
 	}
 	catch(PDOException $e)
 	{
-		// if error occurs this might be good to log
-		$version_id = 0;
+		print_r($e);
+		exit;
 	}
 
 	// If version > 0 then we have a valid PHP version
@@ -132,17 +135,11 @@ if($is_master)
 		// Graphs will be generated and the database updated with the latest build information
 		if($makestatus == 'pass')
 		{			
-			//if(date('D') == 'Sun')
-			//{
-				$graph_mode = 'weekly';
-				require $workdir.'/graph.php';
-			//}
+			$graph_mode = 'weekly';
+			require $workdir.'/graph.php';
 
-			//if(date('d') == 1)
-			//{
-				$graph_mode = 'monthly';
-				require $workdir.'/graph.php';
-			//}
+			$graph_mode = 'monthly';
+			require $workdir.'/graph.php';
 
 			// Do SQL updates for the specific PHP version
 			$sql = 'UPDATE versions SET version_last_build_time=?, version_last_attempted_build_date=?, version_last_successful_build_date=? WHERE version_id=?';

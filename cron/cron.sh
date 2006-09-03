@@ -46,6 +46,7 @@ do
 	if [ $BUILD_VERSION = 1 ]; then
 
 		BUILT_SOME=1
+		BEGIN=`date +%s`
 
 		OUTDIR=${OUTROOT}/${PHPTAG}
 		PHPSRC=${PHPROOT}/${PHPTAG}
@@ -101,7 +102,9 @@ do
 			echo "make failed"
 		fi # End build failure or success
 
-		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG}
+		BUILD_TIME=$[`date +%s` - ${BEGIN}]
+
+		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG} ${BUILD_TIME}
 
 	fi # End verify build PHP version
 done
