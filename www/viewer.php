@@ -118,7 +118,7 @@ else
 	// If username is not set, show lcov, if it is set, default to system
 	if(!isset($username))
 	{
-		$func = 'lcov';
+		$func = 'menu';
 	}
 	else
 	{
@@ -287,7 +287,7 @@ HTML;
 			$appvars['page']['head'] = $func_array[$func]['pagehead'].' Data File Not Available';
 			$appvars['page']['headtitle'] = $version;
 
-			$content = 'File could not be opened.  Please try again in a few minutes, or return to the <a href="viewer.php?version='.$version.'&func='.$func.'">listing</a> page.';
+			$content = 'File could not be opened.  Please try again in a few minutes, or return to the <a href="/">listing</a> page.';
 		} // End check for no content or failure
 		else
 		{
@@ -367,6 +367,10 @@ HTML;
 		$content = 'content for code coverage would be here.';
 
 		// todo: if there is no lcov content, inform user here
+	}
+	else if($func == 'menu')
+	{
+		$content = 'Please choose one function from the menu on the left.';
 	}
 	else
 	{
