@@ -27,9 +27,7 @@ $osinfo = `uname -srmi`;
 // If master server, updated system.inc in addition to gathering the information
 if($is_master)
 {
-	$write = '';
-
-	$write .= "<h2>Configure Used:</h2>\n";
+	$write  = "<h2>Configure Used:</h2>\n";
 	$write .= "<pre>".$configureinfo."</pre>\n";
 
 	$write .= "<h2>Compiler Used:</h2>\n";
@@ -38,8 +36,6 @@ if($is_master)
 	$write .= "<h2>Operating System:</h2>\n";
 	$write .= '<p>'.$osinfo."</p>\n";
 
-	file_put_contents("$outdir/system.inc", 
-			$write
-			.html_footer(false));
+	file_put_contents("$outdir/system.inc", $write . html_footer());
 }
 ?>
