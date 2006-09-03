@@ -55,14 +55,15 @@ PRIMARY KEY  (`user_id`)
 
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
+`version_id` tinyint(4) NOT NULL auto_increment,
 `version_name` varchar(30) collate latin1_general_ci NOT NULL,
 `version_last_build_time` int(11) NOT NULL,
 `version_last_attempted_build_date` datetime NOT NULL,
 `version_last_successful_build_date` datetime NOT NULL,
-PRIMARY KEY  (`version_name`)
+PRIMARY KEY  (`version_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Store the PHP versions accepted and local build information';
 
-INSERT INTO `versions` (`version_name`, `version_last_build_time`, `version_last_attempted_build_date`, `version_last_successful_build_date`) VALUES ('PHP_4_4', 1716, '2006-08-21 00:13:23', '2006-08-21 00:13:23'),
-('PHP_5_1', 4834, '2006-08-21 03:51:52', '2006-08-21 03:51:52'),
-('PHP_5_2', 5680, '2006-08-21 03:51:19', '2006-08-21 03:51:19'),
-('PHP_HEAD', 17851, '2006-08-21 03:52:19', '2006-08-21 03:52:19');
+INSERT INTO `versions` (`version_id`, `version_name`, `version_last_build_time`, `version_last_attempted_build_date`, `version_last_successful_build_date`) VALUES (1, 'PHP_4_4', 1716, '2006-08-21 00:13:23', '2006-08-21 00:13:23'),
+(2, 'PHP_5_1', 4834, '2006-08-21 03:51:52', '2006-08-21 03:51:52'),
+(3, 'PHP_5_2', 5680, '2006-08-21 03:51:19', '2006-08-21 03:51:19'),
+(4, 'PHP_HEAD', 17851, '2006-08-21 03:52:19', '2006-08-21 03:52:19');
