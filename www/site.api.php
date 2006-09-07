@@ -42,7 +42,7 @@ function time_diff($time, $abs=false)
 {
 	if ($abs) {
 		date_default_timezone_set('UTC');
-		$time -= time();
+		$time = time() - $time;
 	}
 
 	if ($time < 60) {
