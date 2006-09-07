@@ -1,54 +1,32 @@
 <?php 
 // PHP GCOV Website
 // Name: GCOV Viewer page
-
 // Desc: page for view PHP version information such as code coverage
 
-/*
-Irregular Variable Usage:
-$filename	= used for php include files where a filename is specified in PHP code
-$os 			= used only when func=search
-
-*/
 
 // Include the site API
-include_once 'site.api.php';
+include 'site.api.php';
 
 // Initialize the core components
 api_init($appvars);
 
-$content = ''; // Stores content collected during execution
-$error = ''; // Start by assuming no error has occurred
-$file = '';
+$content  = ''; // Stores content collected during execution
+$error    = ''; // Start by assuming no error has occurred
+$fileroot = ''; // base directory for including external files (used for external builds)
 
-$fn = ''; // represents the file name
+$file     = isset($_REQUEST['file']) ? $_REQUEST['file'] : '';
+$version  = isset($_REQUEST['version']) ? $_REQUEST['version'] : '';
+$mode     = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
 
-$incfile = ''; // used for php includes of files
-$fileroot = '';
 
-// Pull in defined variables
-$file = isset($_REQUEST['file']) ? $_REQUEST['file'] : '';
-$version = isset($_REQUEST['version']) ? $_REQUEST['version'] : '';
-
-// todo: in testing phase
-if(isset($_REQUEST['username']))
+if(isset($_REQUEST['username']) && ctype_alnum($_REQUEST['username']) &&
+   file_exists('other_platforms/'.$_REQUEST['username'].'/'.$version))
 {
-	if(file_exists('other_platforms/'.$_REQUEST['username']))
-	{
-		if(file_exists('other_platforms/'.$_REQUEST['username'].'/'.$version))
-		{
-			$fileroot = 'other_platforms/'.$_REQUEST['username'].'/';
-			$username = $_REQUEST['username'];
-
-			$appvars['site']['builderusername'] = $username;
-		}
-	}
+	$fileroot = 'other_platforms/'.$_REQUEST['username'].'/';
+	$username = $_REQUEST['username'];
+	$appvars['site']['builderusername'] = $username;
 }
 
-if(isset($_REQUEST['mode']))
-{
-	$mode = $_REQUEST['mode'];
-}
 
 // Define the function array
 // each array element starts with the name of the command
@@ -111,15 +89,7 @@ if(isset($_REQUEST['func']))
 }
 else
 {
-	// If username is not set, show lcov, if it is set, default to system
-	if(!isset($username))
-	{
-		$func = 'menu';
-	}
-	else
-	{
-		$func = 'system';
-	}
+	$func = isset($username) ? 'system' : 'menu';
 }
 $appvars['site']['func'] = $func;
 
@@ -129,10 +99,6 @@ if((array_search($version, $appvars['site']['tags']) !== false) || ($func == 'se
 {
 	$appvars['site']['mytag'] = $version;
 
-	// todo: make functions an array or similiar
-	$func_element = array_search($func, $func_array);
-
-	// todo: this function is experimental
 	if($func == 'search')
 	{
 		if(isset($_REQUEST['os']))
@@ -227,21 +193,9 @@ HTML;
 
 	} // End check for function search	
 
-	else if(@array_key_exists($func,$func_array))
+	elseif (isset($func_array[$func]))
 	{
-		// Determine the file to use
-		if(isset($func_array[$func]['file']))
-		{
-			$incfile = $func_array[$func]['file'];
-		}
-		elseif($file == '')
-		{
-			$incfile = $func;
-		}
-		else
-		{
-			$incfile = basename($file);
-		}
+		$incfile = $file ? basename($file) : $func;
 
 		// Determine the file path
 		$filepath = $fileroot.$version.'/'.$incfile.'.inc';
@@ -252,56 +206,67 @@ HTML;
 	                ob_start();
         	        if(file_exists($filepath))
                 	{
-				include_once $filepath;
+				include $filepath;
 			}
 			$content = ob_get_clean();
-
-			if(isset($filename))
-			{
-				$func_array[$func]['pagehead'] .= ' for \''.$filename.'\'';
-			}
 		}
 		else // Treat the file contents as regular text file
 		{
-			// Open file handle
 			$content = @file_get_contents($filepath);
-			// Read file contents
+
 			if($func_array[$func]['option'] == 'text')
 				$content = '<pre>'.$content.'</pre>';
 		}
 
+		$appvars['page']['title']     = $func_array[$func]['pagetitle'];
+		$appvars['page']['head']      = $func_array[$func]['pagehead'];
+		$appvars['page']['headtitle'] = $version;
+
 		// Determine title based on success or failure
-		if(($content == '') || ($content === false))
+		if($content)
 		{
-			$appvars['page']['title'] = $func_array[$func]['pagetitle'];
-			$appvars['page']['head'] = $func_array[$func]['pagehead'].' Data File Not Available';
-			$appvars['page']['headtitle'] = $version;
-
-			$content = 'File could not be opened.  Please try again in a few minutes, or return to the <a href="/">listing</a> page.';
-		} // End check for no content or failure
-		else
-		{
-			$appvars['page']['title'] = $func_array[$func]['pagetitle'];
-
-			$appvars['page']['head'] = $func_array[$func]['pagehead'];
-
 			if(isset($username))
 			{
-				$appvars['page']['head'] .= ' (builder: '.$username.')';
-			} // End check if username is set
-
-			$appvars['page']['headtitle'] = $version;
-		} // End check for content
+				$appvars['page']['head'] .= " (builder: $username)";
+			}
+		}
+		else
+		{
+			$appvars['page']['head'] .= ' Data File Not Available';
+			$content = 'File could not be opened.  Please try again in a few minutes, or return to the <a href="/">listing</a> page.';
+		}
 
 	} // End check for func defined in func_array
 
-	else if($func == 'graph') // todo: revamp this section entirely
+	elseif($func == 'graph')
 	{
 		// If date is not set display all available dates
-		// todo: format date as the actual date instead of numbers
-		if(!@array_key_exists($mode, $graph_mode_array))
+		if(isset($graph_mode_array[$mode]))
 		{
+			$appvars['page']['title'] = 'PHP: '.$version.' Last '.$graph_mode_array[$mode]['title'] . ' Graphs';
+			$appvars['page']['head'] = 'Last '.$graph_mode_array[$mode]['title']. ' Graphs';
+			$appvars['page']['headtitle'] = $version;
 
+			$content .= '<p>The following images show the changes in code coverage, compile warnings, memory leaks and test failures:</p>';
+
+			$graph_count = 0;
+
+			foreach($graph_types_array as $graph_type)
+			{
+				$graph = "$version/graphs/{$graph_type}_$mode.png";
+
+				if(file_exists($graph))
+				{
+					$content .= '<img src="'.$graph.'" />&nbsp;'."\n";
+
+					if(++$graph_count == 2)
+						$content .= "<br />\n";
+				}
+			}
+
+		}
+		else // Display the graphs for the specified PHP version and date
+		{
 			$appvars['page']['title'] = 'PHP: '.$version.' Graphs';
 			$appvars['page']['head'] = 'Graphs';
 			$appvars['page']['headtitle'] = $version;
@@ -316,31 +281,6 @@ HTML;
 <a href="viewer.php?version=$version&func=graph&mode=$graph_mode[name]">Last $graph_mode[title]</a><br />
 HTML;
 			}
-
-		}
-		else // Display the graphs for the specified PHP version and date
-		{
-			$appvars['page']['title'] = 'PHP: '.$version.' Last '.$graph_mode_array[$mode]['title'] . ' Graphs';
-			$appvars['page']['head'] = 'Last '.$graph_mode_array[$mode]['title']. ' Graphs';
-			$appvars['page']['headtitle'] = $version;
-
-			$content .= '<p>The following images show the changes in code coverage, compile warnings, memory leaks and test failures.</p>';
-
-			$graph_count = 0;
-
-			foreach($graph_types_array as $graph_type)
-			{
-				if(file_exists($version.'/graphs/'.$graph_type.'_'.$mode.'.png'))
-				{
-					$content .= '<img src="'.$version.'/graphs/'.$graph_type.'_'.$mode.'.png" />&nbsp;'."\n";
-
-					if(++$graph_count == 2)
-						$content .= '<br />'."\n";
-
-				} // End check for graph file
-
-			} // End loop through graph types
-			
 		} // End check for valid graph mode
 
 	} // End check for func=graph
@@ -348,7 +288,7 @@ HTML;
 	else if($func == 'lcov') 
 	// Displays the lcov content for this version
 	{
-		// Define page variables		
+		// Define page variables
 		$appvars['page']['title'] = 'PHP: '. $version.' Code Coverage Report';
 		$appvars['page']['head'] = $version.': Code Coverage Report';
 		$appvars['page']['headtitle'] = $version;		
@@ -384,7 +324,7 @@ else
 api_showheader($appvars);
 
 // If an error occurred the command did not exist
-if($error != '')
+if($error)
 {
 	echo 'Oops!  Seems we were unable to execute your command.  The following are the errors the system found: <br />'.$error;
 }
