@@ -266,14 +266,10 @@ HTML;
 		else // Treat the file contents as regular text file
 		{
 			// Open file handle
-			$fh = @fopen($filepath, 'r');
+			$content = @file_get_contents($filepath);
 			// Read file contents
 			if($func_array[$func]['option'] == 'text')
-				$content = '<pre>'.@fread($fh, filesize($filepath)).'</pre>';
-			else
-				$content = @fread($fh, filesize($filepath));
-				
-			@fclose($fh);
+				$content = '<pre>'.$content.'</pre>';
 		}
 
 		// Determine title based on success or failure
@@ -309,8 +305,8 @@ HTML;
 		{
 
 			$appvars['page']['title'] = 'PHP: '.$version.' Graphs';
-      $appvars['page']['head'] = 'Graphs';
-      $appvars['page']['headtitle'] = $version;
+			$appvars['page']['head'] = 'Graphs';
+			$appvars['page']['headtitle'] = $version;
 
 			$content .= <<< HTML
 <p>Select the period of time you wish to view as a graphical progression.</p>
