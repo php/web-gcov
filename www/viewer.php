@@ -108,7 +108,6 @@ $graph_types_array = array('codecoverage','failures','memleaks','warnings');
 if(isset($_REQUEST['func']))
 {
 	$func = $_REQUEST['func'];
-
 }
 else
 {
@@ -140,24 +139,23 @@ if((array_search($version, $appvars['site']['tags']) !== false) || ($func == 'se
 		{
 			$count = 0;
 			$os = $_REQUEST['os'];
-			$stmt = null;
 			$stmtarray = array();
 
 			$appvars['page']['title'] = 'PHP: Other Platform Search Results';
-      $appvars['page']['head'] = 'Other Platform Search Results';
+			$appvars['page']['head'] = 'Other Platform Search Results';
 			$appvars['page']['headtitle'] = 'Search Results';
 
 			if($os == 'all')
 			{
-      	$sql = 'SELECT user_name, last_user_os FROM remote_builds';
+				$sql = 'SELECT user_name, last_user_os FROM remote_builds';
 			}
 			else
 			{
 				$sql = 'SELECT user_name, last_user_os FROM remote_builds WHERE last_user_os=?';
 				$stmtarray = array($os);
 			}
-      $stmt = $mysqlconn->prepare($sql);
- 	    $stmt->execute($stmtarray);
+			$stmt = $mysqlconn->prepare($sql);
+			$stmt->execute($stmtarray);
 
 			// todo: allow check to be narrowed down to a specific PHP version
 			while($row = $stmt->fetch())
@@ -174,7 +172,7 @@ if((array_search($version, $appvars['site']['tags']) !== false) || ($func == 'se
 						$content .= <<< HTML
 <a href="viewer.php?username=$user_name&version=$phpvertag">$user_name</a> (PHP Version: $phpvertag, OS: $last_user_os)<br />
 HTML;
-						$count++;
+						++$count;
 					} // End check if tag is active for this user
 
 				} // End loop through each accepted PHP version
