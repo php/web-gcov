@@ -69,14 +69,7 @@ while($row = $stmt->fetch(PDO::FETCH_NUM))
 </ul>
 <h2>Downloads</h2>
 <ul>
-<li>Integrate GCOV testing into PHP_4_4 by applying this <a href="downloads/PHP_4_4-gcov-20060810.diff.txt.bz2">patch</a>.</li>
-<li>Integrate PHP/GCOV testing by applying one of the following lcov 1.5 patches:
-<ul>
-<li><a href="downloads/lcov_1.5-1_all.deb">lcov_1.5-1_all.deb</a></li>
-<li><a href="downloads/lcov-1.5-pre1.noarch.rpm">lcov-1.5-pre1.noarch.rpm</a></li>
-</ul>
-</li>
-<li>After installing the above lcov update, replace genhtml with this <a href="downloads/genhtml.gcov-php-net">patch</a>.
+<li><a href="downloads/PHP_4_4-gcov-20060810.diff.txt.bz2">PHP 4.4 patch</a> used by our testing process</li>
 </ul>
 </p>
 </td>
