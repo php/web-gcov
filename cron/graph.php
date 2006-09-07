@@ -13,14 +13,10 @@ Inportant Notes:
 
 if(!defined('CRON_PHP'))
 {
-  echo basename($_SERVER['PHP_SELF']).': Sorry this file must be called by a cron script.'."\n";
-	  exit;
+	die(basename($_SERVER['PHP_SELF']).": Sorry this file must be called by a cron script.\n");
 }
 
-include_once 'config.php';
-
 include_once 'lib/jpgraph/jpgraph.php';
-
 include_once 'lib/jpgraph/jpgraph_line.php';
 
 /*
@@ -41,6 +37,9 @@ else if($graph_mode == 'weekly')
 	$graph_mode_text = 'Week';
 	$graph_days = 7;
 }
+
+// make sure the directory exists
+@mkdir("$outdir/graphs");
 
 // Make sure an acceptable graph mode is selected before continuing
 if($graph_days > 0)
@@ -71,18 +70,18 @@ if($graph_days > 0)
 	$current_date = date('M d');
 
 	$graph_array = array(
-        array('name' => 'codecoverage',
-							'title' => 'Code Coverage',
-							'yformat' => 'percent'),
+				array('name' => 'codecoverage',
+						'title' => 'Code Coverage',
+						'yformat' => 'percent'),
 				array('name' => 'failures',
-							'title' => 'Test Failures',
-							'yformat' => 'integer'),
-        array('name' => 'memleaks',
-							'title' => 'Memory Leaks',
-							'yformat' => 'integer'),
+						'title' => 'Test Failures',
+						'yformat' => 'integer'),
+				array('name' => 'memleaks',
+						'title' => 'Memory Leaks',
+						'yformat' => 'integer'),
 				array('name' => 'warnings',
-							'title' => 'Compile Warnings',
-							'yformat' => 'integer')
+						'title' => 'Compile Warnings',
+						'yformat' => 'integer')
 			);
 
 	while($row = $stmt->fetch())
@@ -147,16 +146,15 @@ if($graph_days > 0)
 				// Output the graph to a file location
 				$graph->Stroke($graph_filename);
 
-				} // End check for number of data points on the graph
-				else
-					echo "graph.php: graph of mode $curgraph[name] had an insufficient number of valid data points.\n";
+			} // End check for number of data points on the graph
+			else
+				echo "graph.php: graph of mode $curgraph[name] had an insufficient number of valid data points.\n";
 		} // End looping each graph type
 
-		echo "graph.php: completed this graph mode\n";
+		echo "graph.php: completed the $graph_mode graph mode\n";
 	} // End check that number of rows > 1
 	else
 	{
-		//echo 'insufficient number of data rows'."\n";
 		echo "graph.php: has insufficent data rows to make these graphs for $version_id \n";
 	}
 }
