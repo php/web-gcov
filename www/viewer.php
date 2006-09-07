@@ -257,7 +257,6 @@ HTML;
 				include_once $filepath;
 			}
 			$content = ob_get_clean();
-			ob_end_flush();
 
 			if(isset($filename))
 			{
