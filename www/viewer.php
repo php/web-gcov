@@ -24,6 +24,7 @@ $file = '';
 $fn = ''; // represents the file name
 
 $incfile = ''; // used for php includes of files
+$fileroot = '';
 
 // Pull in defined variables
 $file = isset($_REQUEST['file']) ? $_REQUEST['file'] : '';
@@ -41,11 +42,7 @@ if(isset($_REQUEST['username']))
 
 			$appvars['site']['builderusername'] = $username;
 		}
-		else
-			$fileroot = '';
 	}
-	else
-		$fileroot = '';
 }
 
 if(isset($_REQUEST['mode']))
