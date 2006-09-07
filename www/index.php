@@ -37,7 +37,7 @@ analysis.
 <th>TAG</th>
 <th>Last Attempted<br />Build Date</th>
 <th>Last Successful<br />Build Date</th>
-<th>Last Build <br /> Time (seconds)</th>
+<th>Last Build <br /> Time</th>
 </tr>
 <?php
 
@@ -50,7 +50,7 @@ while($row = $stmt->fetch(PDO::FETCH_NUM))
 	echo "<th align='left'><a href='viewer.php?version=$version_name'>$version_name</a></th>";
 	echo '<td>'.$version_last_attempted_build_date.'</td>'."\n";
 	echo '<td>'.$version_last_successful_build_date.'</td>'."\n";
-	echo '<td>'.$version_last_build_time.'</td>'."\n";
+	echo '<td>'.time_diff($version_last_build_time).'</td>'."\n";
 	
 	// End additions
 	echo "</tr>\n";

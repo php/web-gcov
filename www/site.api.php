@@ -14,8 +14,7 @@ include $appvars['site']['dbcsfile'];
 
 if(!$mysqlconn)
 {
-	echo 'Unable to access the database at this time.  Please try again in a few minutes';
-	exit;
+	die('Unable to access the database at this time.  Please try again in a few minutes');
 }
 
 
@@ -25,28 +24,37 @@ function api_init(&$appvars = array())
 {
 
 	$appvars['site']['mytag'] = null;
-	
-	// Start loading version tags
-
-	// todo: if this fails then the tags can not be loaded
-	$content = file_get_contents($appvars['site']['tagsfile']);
-
-	$content = trim($content);
-
-	$elements = explode("\n", $content);
-	$numelements = count($elements);
-
-	// Recall: the first two elements are only used by the cron scripts
-	for($i = 2; $i < $numelements; $i++)
-	{
-	        $appvars['site']['tags'][$elements[$i]] = trim($elements[$i]);
-	}	
-	// End version tag loading
-	
-	// Creates instances such as the database connection, if needed
-
 	$appvars['page']['headtitle'] = 'PHP: Test and Code Coverage Analysis';
+
+
+	// load version tags
+	$elements = (array)@file($appvars['site']['tagsfile']);
+
+	foreach ($elements as $ver)
+	{
+		$ver = trim($ver);
+	        $appvars['site']['tags'][$ver] = trim($ver);
+	}
 }
+
+
+function time_diff($time, $abs=false)
+{
+	if ($abs) {
+		date_default_timezone_set('UTC');
+		$time -= time();
+	}
+
+	if ($time < 60) {
+		return "$time seconds";
+	}
+	elseif ($time < 3600) {
+		return intval($time/60) . ' minutes';
+	} else {
+		return intval($time/3600) . ' hours';
+	}
+}
+
 
 // Application Header Function
 function api_showheader($appvars=array())
