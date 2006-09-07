@@ -44,7 +44,8 @@ REQUIREMENTS
 PHP 5.1 and above is required to have the cron scripts function as server instance.  Additionally, the master server instance will require several PHP extensions to be installed for proper operation, including:
 
 bzip2
-gd 
+ctype
+gd
 pdo
 pdo-mysql
 

@@ -1,5 +1,6 @@
 #!/bin/sh
 
+source ./config.sh
 export LC_ALL=C
 
 # file that contains the PHP version tags
@@ -16,8 +17,6 @@ TAGS_ARRAY=( `cat "$FILENAME"` )
 TAGS_COUNT=${#TAGS_ARRAY[@]}
 
 BUILT_SOME=0
-PHPROOT=${TAGS_ARRAY[0]}
-OUTROOT=${TAGS_ARRAY[1]}
 
 # Check for a build version passed to the script
 if [ $# -eq 1 ]; then
@@ -27,7 +26,7 @@ else
 fi
 
 # loop through each PHP version and perform the required builds
-for (( i = 2 ; i < $TAGS_COUNT ; i += 1 ))
+for (( i = 0 ; i < $TAGS_COUNT ; i += 1 ))
 do
 	PHPTAG=${TAGS_ARRAY[i]}
 
@@ -59,6 +58,10 @@ do
 		if [ -d ${PHPTAG} ]; then
 			cd ${PHPTAG}
 			cvs -q up
+			# CVS doesn't update the Zend dir automatically
+			cd Zend
+			cvs -q up
+			cd ..
 		else
 			cvs -q -d ${CVSROOT} co -d ${PHPTAG} -r ${PHPTAG} php-src
 			cd ${PHPTAG}
@@ -75,7 +78,6 @@ do
 
 		if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
 
-			#test for success of the make operation
 			MAKESTATUS=pass
 
 			TEST_PHP_ARGS="-U -n -q --keep-all"
