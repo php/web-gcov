@@ -61,6 +61,9 @@ $xmlarray = array();
 // Set up variables that apply to all scripts
 $version = basename($phpdir, __FILE__); // todo: make this dynamic or based on the tags instead
 
+// avoid filling the disk
+system("rm -f $outdir/*.inc");
+
 // Load main configuration including database connection
 require $workdir.'/config.php';
 
