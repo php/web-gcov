@@ -14,7 +14,7 @@ $content  = ''; // Stores content collected during execution
 $error    = ''; // Start by assuming no error has occurred
 $fileroot = ''; // base directory for including external files (used for external builds)
 
-$file     = isset($_REQUEST['file']) ? $_REQUEST['file'] : '';
+$file     = isset($_REQUEST['file']) ? basename($_REQUEST['file']) : '';
 $version  = isset($_REQUEST['version']) ? $_REQUEST['version'] : '';
 $mode     = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
 
@@ -36,7 +36,7 @@ $func_array = array(
 	'compile_results' =>
 		array(
 			'option' => 'phpinc', 
-			'pagetitle' => 'PHP: Compile Results for '.$version, 
+			'pagetitle' => 'PHP: Compile Results for '.$version,
 			'pagehead' => 'Compile Results'
 		),
 	// todo: remove php_test_log
@@ -48,14 +48,14 @@ $func_array = array(
 		),
 	'valgrind' =>
 		array(
-			'option' => 'phpinc', // or text at this point
-			'pagetitle' => 'PHP: Valgrind Report for '.$version, 
+			'option' => 'phpinc',
+			'pagetitle' => 'PHP: Valgrind Report for '.$version,
 			'pagehead' => 'Valgrind Report'
 		),
 	'tests' =>
 		array(
 			'option' => 'phpinc', 
-			'pagetitle' => 'PHP: Test Failures for '.$version, 
+			'pagetitle' => 'PHP: Test Failures for '.$version,
 			'pagehead' => 'Test Failures'
 		),
 	'system' =>
@@ -195,7 +195,7 @@ HTML;
 
 	elseif (isset($func_array[$func]))
 	{
-		$incfile = $file ? basename($file) : $func;
+		$incfile = $file ? $file : $func;
 
 		// Determine the file path
 		$filepath = $fileroot.$version.'/'.$incfile.'.inc';
@@ -293,10 +293,12 @@ HTML;
 		$appvars['page']['head'] = $version.': Code Coverage Report';
 		$appvars['page']['headtitle'] = $version;		
 
-		// Collect file content
-		$content = 'content for code coverage would be here.';
-
-		// todo: if there is no lcov content, inform user here
+		if (@is_dir("$version/lcov_html")) {
+			header("Location: /$version/lcov_html/");
+			exit;
+		} else {
+			$content = "Sorry, but the lcov data isn't available at this time.";
+		}
 	}
 	else if($func == 'menu')
 	{

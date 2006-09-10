@@ -12,10 +12,10 @@ $appvars['site'] = array(); // Application site-specific variable array
 $appvars['page'] = array(); // Application page-specific variable array
 
 // Define the file that contains the text for each PHP version
-$appvars['site']['tagsfile'] = '../cron/tags.inc';
+$appvars['site']['tagsfile'] = dirname(__FILE__).'/../cron/tags.inc';
 
 // Define the file that contains all needed database connections
-$appvars['site']['dbcsfile'] = '../cron/database.php';
+$appvars['site']['dbcsfile'] = dirname(__FILE__).'/../cron/database.php';
 
 // Define links for the side bar (used in site.api.php)
 $appvars['site']['sidebarsubitems_localbuilds'] = array(

@@ -47,7 +47,7 @@ while($row = $stmt->fetch(PDO::FETCH_NUM))
 	list($version_name, $version_last_build_time, $version_last_attempted_build_date, $version_last_successful_build_date) = $row;
 	
 	echo "<tr>";
-	echo "<th align='left'><a href='viewer.php?version=$version_name'>$version_name</a></th>";
+	echo "<th align='left'><a href='/viewer.php?version=$version_name'>$version_name</a></th>";
 	echo '<td>'.$version_last_attempted_build_date.'</td>'."\n";
 	echo '<td>'.$version_last_successful_build_date.'</td>'."\n";
 	echo '<td>'.time_diff($version_last_build_time).'</td>'."\n";

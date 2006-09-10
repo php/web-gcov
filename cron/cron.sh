@@ -9,6 +9,9 @@ FILENAME=tags.inc
 WORKDIR=`dirname "$0"`
 echo "$WORKDIR" | grep -q '^/' || WORKDIR="`pwd`/$WORKDIR"  # get absolute path
 
+# make genhtml use our header/footer
+export LTP_GENHTML="genhtml --html-prolog ${WORKDIR}/lcov_prolog.inc --html-epilog ${WORKDIR}/lcov_epilog.inc --html-extension php"
+
 # set up a one dimensional array to store all php version information
 declare -a TAGS_ARRAY
 TAGS_ARRAY=( `cat "$FILENAME"` )
