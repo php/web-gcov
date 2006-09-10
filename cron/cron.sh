@@ -90,7 +90,7 @@ do
 			export TEST_PHP_ARGS
 
 			# test for lcov support
-			if ( grep lcov Makefile ); then
+			if ( grep lcov Makefile >/dev/null 2>&1 ); then
 				make lcov > ${TMPDIR}/php_test.log
 				rm -fr ${OUTDIR}/lcov_html
 				mv lcov_html ${OUTDIR}
