@@ -35,7 +35,7 @@ $error    = ''; // Start by assuming no error has occurred
 $fileroot = ''; // base directory for including external files (used for external builds)
 
 $file     = isset($_REQUEST['file']) ? basename($_REQUEST['file']) : '';
-$version  = isset($_REQUEST['version']) ? $_REQUEST['version'] : '';
+$version  = isset($_REQUEST['version']) && isset($appvars['site']['tags'][$_REQUEST['version']]) ? $_REQUEST['version'] : '';
 $mode     = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : '';
 
 
@@ -113,9 +113,7 @@ else
 }
 $appvars['site']['func'] = $func;
 
-// Ensure the version specified is valid (todo: more security required?)
-// note: !== false is required since PHP_4.4.1 has the 0th place
-if((array_search($version, $appvars['site']['tags']) !== false) || ($func == 'search'))
+if($version || $func === 'search')
 {
 	$appvars['site']['mytag'] = $version;
 
