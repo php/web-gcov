@@ -28,9 +28,6 @@
 // Include the site API so the database connection can be used
 include 'site.api.php';
 
-// Include the post function definitions file
-include 'post.funcs.php';
-
 // Initialize the core components
 api_init($appvars);
 
