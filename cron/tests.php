@@ -139,7 +139,7 @@ HTML;
 			$index_write .= <<< HTML
 <tr>
 <td>
-<a href="viewer.php?version=$version&func=tests&file=$hash">$file</a></td>
+<a href="viewer.php?version=$phpver&func=tests&file=$hash">$file</a></td>
 <td>{$testtype}</td>
 <td>{$title_html}</td>
 </tr>

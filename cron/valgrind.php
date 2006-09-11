@@ -28,8 +28,6 @@ if(!defined('CRON_PHP'))
 	exit;
 }
 
-require_once $workdir.'/template.php';
-
 // data: contains the contents of $tmpdir/php_test.log
 // unicode: true if unicode is included in the log files
 
@@ -65,16 +63,13 @@ foreach ($leaks as $test)
 
 	$base = "$phpdir/".substr($test['file'],0,-4);
 
-	$dir = dirname($test['file']);
-
+	$dir  = dirname($test['file']);
 	$file = basename($test['file']);
-
-	$hash  = 'v' . md5($report_file);
+	$hash = 'v' . md5($report_file);
 
 	$report_file = ''; // Used internally to determine unicode or native filename
 
 	$testtype = '';
-
 	$title = $test['title'];
 
 	// If test mode is not unicode it is native
@@ -166,14 +161,13 @@ HTML;
 	else
 	{
 		// If not master server, add the leak to the output array
-
 		$newleak = array();
-		$newleak['testtype'] = $testtype;
-	  $newleak['title'] = $test['title'];
-		$newleak['file'] = $test['file'];
-    $newleak['script'] = $script_text;
-    $newleak['report'] = $report;
-    $xmlarray['valgrind'][] = $newleak;
+		$newleak['testtype']    = $testtype;
+		$newleak['title']       = $test['title'];
+		$newleak['file']        = $test['file'];
+		$newleak['script']      = $script_text;
+		$newleak['report']      = $report;
+		$xmlarray['valgrind'][] = $newleak;
 
 	} // End check for master server 
 

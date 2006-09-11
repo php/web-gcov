@@ -58,23 +58,15 @@ $version_id = 0;	// Start by assuming the version_id is unknown
 
 $xmlarray = array();
 
-// Set up variables that apply to all scripts
-$version = basename($phpdir, __FILE__); // todo: make this dynamic or based on the tags instead
-
 // avoid filling the disk
 system("rm -f $outdir/*.inc");
 
-// Load main configuration including database connection
 require $workdir.'/config.php';
-
-// Load templates used by the various components of the cron scripts
 require $workdir.'/template.php';
-
-// Gathers the key system information
 require $workdir.'/system.php';
-
-// Processes the log file to find compile related errors and warnings
 require $workdir.'/compile_results.php';
+require $workdir.'/check_parameters.php';
+
 
 // This section is required for either system configuration
 if($makestatus == 'pass')

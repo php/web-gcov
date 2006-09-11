@@ -66,6 +66,12 @@ $func_array = array(
 			'pagetitle' => 'PHP: Test Log for '. $version,
 			'pagehead' => 'Test Log'
 		),
+	'params' =>
+		array(
+			'option' => 'phpinc',
+			'pagetitle' => 'PHP: Parameter Parsing Report for '.$version,
+			'pagehead' => 'Parameter Parsing Report'
+		),
 	'valgrind' =>
 		array(
 			'option' => 'phpinc',

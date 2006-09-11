@@ -41,6 +41,7 @@ $appvars['site']['sidebarsubitems_localbuilds'] = array(
 		'coverage'  => 'lcov',
 		'compile-results' => 'compile_results',
 		'graphs' => 'graph',
+		'parameter-parsing' => 'params',
 		'system' => 'system',
 		'test-failures' => 'tests',
 		'valgrind' => 'valgrind'

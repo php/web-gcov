@@ -31,8 +31,6 @@ if(!defined('CRON_PHP'))
 $totalnumerrors = 0;
 $totalnumwarnings = 0;
 
-require_once 'template.php';
-
 $data = file_get_contents("$tmpdir/php_build.log");
 
 // Check if build file was readable, and if not, notify the user
@@ -113,13 +111,13 @@ else
 HTML;
 				if($type == 'error')
 				{
-					@$stats[$file][0] += 1; // number of file errros
-					$totalnumerrors++;
+					@++$stats[$file][0]; // number of file errros
+					++$totalnumerrors;
 				}		
 				elseif($type == 'warning')
 				{
-					@$stats[$file][1] += 1; // number of file warnings
-					$totalnumwarnings++;
+					@++$stats[$file][1]; // number of file warnings
+					++$totalnumwarnings;
 				}
 				else 
 				{
@@ -187,7 +185,7 @@ HTML;
 			// Add content to the core compile results file
 			$index_write .= <<< HTML
 <tr>
-<td><a href="viewer.php?version=$version&func=compile_results&file=$hash">$short_file</a></td>
+<td><a href="viewer.php?version=$phpver&func=compile_results&file=$hash">$short_file</a></td>
 <td>$data[0]</td>
 <td>$data[1]</td>
 </tr>
