@@ -52,7 +52,7 @@ function api_init(&$appvars = array())
 	foreach ($elements as $ver)
 	{
 		$ver = trim($ver);
-	        $appvars['site']['tags'][$ver] = trim($ver);
+	        $appvars['site']['tags'][$ver] = $ver;
 	}
 }
 
