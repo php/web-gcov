@@ -24,7 +24,7 @@
 
 
 define('REPORT_LEVEL', 2); // 0 reports less false-positives. up to level 5.
-define('VERSION', strtr(substr($phpver, 4), '_', '.'));
+define('VERSION', $phpver == 'PHP_HEAD' ? '6' : strtr(substr($phpver, 4), '_', '.'));
 
 // be sure you have enough memory and stack for PHP. pcre will push the limits!
 ini_set('pcre.backtrack_limit', 10000000);
