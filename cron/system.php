@@ -37,7 +37,7 @@ $compilerinfo = $compiler[0];
 
 // Operating System Section
 // Todo: this section need to be revised for systems without the uname command
-$osinfo = `uname -srmi`;
+$osinfo = `uname -srm`;
 
 // Valgrind (calculated but not displayed)
 // Todo: This section is diabled since it needs tweaking for Windows installations
