@@ -144,11 +144,11 @@ if($version || $func === 'search')
 				$sql = 'SELECT user_name, last_user_os FROM remote_builds WHERE last_user_os=?';
 				$stmtarray = array($os);
 			}
-			$stmt = $mysqlconn->prepare($sql);
-			$stmt->execute($stmtarray);
+			if ($stmt = $mysqlconn->prepare($sql))
+				$stmt->execute($stmtarray);
 
 			// todo: allow check to be narrowed down to a specific PHP version
-			while($row = $stmt->fetch())
+			while($stmt && $row = $stmt->fetch())
 			{
 				list($user_name, $last_user_os) = $row;
 
