@@ -111,6 +111,12 @@ if($is_master)
 		$stmt = $mysqlconn->prepare($sql);
 		$stmt->execute(array($phpver));
 		$version_id = $stmt->fetchColumn();
+
+		if (!$version_id) {
+			$mysqlconn->exec("INSERT INTO versions (version_name) VALUES('$phpver')");
+			$stmt->execute(array($phpver));
+			$version_id = $stmt->fetchColumn();
+		}
 	}
 	catch(PDOException $e)
 	{
