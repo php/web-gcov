@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.1.2.14 2006-09-10 15:28:52 nlopess Exp $
+#   $Id: cron.sh,v 1.1.2.15 2006-10-06 18:49:33 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -106,7 +106,7 @@ do
 
 			# only run valgrind testing if it is available
 			if (valgrind --version >/dev/null 2>&1 && test "$VALGRIND" ); then
-				TEST_PHP_ARGS+=" -m"
+				TEST_PHP_ARGS="${TEST_PHP_ARGS} -m"
 			fi
 
 			export TEST_PHP_ARGS
