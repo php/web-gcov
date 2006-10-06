@@ -17,10 +17,11 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.1.2.15 2006-10-06 18:49:33 nlopess Exp $
+#   $Id: cron.sh,v 1.1.2.16 2006-10-06 19:39:25 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
+export CCACHE_DISABLE=1
 
 # file that contains the PHP version tags
 FILENAME=tags.inc
