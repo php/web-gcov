@@ -179,8 +179,8 @@ HTML;
 		{
 			$stmt = null;
 			$sql = 'SELECT DISTINCT last_user_os FROM remote_builds';
-			$stmt = $mysqlconn->prepare($sql);
-			$stmt->execute();
+			if ($stmt = $mysqlconn->prepare($sql))
+				$stmt->execute();
 
 			$appvars['page']['title'] = 'PHP: Search Other Platforms';
 			$appvars['page']['head'] = 'Other Platform Search';
@@ -197,7 +197,7 @@ HTML;
 <option value="all">All Platforms</option>
 HTML;
 
-			while($row = $stmt->fetch())
+			while($stmt && $row = $stmt->fetch())
 			{
 		  	list($os) = $row;
 

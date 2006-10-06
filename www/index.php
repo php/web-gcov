@@ -39,8 +39,8 @@ foreach($appvars['site']['tags'] as $tag)
 }
 
 $sql = substr($sql, 0, -3);
-$stmt = $mysqlconn->prepare($sql);
-$stmt->execute();
+if ($stmt = $mysqlconn->prepare($sql))
+       $stmt->execute();
 
 // Outputs the site header to the screen
 api_showheader($appvars);
@@ -64,7 +64,7 @@ analysis.
 <?php
 
 // Output PHP versions into a table
-while($row = $stmt->fetch(PDO::FETCH_NUM))
+while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 {
 	list($version_name, $version_last_build_time, $version_last_attempted_build_date, $version_last_successful_build_date) = $row;
 	
