@@ -39,6 +39,7 @@ foreach($appvars['site']['tags'] as $tag)
 }
 
 $sql = substr($sql, 0, -3);
+$sql .= ' ORDER BY version_name';
 if ($stmt = $mysqlconn->prepare($sql))
        $stmt->execute();
 
