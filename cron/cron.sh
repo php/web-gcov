@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.1.2.16 2006-10-06 19:39:25 nlopess Exp $
+#   $Id: cron.sh,v 1.1.2.17 2006-10-07 18:56:02 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -70,9 +70,14 @@ do
 		BUILT_SOME=1
 		BEGIN=`date +%s`
 
+		CVSTAG=${PHPTAG}
 		OUTDIR=${OUTROOT}/${PHPTAG}
 		PHPSRC=${PHPROOT}/${PHPTAG}
 		TMPDIR=${PHPROOT}/tmp/${PHPTAG}
+
+		if [ "${CVSTAG}" = "PHP_HEAD" ]; then
+			CVSTAG="HEAD"
+		fi
 
 		mkdir -p $OUTDIR
 		mkdir -p $TMPDIR
@@ -86,7 +91,7 @@ do
 			cvs -q up
 			cd ..
 		else
-			cvs -q -d ${CVSROOT} co -d ${PHPTAG} -r ${PHPTAG} php-src
+			cvs -q -d ${CVSROOT} co -d ${PHPTAG} -r ${CVSTAG} php-src
 			cd ${PHPTAG}
 		fi
 		./cvsclean
