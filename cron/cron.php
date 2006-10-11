@@ -59,7 +59,9 @@ $version_id = 0;	// Start by assuming the version_id is unknown
 $xmlarray = array();
 
 // avoid filling the disk
-system("rm -f $outdir/*.inc");
+if($makestatus == 'pass') {
+	system("rm -f $outdir/*.inc");
+}
 
 require $workdir.'/config.php';
 require $workdir.'/template.php';
