@@ -61,6 +61,7 @@ analysis.
 <th>Last Attempted<br />Build Date</th>
 <th>Last Successful<br />Build Date</th>
 <th>Last Build <br /> Time</th>
+<th>Build Completion<br /> Estimate</th>
 </tr>
 <?php
 
@@ -74,7 +75,35 @@ while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 	echo '<td>'.$version_last_attempted_build_date.'</td>'."\n";
 	echo '<td>'.$version_last_successful_build_date.'</td>'."\n";
 	echo '<td>'.time_diff($version_last_build_time).'</td>'."\n";
-	
+
+	echo '<td>';
+
+	$pidfile = "./$version_name/build.pid";
+
+	if(@file_exists($pidfile) && posix_kill((int)@file_get_contents($pidfile), 0)) {
+
+		if($version_last_build_time > 0) {
+			// Obtain last modified date and time of the process id file
+			$estimate_time = filemtime($pidfile) + $version_last_build_time - time();
+
+			if($estimate_time <= 0) {
+				echo 'any time soon';
+			} else {
+				echo time_diff($estimate_time);
+			} // End check for a positive time estimation
+
+		// this is the first time the build is running
+		} else {
+			echo 'Unknown';
+		}
+
+	} else {
+		@unlink($pidfile);
+		echo 'Not running';
+	} // End check for a running php build process id
+
+	echo "</td>\n";
+
 	// End additions
 	echo "</tr>\n";
 }
