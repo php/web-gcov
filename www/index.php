@@ -79,8 +79,9 @@ while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 	echo '<td>';
 
 	$pidfile = "./$version_name/build.pid";
+	$process_list = `ps -A`;
 
-	if(@file_exists($pidfile) && posix_kill((int)@file_get_contents($pidfile), 0)) {
+	if(@file_exists($pidfile) && strpos($process_list, (int)@file_get_contents($pidfile).' ')) {
 
 		if($version_last_build_time > 0) {
 			// Obtain last modified date and time of the process id file
