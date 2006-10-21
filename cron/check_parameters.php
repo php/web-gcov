@@ -359,7 +359,7 @@ HTML;
 		// $errors[$filename][] = array($line, $function, $str);
 		foreach ($errors as $filename => $err) {
 			$dir   = dirname($filename);
-			$hash  = 'c' . md5($filename) . '.inc';
+			$hash  = 'c' . md5($filename);
 			$count = count($err);
 
 			$total += $count;
