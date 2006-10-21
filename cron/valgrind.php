@@ -28,8 +28,7 @@ if(!defined('CRON_PHP'))
 	exit;
 }
 
-// data: contains the contents of $tmpdir/php_test.log
-// unicode: true if unicode is included in the log files
+// $data: contains the contents of $tmpdir/php_test.log
 
 // Output for core file
 $index_write = '';
@@ -63,29 +62,19 @@ foreach ($leaks as $test)
 
 	$base = "$phpdir/".substr($test['file'],0,-4);
 
-	$dir  = dirname($test['file']);
-	$file = basename($test['file']);
-	$hash = 'v' . md5($report_file);
-
-	$report_file = ''; // Used internally to determine unicode or native filename
-
-	$testtype = '';
+	$dir   = dirname($test['file']);
+	$file  = basename($test['file']);
 	$title = $test['title'];
 
-	// If test mode is not unicode it is native
-	if((isset($test['testtype'])) && (strtolower($test['testtype']) == 'u'))
-	{
+	if(isset($test['testtype']) && strtolower($test['testtype']) == 'u') {
 		$testtype = 'Unicode';
-
-		// This ensure the hash for unicode differs from the native leak
 		$report_file = $base.'u.mem';
-	}
-	else
-	{
+	} else {
 		$testtype = 'Native';
-
 		$report_file = $base.'mem';
-	} // End check for test type
+	}
+
+	$hash = 'v' . md5($report_file);
 
 	// Check if master server
 	if($is_master)
@@ -118,28 +107,8 @@ HTML;
 
 	} // End check for master server
 
-	$script_text = file_get_contents($base.'php');
-
-	if($script_text === false)
-	{
-		$script_text = 'Script contents were not available.';
-		$script_php = $script_text;
-	}
-	else
-	{
-		$script_php = highlight_string($script_text, true);
-	} // End check for ability to obtain the script file contents
-	
-	$report = file_get_contents($report_file);
-
-	if($report === false)
-	{
-		$report = 'Memory leak file contents were not available.';
-	}
-	else
-	{
-		$report = str_replace($phpdir,'',$report);
-	} // End check for ability to obtain the contents of the mem file
+	$script_php = highlight_file($base.'php', true);
+	$report     = str_replace($phpdir, '', file_get_contents($report_file));
 
 	if($is_master)
 	{
