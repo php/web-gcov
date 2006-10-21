@@ -17,11 +17,19 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.1.2.17 2006-10-07 18:56:02 nlopess Exp $
+#   $Id: cron.sh,v 1.1.2.18 2006-10-21 11:20:31 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
 export CCACHE_DISABLE=1
+
+# Called either on error or successful completion
+remove_pid_file()
+{
+	rm -f "$PIDFILE"
+}
+trap remove_pid_file EXIT
+
 
 # file that contains the PHP version tags
 FILENAME=tags.inc
@@ -74,6 +82,7 @@ do
 		OUTDIR=${OUTROOT}/${PHPTAG}
 		PHPSRC=${PHPROOT}/${PHPTAG}
 		TMPDIR=${PHPROOT}/tmp/${PHPTAG}
+		PIDFILE=${OUTDIR}/build.pid
 
 		if [ "${CVSTAG}" = "PHP_HEAD" ]; then
 			CVSTAG="HEAD"
@@ -81,6 +90,8 @@ do
 
 		mkdir -p $OUTDIR
 		mkdir -p $TMPDIR
+
+		echo $$ > ${PIDFILE}
 
 		cd ${PHPROOT}
 		if [ -d ${PHPTAG} ]; then
@@ -135,6 +146,8 @@ do
 		BUILD_TIME=$[`date +%s` - ${BEGIN}]
 
 		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG} ${BUILD_TIME}
+
+		remove_pid_file
 
 	fi # End verify build PHP version
 done
