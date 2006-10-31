@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.1.2.18 2006-10-21 11:20:31 nlopess Exp $
+#   $Id: cron.sh,v 1.1.2.19 2006-10-31 14:22:29 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -96,10 +96,10 @@ do
 		cd ${PHPROOT}
 		if [ -d ${PHPTAG} ]; then
 			cd ${PHPTAG}
-			cvs -q up
+			cvs -q up -Pd
 			# CVS doesn't update the Zend dir automatically
 			cd Zend
-			cvs -q up
+			cvs -q up -Pd
 			cd ..
 		else
 			cvs -q -d ${CVSROOT} co -d ${PHPTAG} -r ${CVSTAG} php-src
