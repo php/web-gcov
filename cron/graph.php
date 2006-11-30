@@ -76,8 +76,6 @@ if($graph_days > 0)
 	//$version_id = 0;
 	}
 
-	$data_numrows = 0;
-
 	$data_x = array();
 
 	$data_y = array();
@@ -109,22 +107,25 @@ if($graph_days > 0)
 
 		list($year, $month, $day) = explode('-', $build_date);
 
-		$data_x[] = $day;
-
 		// Code Coverage less then 0 means could not be located
-		if($build_codecoverage >= 0)
+		if($build_codecoverage >= 0) {
 			$data_y['codecoverage'][] = $build_codecoverage;
+			$data_x['codecoverage'][] = $day;
+		}
 
 		$data_y['failures'][] = $build_numfailures;
-		$data_y['memleaks'][] = $build_numleaks;
-		$data_y['warnings'][] = $build_numwarnings;
+		$data_x['failures'][] = $day;
 
-		$data_numrows++;
+		$data_y['memleaks'][] = $build_numleaks;
+		$data_x['memleaks'][] = $day;
+
+		$data_y['warnings'][] = $build_numwarnings;
+		$data_x['warnings'][] = $day;
 
 	} // Cycle through the results
 
 	// Ensure more than one data row exist for the period of time
-	if($data_numrows > 1)
+	if(count($data_x))
 	{
 		// Create the graphs
 		foreach($graph_array as $curgraph)
@@ -154,7 +155,7 @@ if($graph_days > 0)
 				// Add the plot to the graph
 				$graph->Add($lineplot);
 				$graph->xaxis->SetTitle('Day');
-				$graph->xaxis->SetTickLabels($data_x);
+				$graph->xaxis->SetTickLabels($data_x[$curgraph['name']]);
 				$graph->xaxis->SetTextTickInterval(1);
 
 				if($curgraph['yformat'] == 'percent')
