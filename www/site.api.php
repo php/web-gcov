@@ -131,9 +131,9 @@ if (isset($appvars['page']['css'])) {
 <tr bgcolor="#9999cc">
 <td align="right" valign="bottom"><img src="/images/spacer.gif" width="1" height="15" border="0" alt="" /><a href="http://php.net/downloads.php" class="header small">downloads</a> | <a href="http://qa.php.net" class="header small">QA</a> | <a href="http://php.net/docs.php" class="header small">documentation</a> | <a href="http://php.net/FAQ.php" class="header small">faq</a> | <a href="http://php.net/support.php" class="header small">getting help</a> | <a href="http://php.net/mailing-lists.php" class="header small">mailing lists</a> | <a href="http://bugs.php.net/" class="header small">reporting bugs</a> | <a href="http://php.net/sites.php" class="header small">php.net sites</a> | <a href="http://php.net/links.php" class="header small">links</a> | <a href="http://php.net/my.php" class="header small">my php.net</a>&nbsp;</td>
 </tr>
-<tr><td colspan="2" bgcolor="#000000" height="1"><img src="/gfx/spacer.gif" width="1" height="1" border="0" alt="" /></td></tr>
+<tr><td colspan="2" bgcolor="#000000" height="1"><img src="/images/spacer.gif" width="1" height="1" border="0" alt="" /></td></tr>
 <tr><td colspan="2" bgcolor="#7777cc" class="header small">&nbsp;</td></tr>
-<tr><td colspan="2" bgcolor="#000000" height="1"><img src="/gfx/spacer.gif" width="1" height="1" border="0" alt="" /></td></tr>
+<tr><td colspan="2" bgcolor="#000000" height="1"><img src="/images/spacer.gif" width="1" height="1" border="0" alt="" /></td></tr>
 
 </table>
 <!-- end header -->	
