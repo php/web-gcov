@@ -13,28 +13,37 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Daniel Pronych <pronych@php.net>                             |
-  |         Nuno Lopes <nlopess@php.net>                                 |
+  | Author: Nuno Lopes <nlopess@php.net>                                 |
   +----------------------------------------------------------------------+
 */
 
 /* $Id$ */
 
-// This file gathers the essential information regarding the configuration for the build
+if (!defined('IN_GCOV_CODE')) exit;
 
-// Configure Section
-$config = file("$phpdir/config.nice");
-$config = array_slice($config, 4); //remove inital comments
-$configureinfo = implode('', $config);
 
-// Compiler Section
-$compiler = explode("\n", `cc --version`);
-$compilerinfo = $compiler[0];
+$inputfile = "./$version/system.inc";
+$raw_data  = @file_get_contents($inputfile);
+$data      = unserialize($raw_data);
 
-// Operating System Section
-// Todo: this section need to be revised for systems without the uname command
-$osinfo = `uname -srm`;
+if (!$raw_data) {
+	$content = "<p>This data isn't available at this time.</p>\n";
+	return;
+}
 
-$system_data = array($configureinfo, $compilerinfo, $osinfo);
+$configureinfo = htmlspecialchars($data[0]);
+$compilerinfo  = htmlspecialchars($data[1]);
+$osinfo        = htmlspecialchars($data[2]);
 
-file_put_contents("$outdir/system.inc", serialize($system_data));
+$content .= <<< HTML
+<h2>Configure</h2>
+<pre>$configureinfo</pre>
+
+<h2>Compiler</h2>
+<pre>$compilerinfo</pre>
+
+<h2>Operating System</h2>
+<pre>$osinfo</pre>
+HTML;
+
+$content .= footer_timestamp(@filemtime($inputfile));
