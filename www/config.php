@@ -42,9 +42,10 @@ $appvars['site']['sidebarsubitems_localbuilds'] = array(
 		'compile-results' => 'compile_results',
 		'graphs' => 'graph',
 		'parameter-parsing' => 'params',
-		'system' => 'system',
+		'skipped-tests' => 'skip',
 		'test-failures' => 'tests',
-		'valgrind' => 'valgrind'
+		'valgrind' => 'valgrind',
+		'system' => 'system',
 	);
 
 // Define sidebar links that are active when viewing a builder's submissions

@@ -36,6 +36,7 @@ if(!$mysqlconn)
 	die('Unable to access the database at this time.  Please try again in a few minutes');
 }
 
+date_default_timezone_set('UTC');
 
 // Application Initialization Function
 // appsvars is passed to the script by reference
@@ -268,4 +269,17 @@ function api_showfooter($appvars = array())
 </html>
 <?php
 	// End content footer
+}
+
+
+function footer_timestamp($tm)
+{
+	$date = date('r', $tm);
+	$diff = time_diff($tm, true);
+
+	return <<< HTML
+<p>&nbsp;</p>
+<p align="center"><small>Generated at $date ($diff ago)</small></p>
+
+HTML;
 }
