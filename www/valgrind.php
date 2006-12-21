@@ -21,7 +21,7 @@
 
 if (!defined('IN_GCOV_CODE')) exit;
 
-$inputfile = "./$version/skip.inc";
+$inputfile = "./$version/valgrind.inc";
 $raw_data  = @file_get_contents($inputfile);
 $data      = unserialize($raw_data);
 $old_dir   = '';
@@ -34,19 +34,19 @@ if (!$raw_data) {
 } elseif (isset($_GET['file'])) {
 	$file = $_GET['file'];
 
-	$appvars['page']['title'] = "PHP: $version Skip Report for $file";
-	$appvars['page']['head']  = "Skip Report for $file";
+	$appvars['page']['title'] = "PHP: $version Valgrind Report for $file";
+	$appvars['page']['head']  = "Valgrind Report for $file";
 
 	if (isset($data[$file])) {
 		$data   = $data[$file];
-		$script = highlight_string($data[0], true);
-		$reason = htmlspecialchars($data[1] ? $data[1] : '(no reason given)');
+		$script = highlight_string($data[2], true);
+		$report = htmlspecialchars($data[3]);
 
 		$content = <<< HTML
 <h2>Script</h2>
 $script
-<h2>Reason</h2>
-<pre>$reason</pre>
+<h2>Report</h2>
+<pre>$report</pre>
 HTML;
 
 	} else {
@@ -55,7 +55,7 @@ HTML;
 
 } elseif ($data) {
 
-	$content = '<p><b>'.count($data) . " tests were skipped:</b></p>\n";
+	$content = '<p><b>'.count($data) . " valgrind reports:</b></p>\n";
 
 	$content .= <<< HTML
 <table border="1">
@@ -65,25 +65,28 @@ HTML;
 		$dir     = dirname($path);
 		$file    = basename($path);
 		$urlfile = htmlspecialchars(urlencode($path));
-		$reason  = htmlspecialchars($entry[1] ? $entry[1] : '(no reason given)');
+		$title   = htmlspecialchars($entry[0]);
+		$type    = $entry[1];
 
 		if ($dir !== $old_dir) {
 			$old_dir = $dir;
 			$content .= <<< HTML
 <tr>
- <td colspan="2" align="center"><b>$dir</b></td>
+ <td colspan="3" align="center"><b>$dir</b></td>
 </tr>
 <tr>
  <td><b>File</b></td>
- <td><b>Reason</b></td>
+ <td><b>Type</b></td>
+ <td><b>Name</b></td>
 </tr>
 HTML;
 		}
 
 		$content .= <<< HTML
 <tr>
- <td><a href="/viewer.php?version=$version&amp;func=skip&amp;file=$urlfile">$file</a></td>
- <td>$reason</td>
+ <td><a href="/viewer.php?version=$version&amp;func=valgrind&amp;file=$urlfile">$file</a></td>
+ <td>$type</td>
+ <td>$title</td>
 </tr>
 HTML;
 
@@ -94,7 +97,7 @@ HTML;
 HTML;
 
 } else {
-	$content = "<p>Currently there are no skipped tests!</p>\n";
+	$content = "<p>Congratulations! Currently there are no valgrind reports!</p>\n";
 }
 
 $content .= footer_timestamp(@filemtime($inputfile));

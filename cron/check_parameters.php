@@ -58,12 +58,12 @@ if (version_compare(VERSION, '6', 'ge')) {
 	$API_params['U'] = $API_params['u'];
 }
 
-$errors = array();
+$check_params = array();
 
 /** reports an error, according to its level */
 function error($str, $level = 0)
 {
-	global $current_file, $current_function, $line, $errors, $phpdir;
+	global $current_file, $current_function, $line, $check_params, $phpdir;
 
 	if ($level <= REPORT_LEVEL) {
 		if (strpos($current_file, $phpdir) === 0) {
@@ -71,7 +71,7 @@ function error($str, $level = 0)
 		} else {
 			$filename = $current_file;
 		}
-		$errors[$filename][] = array($line, $current_function, $str);
+		$check_params[$filename][] = array($line, $current_function, $str);
 	}
 }
 
@@ -342,72 +342,13 @@ function recurse($path)
 
 
 // this script produces the same results on all machines, so don't run it on non-master servers
-if($is_master)
-{
+if ($is_master) {
+
 	recurse($phpdir);
 
-	if ($errors) {
-		$total  = 0;
-		$output = <<< HTML
-<table border="1">
- <tr>
-  <td>File</td>
-  <td>Number of detected problems</td>
- </tr>
-HTML;
+	// sort by filename
+	ksort($check_params);
 
-		// $errors[$filename][] = array($line, $function, $str);
-		foreach ($errors as $filename => $err) {
-			$dir   = dirname($filename);
-			$hash  = 'c' . md5($filename);
-			$count = count($err);
-
-			$total += $count;
-
-			if(substr($filename, 0, 5) == 'Zend/') {
-				$lxrpath = str_replace('Zend/','ZendEngine2/', $filename);
-				$lxrpath = "http://lxr.php.net/source{$lxrpath}#";
-			} else {
-				$lxrpath = "http://lxr.php.net/source/php-src/{$filename}#";
-			}
-
-
-			$output .= <<< HTML
- <tr>
-  <td><a href="viewer.php?version=$phpver&func=params&file=$hash">$filename</a></td>
-  <td>$count</td>
- </tr>
-HTML;
-
-			$file = '<?php $filename="'.basename($filename).'"; ?>'.<<< HTML
-
-<table border="1">
- <tr>
-  <td>Function</td>
-  <td>Line</td>
-  <td>Message</td>
- </tr>
-HTML;
-
-			foreach ($err as $error) {
-
-				$file .= <<< HTML
- <tr>
-  <td>$error[1]</td>
-  <td><a href="{$lxrpath}{$error[0]}">$error[0]</a></td>
-  <td>$error[2]</td>
- </tr>
-HTML;
-			}
-			$file .= '</table>'.html_footer();
-			file_put_contents("$outdir/$hash.inc", $file);
-		}
-
-		$output = "<p>Total: $total</p>\n$output</table>\n";
-
-	} else {
-		$output = "<p>Congratulations! Currently no problems were found!</p>\n";
-	}
-
-	file_put_contents("$outdir/params.inc", $output.html_footer());
+	file_put_contents("$outdir/check_params.inc", serialize($check_params));
 }
+

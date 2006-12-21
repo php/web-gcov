@@ -61,10 +61,6 @@ if(isset($graph_mode_array[$mode])) {
 	}
 
 } else {
-	$appvars['page']['title'] = 'PHP: '.$version.' Graphs';
-	$appvars['page']['head'] = 'Graphs';
-	$appvars['page']['headtitle'] = $version;
-
 	$content .= <<< HTML
 <p>Select the period of time you wish to view as a graphical progression:</p>
 HTML;

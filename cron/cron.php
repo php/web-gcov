@@ -64,7 +64,6 @@ if($makestatus == 'pass') {
 }
 
 require $workdir.'/config.php';
-require $workdir.'/template.php';
 require $workdir.'/system.php';
 require $workdir.'/compile_results.php';
 require $workdir.'/check_parameters.php';

@@ -72,7 +72,7 @@ HTML;
 		$file    = basename($path);
 		$urlfile = htmlspecialchars(urlencode($path));
 		$type    = $entry[0];
-		$title   = $entry[1];
+		$title   = htmlspecialchars($entry[1]);
 
 		if ($dir !== $old_dir) {
 			$old_dir = $dir;

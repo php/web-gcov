@@ -21,80 +21,64 @@
 
 if (!defined('IN_GCOV_CODE')) exit;
 
-$inputfile = "./$version/skip.inc";
+$inputfile = "./$version/check_params.inc";
 $raw_data  = @file_get_contents($inputfile);
 $data      = unserialize($raw_data);
-$old_dir   = '';
-
+$total     = 0;
 
 if (!$raw_data) {
 	$content = "<p>Sorry, but this data isn't available at this time.</p>";
 	return;
 
-} elseif (isset($_GET['file'])) {
-	$file = $_GET['file'];
-
-	$appvars['page']['title'] = "PHP: $version Skip Report for $file";
-	$appvars['page']['head']  = "Skip Report for $file";
-
-	if (isset($data[$file])) {
-		$data   = $data[$file];
-		$script = highlight_string($data[0], true);
-		$reason = htmlspecialchars($data[1] ? $data[1] : '(no reason given)');
-
-		$content = <<< HTML
-<h2>Script</h2>
-$script
-<h2>Reason</h2>
-<pre>$reason</pre>
-HTML;
-
-	} else {
-		$content = "<p>Invalid file ID.</p>\n";
-	}
-
 } elseif ($data) {
 
-	$content = '<p><b>'.count($data) . " tests were skipped:</b></p>\n";
-
-	$content .= <<< HTML
+	$content = <<< HTML
 <table border="1">
 HTML;
 
-	foreach ($data as $path => $entry) {
-		$dir     = dirname($path);
-		$file    = basename($path);
-		$urlfile = htmlspecialchars(urlencode($path));
-		$reason  = htmlspecialchars($entry[1] ? $entry[1] : '(no reason given)');
-
-		if ($dir !== $old_dir) {
-			$old_dir = $dir;
-			$content .= <<< HTML
-<tr>
- <td colspan="2" align="center"><b>$dir</b></td>
-</tr>
-<tr>
- <td><b>File</b></td>
- <td><b>Reason</b></td>
-</tr>
-HTML;
-		}
+	foreach ($data as $path => $fileentry) {
 
 		$content .= <<< HTML
 <tr>
- <td><a href="/viewer.php?version=$version&amp;func=skip&amp;file=$urlfile">$file</a></td>
- <td>$reason</td>
+ <td colspan="3" align="center"><b>$path</b></td>
+</tr>
+<tr>
+ <td><b>Line</b></td>
+ <td><b>Function</b></td>
+ <td><b>Message</b></td>
 </tr>
 HTML;
 
+		foreach ($fileentry as $entry) {
+			$line     = $entry[0];
+			$function = $entry[1];
+			$msg      = htmlspecialchars($entry[2]);
+			$lxrlink  = make_lxr_link($path, $line);
+			$cvslink  = make_cvs_link($path, $line);
+
+			++$total;
+
+			$content .= <<< HTML
+<tr>
+ <td><a href="$cvslink">$line</a> <a href="$lxrlink">[lxr]</a></td>
+ <td>$function</td>
+ <td>$msg</td>
+</tr>
+HTML;
+
+		}
 	}
 
-	$content .= <<< HTML
+	$content = <<< HTML
+<p><b>$total possible problems found:</b></p>
+$content
+
 </table>
+<p><strong>Note</strong>: the lxr links are made against the HEAD branch, and thus the line numbers may be incorrect.</p>
 HTML;
 
 } else {
-	$content = "<p>Currently there are no skipped tests!</p>\n";
+	$content = "<p>Congratulations! Currently there are no compiler warnings/errors!</p>\n";
 }
 
 $content .= footer_timestamp(@filemtime($inputfile));

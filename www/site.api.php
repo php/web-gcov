@@ -283,3 +283,27 @@ function footer_timestamp($tm)
 
 HTML;
 }
+
+
+function make_lxr_link($path, $line)
+{
+	if (strpos($path, 'Zend/') !== false) {
+		$path = str_replace('Zend/','ZendEngine2/', $path);
+		return "http://lxr.php.net/source/{$path}#{$line}";
+	} else {
+		return "http://lxr.php.net/source/php-src/{$path}#{$line}";
+	}
+}
+
+
+function make_cvs_link($path, $line)
+{
+	$cvsbranch = str_replace('PHP_HEAD', 'HEAD', $GLOBALS['version']);
+	return "http://cvs.php.net/viewvc.cgi/php-src/$path?view=annotate&amp;pathrev=$cvsbranch#l$line";
+}
+
+
+function make_lxr_func_link($func)
+{
+	return "http://lxr.php.net/ident?i=$func";
+}

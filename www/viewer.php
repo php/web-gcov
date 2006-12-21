@@ -90,8 +90,8 @@ $func_array = array(
 		),
 	'valgrind' =>
 		array(
-			'pagetitle' => 'PHP: Valgrind Report for '.$version,
-			'pagehead' => 'Valgrind Report'
+			'pagetitle' => 'PHP: Valgrind Reports for '.$version,
+			'pagehead' => 'Valgrind Reports'
 		),
 );
 
