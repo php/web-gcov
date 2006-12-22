@@ -26,7 +26,7 @@
 // If is_master = false; after build, sends data to remote server
 // Note: if is_master = false; a valid username and password is required
 // to post the data to the central server
-$is_master = true;
+$is_master = false;
 
 // Note: these options are specific to is_master = false
 $server_submit_url = 'http://gcov.php.net/post.php';
