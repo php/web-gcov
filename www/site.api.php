@@ -300,8 +300,15 @@ function make_lxr_link($path, $line)
 
 function make_cvs_link($path, $line)
 {
+	if (strpos($path, 'Zend/') !== false) {
+		$module = $GLOBALS['version'] === 'PHP_4_4' ? 'Zend' : 'ZendEngine2';
+		$path   = str_replace('Zend/', '', $path);
+	} else {
+		$module = 'php-src';
+	}
+
 	$cvsbranch = str_replace('PHP_HEAD', 'HEAD', $GLOBALS['version']);
-	return "<a href=\"http://cvs.php.net/viewvc.cgi/php-src/$path?view=annotate&amp;pathrev=$cvsbranch#l$line\">$line</a>";
+	return "<a href=\"http://cvs.php.net/viewvc.cgi/$module/$path?view=annotate&amp;pathrev=$cvsbranch#l$line\">$line</a>";
 }
 
 
