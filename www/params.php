@@ -60,7 +60,7 @@ HTML;
 
 			$content .= <<< HTML
 <tr>
- <td><a href="$cvslink">$line</a> <a href="$lxrlink">[lxr]</a></td>
+ <td>$cvslink $lxrlink</td>
  <td>$function</td>
  <td>$msg</td>
 </tr>

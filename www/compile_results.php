@@ -63,8 +63,8 @@ HTML;
 
 			$content .= <<< HTML
 <tr>
- <td><a href="$cvslink">$line</a> <a href="$lxrlink">[lxr]</a></td>
- <td><a href="$funclink">$function</a></td>
+ <td>$cvslink $lxrlink</td>
+ <td>$funclink</a></td>
  <td>$type: $msg</td>
 </tr>
 HTML;
