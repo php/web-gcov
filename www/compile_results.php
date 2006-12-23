@@ -64,7 +64,7 @@ HTML;
 			$content .= <<< HTML
 <tr>
  <td>$cvslink $lxrlink</td>
- <td>$funclink</a></td>
+ <td>$funclink</td>
  <td>$type: $msg</td>
 </tr>
 HTML;
