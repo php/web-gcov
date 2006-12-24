@@ -64,6 +64,12 @@ foreach ($data as $error) {
 		$type = $error[$i+1] ? $error[$i+1] : 'error'; // warning or error (default)
 		$msg  = $error[$i+2];
 
+		if ($type === 'error') {
+			++$totalnumerrors;
+		} else {
+			++$totalnumwarnings;
+		}
+
 		$compile_results[$filepath][] = array($function, $line, $type, $msg);
 	}
 }

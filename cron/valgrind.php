@@ -54,4 +54,6 @@ foreach ($leaks as $test) {
 // sort by filename
 ksort($valgrind);
 
+$totalnumleaks = count($leaks);
+
 file_put_contents("$outdir/valgrind.inc", serialize($valgrind));

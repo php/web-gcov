@@ -54,6 +54,8 @@ foreach ($tests as $test) {
 		$output     = @file_get_contents($report_file.'out');
 		$script     = @file_get_contents($base.'php');
 
+		++$totalnumfailures;
+
 		$fail_tests[$test['file']] = array($testtype, $title, $difference, $expected, $output, $script);
 	
 	} elseif ($status === 'SKIP') {

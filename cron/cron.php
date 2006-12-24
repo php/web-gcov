@@ -58,10 +58,6 @@ $version_id = 0;	// Start by assuming the version_id is unknown
 
 $xmlarray = array();
 
-// avoid filling the disk
-if($makestatus == 'pass') {
-	system("rm -f $outdir/*.inc");
-}
 
 require $workdir.'/config.php';
 require $workdir.'/system.php';
@@ -82,13 +78,6 @@ if($makestatus == 'pass')
 	}
 	else
 	{
-		// Check for unicode (is this sufficient for PHP > 6?)
-		if(preg_match('/UNICODE[ ]*:[ ]*ON[ ]?/', $data))
-		{
-			// Easy way to track that unicode is enabled
-			$unicode = true;
-		}
-
 		// Run the PHP tests
 		require $workdir.'/tests.php';
 		// Run the valgrind code
