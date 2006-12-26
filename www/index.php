@@ -65,6 +65,8 @@ analysis.
 </tr>
 <?php
 
+$process_list = `ps -A`;
+
 // Output PHP versions into a table
 while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 {
@@ -79,7 +81,6 @@ while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 	echo '<td>';
 
 	$pidfile = "./$version_name/build.pid";
-	$process_list = `ps -A`;
 
 	if(@file_exists($pidfile) && strpos($process_list, (int)@file_get_contents($pidfile).' ')) {
 
@@ -100,7 +101,11 @@ while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 
 	} else {
 		@unlink($pidfile);
-		echo 'Not running';
+		if ($version_last_attempted_build_date === $version_last_successful_build_date) {
+			echo 'Not running';
+		} else {
+			echo '<b>Build failed!</b>';
+		}
 	} // End check for a running php build process id
 
 	echo "</td>\n";
