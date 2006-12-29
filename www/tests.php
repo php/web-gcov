@@ -33,15 +33,17 @@ if (!$raw_data) {
 } elseif (isset($_GET['file'])) {
 	$file = $_GET['file'];
 
-	$appvars['page']['title'] = "PHP: $version Test Failure Report for $file";
-	$appvars['page']['head']  = "Test Failure Report for $file";
-
 	if (isset($data[$file])) {
 		$data   = $data[$file];
+		$file   = htmlspecialchars($file);
+		$title  = htmlspecialchars($data[1]);
 		$diff   = htmlspecialchars($data[2]);
 		$exp    = htmlspecialchars($data[3]);
 		$output = htmlspecialchars($data[4]);
 		$script = highlight_string($data[5], true);
+
+		$appvars['page']['title'] = "PHP: $version Test Failure Report for $file";
+		$appvars['page']['head']  = "Test Failure Report for $file ('$title')";
 
 		$content = <<< HTML
 <h2>Script</h2>

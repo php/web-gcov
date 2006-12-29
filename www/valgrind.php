@@ -33,13 +33,15 @@ if (!$raw_data) {
 } elseif (isset($_GET['file'])) {
 	$file = $_GET['file'];
 
-	$appvars['page']['title'] = "PHP: $version Valgrind Report for $file";
-	$appvars['page']['head']  = "Valgrind Report for $file";
-
 	if (isset($data[$file])) {
 		$data   = $data[$file];
+		$file   = htmlspecialchars($file);
+		$title  = htmlspecialchars($data[0]);
 		$script = highlight_string($data[2], true);
 		$report = htmlspecialchars($data[3]);
+
+		$appvars['page']['title'] = "PHP: $version Valgrind Report for $file";
+		$appvars['page']['head']  = "Valgrind Report for $file ('$title')";
 
 		$content = <<< HTML
 <h2>Script</h2>

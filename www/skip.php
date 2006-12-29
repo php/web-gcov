@@ -33,13 +33,14 @@ if (!$raw_data) {
 } elseif (isset($_GET['file'])) {
 	$file = $_GET['file'];
 
-	$appvars['page']['title'] = "PHP: $version Skip Report for $file";
-	$appvars['page']['head']  = "Skip Report for $file";
-
 	if (isset($data[$file])) {
 		$data   = $data[$file];
+		$file   = htmlspecialchars($file);
 		$script = highlight_string($data[0], true);
 		$reason = htmlspecialchars($data[1] ? $data[1] : '(no reason given)');
+
+		$appvars['page']['title'] = "PHP: $version Skip Report for $file";
+		$appvars['page']['head']  = "Skip Report for $file";
 
 		$content = <<< HTML
 <h2>Script</h2>
