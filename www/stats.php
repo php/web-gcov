@@ -54,20 +54,23 @@ $content = <<< HTML
 HTML;
 
 if ($c_errors) {
-	$content .= "<b>Compile Errors:</b> $c_errors<br/>";
+	$content .= "<b>Compile Errors:</b> $c_errors<br/>\n";
 }
 
 $content .= <<< HTML
 <b>Compile Warnings:</b> $c_warns<br/>
 HTML;
 
-if ($coverage != -1) {
-	$content .= "<b>Code Coverage:</b> $coverage%<br/>";
+if ($coverage !== NULL) {
+	$content .= "<b>Code Coverage:</b> $coverage%<br/>\n";
 }
 
-$content .= <<< HTML
-<b>Test Failures:</b> $test_failures<br/>
-<b>Valgrind Reports:</b> $valgrind<br/>
-</p>
-HTML;
+if ($test_failures !== NULL) {
+	$content .= "<b>Test Failures:</b> $test_failures<br/>\n";
+}
 
+if ($valgrind !== NULL) {
+	$content .= "<b>Valgrind Reports:</b> $valgrind<br/>\n";
+}
+
+$content .= "</p>\n";

@@ -26,8 +26,7 @@
 Inportant Notes:
 
 * We select the average number of each of the four criteria with the limitation of one data point
-* allowed per period (day/month), excluding the coverage, where we select the max value (mainly
-* because of possible -1 values)
+* allowed per period (day/month)
 
 * Graphs can only be generated for the period of time if at least more than one data point exist
 * during that time frame. Otherwise an error would occur when starting the graph creation process.
@@ -75,7 +74,7 @@ function gen_graph($graph_days, $graph_mode_text, $xLabel, $sqlgroup, $date2text
 
 	try
 	{
-		$sql = "SELECT $sqlgroup(build_datetime), max(build_percent_code_coverage), avg(build_numwarnings), avg(build_numfailures), avg(build_numleaks) FROM local_builds WHERE DATE_SUB(CURDATE() , INTERVAL ? DAY) <= build_datetime AND version_id=? GROUP BY $sqlgroup(build_datetime)";
+		$sql = "SELECT $sqlgroup(build_datetime), avg(build_percent_code_coverage), avg(build_numwarnings), avg(build_numfailures), avg(build_numleaks) FROM local_builds WHERE DATE_SUB(CURDATE() , INTERVAL ? DAY) <= build_datetime AND version_id=? GROUP BY $sqlgroup(build_datetime)";
 		$stmt = $mysqlconn->prepare($sql);
 		$stmt->execute(array($graph_days, $version_id));
 	}
@@ -116,17 +115,20 @@ function gen_graph($graph_days, $graph_mode_text, $xLabel, $sqlgroup, $date2text
 
 		$date = $date2text($date);
 
-		// Code Coverage less then 0 means could not be located
-		if($build_codecoverage >= 0) {
+		if ($build_codecoverage !== NULL) {
 			$data_y['codecoverage'][] = $build_codecoverage;
 			$data_x['codecoverage'][] = $date;
 		}
 
-		$data_y['failures'][] = $build_numfailures;
-		$data_x['failures'][] = $date;
+		if ($build_numfailures !== NULL) {
+			$data_y['failures'][] = $build_numfailures;
+			$data_x['failures'][] = $date;
+		}
 
-		$data_y['memleaks'][] = $build_numleaks;
-		$data_x['memleaks'][] = $date;
+		if ($build_numleaks !== NULL) {
+			$data_y['memleaks'][] = $build_numleaks;
+			$data_x['memleaks'][] = $date;
+		}
 
 		$data_y['warnings'][] = $build_numwarnings;
 		$data_x['warnings'][] = $date;

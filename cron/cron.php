@@ -41,8 +41,8 @@ $workdir = dirname(__FILE__); // Get the working directory to simplify php file 
 $totalnumerrors = 0; 	// Total number of errors (compile_errors.php)
 $totalnumwarnings = 0;	// Total number of warnings (compile_errors.php)
 
-$totalnumleaks = 0;	// Total number of memory leaks (valgrind.php)
-$totalnumfailures = 0;	// Total number of test failures (tests.php)
+$totalnumleaks = NULL;	// Total number of memory leaks (valgrind.php)
+$totalnumfailures = NULL; // Total number of test failures (tests.php)
 
 $configureinfo = 'N/A';	// Information regarding configure (system.php)
 
@@ -50,9 +50,7 @@ $compilerinfo = 'N/A';	// Information regarding compiler (system.php)
 
 $osinfo = 'N/A';	// Information regarding operating system (system.php)
 
-$valgrindinfo = 'N/A'; // Information regarding valgrind (system.php)
-
-$codecoverage_percent = -1; // Information regarding the code coverage
+$codecoverage_percent = NULL; // Information regarding the code coverage
 
 $version_id = 0;	// Start by assuming the version_id is unknown
 
@@ -187,7 +185,6 @@ else
 <compiler>$compilerinfo</compiler>
 <configure>$configureinfo</configure>
 <os>$osinfo</os>
-<valgrind>$valgrindinfo</valgrind>
 </buildinfo>
 <builddata>
 XML;

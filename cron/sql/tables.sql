@@ -16,16 +16,17 @@ DROP TABLE IF EXISTS `local_builds`;
 CREATE TABLE `local_builds` (
 `build_id` int(11) NOT NULL auto_increment,
 `version_id` int(11) NOT NULL,
-`build_datetime` datetime NOT NULL default '2000-01-01 12:00:00',
+`build_datetime` datetime NOT NULL,
 `build_numerrors` int(11) NOT NULL,
 `build_numwarnings` int(11) NOT NULL,
-`build_numfailures` int(11) NOT NULL,
-`build_numleaks` int(11) NOT NULL,
-`build_percent_code_coverage` float NOT NULL,
+`build_numfailures` int(11),
+`build_numleaks` int(11),
+`build_percent_code_coverage` float,
 `build_os_info` tinytext collate latin1_general_ci NOT NULL,
 `build_compiler_info` tinytext collate latin1_general_ci NOT NULL,
 PRIMARY KEY  (`build_id`),
-KEY `version_id` (`version_id`)
+KEY `version_id` (`version_id`),
+KEY `build_datetime` (`build_datetime`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Store local build statistics for graph building';
 
 -- --------------------------------------------------------
