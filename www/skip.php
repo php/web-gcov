@@ -24,7 +24,6 @@ if (!defined('IN_GCOV_CODE')) exit;
 $inputfile = "./$version/skip.inc";
 $raw_data  = @file_get_contents($inputfile);
 $data      = unserialize($raw_data);
-$old_dir   = '';
 
 
 if (!$raw_data) {
@@ -56,14 +55,15 @@ HTML;
 } elseif ($data) {
 
 	$content = '<p><b>'.count($data) . " tests were skipped:</b></p>\n";
+	$old_dir = '';
 
 	$content .= <<< HTML
 <table border="1">
 HTML;
 
 	foreach ($data as $path => $entry) {
-		$dir     = dirname($path);
-		$file    = basename($path);
+		$dir     = htmlspecialchars(dirname($path));
+		$file    = htmlspecialchars(basename($path));
 		$urlfile = htmlspecialchars(urlencode($path));
 		$reason  = htmlspecialchars($entry[1] ? $entry[1] : '(no reason given)');
 

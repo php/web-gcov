@@ -24,7 +24,6 @@ if (!defined('IN_GCOV_CODE')) exit;
 $inputfile = "./$version/valgrind.inc";
 $raw_data  = @file_get_contents($inputfile);
 $data      = unserialize($raw_data);
-$old_dir   = '';
 
 
 if (!$raw_data) {
@@ -56,17 +55,18 @@ HTML;
 } elseif ($data) {
 
 	$content = '<p><b>'.count($data) . " valgrind reports:</b></p>\n";
+	$old_dir = '';
 
 	$content .= <<< HTML
 <table border="1">
 HTML;
 
 	foreach ($data as $path => $entry) {
-		$dir     = dirname($path);
-		$file    = basename($path);
+		$dir     = htmlspecialchars(dirname($path));
+		$file    = htmlspecialchars(basename($path));
 		$urlfile = htmlspecialchars(urlencode($path));
 		$title   = htmlspecialchars($entry[0]);
-		$type    = $entry[1];
+		$type    = htmlspecialchars($entry[1]);
 
 		if ($dir !== $old_dir) {
 			$old_dir = $dir;

@@ -320,3 +320,10 @@ function make_lxr_func_link($func)
 		return "<a href=\"http://lxr.php.net/ident?i=$func\">$func</a>";
 	}
 }
+
+
+function lxr_broken_links_note()
+{
+	if ($GLOBALS['version'] !== 'PHP_HEAD')
+		return '<p><strong>Note</strong>: the lxr links are made against the HEAD branch, and thus the line numbers may be incorrect.</p>';
+}

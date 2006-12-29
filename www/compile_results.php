@@ -38,6 +38,7 @@ if (!$raw_data) {
 HTML;
 
 	foreach ($data as $path => $fileentry) {
+		$path = htmlspecialchars($path);
 
 		$content .= <<< HTML
 <tr>
@@ -51,9 +52,9 @@ HTML;
 HTML;
 
 		foreach ($fileentry as $entry) {
-			$function = $entry[0];
-			$line     = $entry[1];
-			$type     = $entry[2];
+			$function = htmlspecialchars($entry[0]);
+			$line     = htmlspecialchars($entry[1]);
+			$type     = htmlspecialchars($entry[2]);
 			$msg      = htmlspecialchars($entry[3]);
 			$lxrlink  = make_lxr_link($path, $line);
 			$cvslink  = make_cvs_link($path, $line);
@@ -81,8 +82,8 @@ Total: $total</p>
 
 $content
 </table>
-<p><strong>Note</strong>: the lxr links are made against the HEAD branch, and thus the line numbers may be incorrect.</p>
 HTML;
+	$content .= lxr_broken_links_note();
 
 } else {
 	$content = "<p>Congratulations! Currently there are no compiler warnings/errors!</p>\n";

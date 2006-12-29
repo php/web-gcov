@@ -24,7 +24,6 @@ if (!defined('IN_GCOV_CODE')) exit;
 $inputfile = "./$version/fail.inc";
 $raw_data  = @file_get_contents($inputfile);
 $data      = unserialize($raw_data);
-$old_dir   = '';
 
 
 if (!$raw_data) {
@@ -62,16 +61,17 @@ HTML;
 } elseif ($data) {
 
 	$content = '<p><b>'.count($data) . " tests failed:</b></p>\n";
+	$old_dir = '';
 
 	$content .= <<< HTML
 <table border="1">
 HTML;
 
 	foreach ($data as $path => $entry) {
-		$dir     = dirname($path);
-		$file    = basename($path);
+		$dir     = htmlspecialchars(dirname($path));
+		$file    = htmlspecialchars(basename($path));
 		$urlfile = htmlspecialchars(urlencode($path));
-		$type    = $entry[0];
+		$type    = htmlspecialchars($entry[0]);
 		$title   = htmlspecialchars($entry[1]);
 
 		if ($dir !== $old_dir) {
