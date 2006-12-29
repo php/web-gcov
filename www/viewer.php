@@ -78,6 +78,11 @@ $func_array = array(
 			'pagetitle' => 'PHP: Skipped tests for '.$version,
 			'pagehead' => 'Skipped Tests'
 		),
+	'stats' =>
+		array(
+			'pagetitle' => "Overview of $version",
+			'pagehead'  => "Overview of $version"
+		),
 	'system' =>
 		array(
 			'pagetitle' => 'PHP: System Info',
@@ -98,7 +103,7 @@ $func_array = array(
 if(isset($_REQUEST['func'])) {
 	$func = $_REQUEST['func'];
 } else {
-	$func = isset($username) ? 'system' : 'menu';
+	$func = 'stats';
 }
 $appvars['site']['func'] = $func;
 
@@ -210,9 +215,6 @@ HTML;
 		if(isset($username)) {
 			$appvars['page']['head'] .= " (builder: $username)";
 		}
-
-	} elseif ($func === 'menu') {
-		$content = 'Please choose one function from the menu on the left.';
 
 	} else {
 		// Define page variables

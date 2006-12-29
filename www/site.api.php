@@ -61,7 +61,6 @@ function api_init(&$appvars = array())
 function time_diff($time, $abs=false)
 {
 	if ($abs) {
-		date_default_timezone_set('UTC');
 		$time = time() - $time;
 	}
 
