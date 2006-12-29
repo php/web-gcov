@@ -37,7 +37,7 @@ if (!$raw_data) {
 		$data   = $data[$file];
 		$file   = htmlspecialchars($file);
 		$title  = htmlspecialchars($data[0]);
-		$script = highlight_string($data[2], true);
+		$script = highlight_php_numbered($data[2]);
 		$report = htmlspecialchars($data[3]);
 
 		$appvars['page']['title'] = "PHP: $version Valgrind Report for $file";

@@ -40,7 +40,7 @@ if (!$raw_data) {
 		$diff   = htmlspecialchars($data[2]);
 		$exp    = htmlspecialchars($data[3]);
 		$output = htmlspecialchars($data[4]);
-		$script = highlight_string($data[5], true);
+		$script = highlight_php_numbered($data[5]);
 
 		$appvars['page']['title'] = "PHP: $version Test Failure Report for $file";
 		$appvars['page']['head']  = "Test Failure Report for $file ('$title')";

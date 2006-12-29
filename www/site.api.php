@@ -327,3 +327,17 @@ function lxr_broken_links_note()
 	if ($GLOBALS['version'] !== 'PHP_HEAD')
 		return '<p><strong>Note</strong>: the lxr links are made against the HEAD branch, and thus the line numbers may be incorrect.</p>';
 }
+
+
+function highlight_php_numbered($code)
+{
+	$code = explode('<br />', highlight_string($code, true));
+
+	$ret = '';
+	$i = 0;
+	foreach ($code as $l) {
+		$ret .= '<span style="color: #000">' . ++$i . ':</span> ' . $l . '<br />';
+	}
+
+	return $ret;
+}
