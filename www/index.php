@@ -127,7 +127,7 @@ while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 </ul>
 <h2>Downloads</h2>
 <ul>
-<li><a href="downloads/PHP_4_4-gcov-20061006.diff.txt.bz2">PHP 4.4 patch</a> used by our testing process</li>
+<li><a href="downloads/PHP_4_4-gcov.diff.txt.bz2">PHP 4.4 patch</a> used by our testing process</li>
 </ul>
 </p>
 </td>
