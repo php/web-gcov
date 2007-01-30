@@ -26,7 +26,7 @@
 $fail_tests = array();
 $skip_tests = array();
 $valgrind   = array();
-$tests_re = '/^(?P<status>[A-Z&]+)(?::(?P<testtype>[a-z|A-Z]))? (?P<title>.+) \[(?P<file>[^\]]+)\](?: reason: (?P<reason>.+))?/m';
+$tests_re = '/^(?P<status>[A-Z&]+)(?::(?P<testtype>[UN]))? (?P<title>.+) \[(?P<file>[^\]]+)\](?: reason: (?P<reason>.+))?/m';
 
 preg_match_all($tests_re, $data, $tests, PREG_SET_ORDER);
 
@@ -41,7 +41,7 @@ foreach ($tests as $test) {
 
 	$report_file = $base;
 
-	if (isset($test['testtype']) && strtolower($test['testtype']) == 'u') {
+	if (isset($test['testtype']) && $test['testtype'] === 'U') {
 		$testtype = 'Unicode';
 		$report_file .= 'u.';
 	} else {
