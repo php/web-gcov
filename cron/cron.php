@@ -3,7 +3,7 @@
   +----------------------------------------------------------------------+
   | PHP QA GCOV Website                                                  |
   +----------------------------------------------------------------------+
-  | Copyright (c) 2005-2006 The PHP Group                                |
+  | Copyright (c) 2005-2007 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -41,7 +41,7 @@ $workdir = dirname(__FILE__); // Get the working directory to simplify php file 
 $totalnumerrors = 0; 	// Total number of errors (compile_errors.php)
 $totalnumwarnings = 0;	// Total number of warnings (compile_errors.php)
 
-$totalnumleaks = NULL;	// Total number of memory leaks (valgrind.php)
+$totalnumleaks = NULL;	// Total number of memory leaks (tests.php)
 $totalnumfailures = NULL; // Total number of test failures (tests.php)
 
 $configureinfo = 'N/A';	// Information regarding configure (system.php)
@@ -78,8 +78,6 @@ if($makestatus == 'pass')
 	{
 		// Run the PHP tests
 		require $workdir.'/tests.php';
-		// Run the valgrind code
-		require $workdir.'/valgrind.php';
 
 		// Grab the code coverage rate
 		if(preg_match('/Overall coverage rate: .+ \((.+)%\)/', $data, $matches))

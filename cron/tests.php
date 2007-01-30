@@ -3,7 +3,7 @@
   +----------------------------------------------------------------------+
   | PHP QA GCOV Website                                                  |
   +----------------------------------------------------------------------+
-  | Copyright (c) 2005-2006 The PHP Group                                |
+  | Copyright (c) 2005-2007 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -25,13 +25,14 @@
 
 $fail_tests = array();
 $skip_tests = array();
-$tests_re = '/(?P<status>FAIL|PASS|SKIP)(?::(?P<testtype>[a-z|A-Z]))? (?P<title>.+) \[(?P<file>[^\]]+)\](?: reason: (?P<reason>.+))?/';
+$valgrind   = array();
+$tests_re = '/^(?P<status>[A-Z&]+)(?::(?P<testtype>[a-z|A-Z]))? (?P<title>.+) \[(?P<file>[^\]]+)\](?: reason: (?P<reason>.+))?/m';
 
 preg_match_all($tests_re, $data, $tests, PREG_SET_ORDER);
 
 foreach ($tests as $test) {
 
-	$status = $test['status']; // FAIL, PASS or SKIP
+	$status = $test['status']; // FAIL, LEAK, PASS, SKIP, ...
 	$title  = $test['title'];
 	$reason = isset($test['reason']) ? $test['reason'] : '';
 
@@ -48,7 +49,7 @@ foreach ($tests as $test) {
 	}
 
 	// Failed tests provide more content then passed tests
-	if ($status === 'FAIL') {
+	if (strpos($status, 'FAIL') !== false) {
 		$difference = @file_get_contents($report_file.'diff');
 		$expected   = @file_get_contents($report_file.'exp');
 		$output     = @file_get_contents($report_file.'out');
@@ -58,7 +59,16 @@ foreach ($tests as $test) {
 
 		$fail_tests[$test['file']] = array($testtype, $title, $difference, $expected, $output, $script);
 	
-	} elseif ($status === 'SKIP') {
+	}
+
+	if (strpos($status, 'LEAK') !== false) {
+		$report = @file_get_contents($report_file.'mem');
+		$script = @file_get_contents($base.'php');
+
+		$valgrind[$test['file']] = array($title, $testtype, $script, $report);
+	}
+
+	if (strpos($status, 'SKIP') !== false) {
 		$skip = @file_get_contents($report_file.'skip.php');
 
 		$skip_tests[$test['file']] = array($skip, $reason);
@@ -69,7 +79,11 @@ foreach ($tests as $test) {
 // sort by filename
 ksort($skip_tests);
 ksort($fail_tests);
+ksort($valgrind);
+
+$totalnumleaks = count($valgrind);
 
 // now write the raw data to thw www dir
 file_put_contents("$outdir/skip.inc", serialize($skip_tests));
 file_put_contents("$outdir/fail.inc", serialize($fail_tests));
+file_put_contents("$outdir/valgrind.inc", serialize($valgrind));
