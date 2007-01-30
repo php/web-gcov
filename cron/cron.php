@@ -60,7 +60,6 @@ $xmlarray = array();
 require $workdir.'/config.php';
 require $workdir.'/system.php';
 require $workdir.'/compile_results.php';
-require $workdir.'/check_parameters.php';
 
 
 // This section is required for either system configuration
@@ -90,6 +89,8 @@ if($makestatus == 'pass')
 // Start Master Only Section //
 if($is_master)
 {
+	require $workdir.'/check_parameters.php';
+
 	// Get version ID for the current PHP version
 	try
 	{
@@ -132,14 +133,12 @@ if($is_master)
 		$stmt->bindParam(':build_os_info', $osinfo);
 		$stmt->bindParam(':build_compiler_info', $compilerinfo);
 		$stmt->execute();
-		
-		$stmt = null;
+
+		require $workdir.'/graph.php';
 
 		// Graphs will be generated and the database updated with the latest build information
 		if($makestatus == 'pass')
 		{
-			require $workdir.'/graph.php';
-
 			// Do SQL updates for the specific PHP version
 			$sql = 'UPDATE versions SET version_last_build_time=?, version_last_attempted_build_date=?, version_last_successful_build_date=? WHERE version_id=?';
 

@@ -3,7 +3,7 @@
   +----------------------------------------------------------------------+
   | PHP QA GCOV Website                                                  |
   +----------------------------------------------------------------------+
-  | Copyright (c) 2005-2006 The PHP Group                                |
+  | Copyright (c) 2005-2007 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -341,14 +341,10 @@ function recurse($path)
 }
 
 
-// this script produces the same results on all machines, so don't run it on non-master servers
-if ($is_master) {
+// run the code
+recurse($phpdir);
 
-	recurse($phpdir);
+// sort by filename
+ksort($check_params);
 
-	// sort by filename
-	ksort($check_params);
-
-	file_put_contents("$outdir/check_params.inc", serialize($check_params));
-}
-
+file_put_contents("$outdir/check_params.inc", serialize($check_params));
