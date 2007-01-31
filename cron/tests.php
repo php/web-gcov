@@ -26,7 +26,7 @@
 $fail_tests = array();
 $skip_tests = array();
 $valgrind   = array();
-$tests_re = '/^(?P<status>[A-Z&]+)(?::(?P<testtype>[UN]))? (?P<title>.+) \[(?P<file>[^\]]+)\](?: reason: (?P<reason>.+))?/m';
+$tests_re = '/\r(?P<status>[A-Z&]+)(?::(?P<testtype>[UN]))? (?P<title>.+) \[(?P<file>[^\]]+)\](?: reason: (?P<reason>.+))?/';
 
 preg_match_all($tests_re, $data, $tests, PREG_SET_ORDER);
 
