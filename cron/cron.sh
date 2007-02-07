@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.2 2006-12-19 15:52:09 nlopess Exp $
+#   $Id: cron.sh,v 1.3 2007-02-07 11:46:15 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -131,8 +131,10 @@ do
 			# test for lcov support
 			if ( grep lcov Makefile >/dev/null 2>&1 ); then
 				make lcov > ${TMPDIR}/php_test.log
-				rm -fr ${OUTDIR}/lcov_html
-				mv lcov_html ${OUTDIR}
+				if [ -d lcov_html ]; then
+					rm -fr ${OUTDIR}/lcov_html
+					mv lcov_html ${OUTDIR}
+				fi
 			else
 				make test > ${TMPDIR}/php_test.log
 			fi
