@@ -1,0 +1,69 @@
+Technical Notes about gcov.php.net
+==================================
+
+Paths on the server
+-------------------
+The cvs files are located in /local/Web/sites/gcov-web
+This directory is not updated automatically to allow manual updates of
+stable code only. Remember that breaking the cron scripts is a
+terrible thing that most of time will only be discovered one week
+later (the time that takes a full build).
+
+The build dir (where the php sources are located) is: /var/php_gcov
+This is where the valgrind suppression file lives, where you need to
+change the config.nice files (to add/remove extensions) and where the
+build logs are saved.
+
+To run a build you to call one of the /home/nlopess/run-* files. These
+files do some cleanup before calling the cron.sh script and also sets
+some environment variables. Probably you'll also want to run the
+script with the 'nlopess' user, so that you don't run in weird
+permission problems.
+
+There is also a /var/php-gcov directory, but it isn't currently used.
+This is where the previous gcov.php.net site lives. Please don't touch
+this.
+
+
+Master vs client
+----------------
+We call the master server to the gcov.php.net machine, as it receives
+the results from other computers - the clients - and also compiles PHP
+on its own.
+
+
+The cron scripts
+----------------
+The cron script (cron/cron.sh) updates the cvs checkouts, runs
+configure and make. Then it calls cron.php with generated log files.
+Each php cron script is in a separated file, to follow a plugin-style
+architecture. Each script then produces a .inc file that consists of
+serialized data. These files are written to the www/PHP_VERSION
+directory. They are then read directly by the web interface.
+Lcov is also called by the cron.sh script. The html files are then
+moved as-is to the www/PHP_VERSION/lcov_html directory.
+
+
+The web interface
+-----------------
+The web interface is pretty simple. It just reads the information from
+the database (like how much time the last build toke), and also from
+the files that were created by the cron scripts.
+
+
+Submiting results from external machines
+----------------------------------------
+This feauture doesn't currently work. The idea is to adapt the
+cron.php file so that it posts the .inc (the serialized data) to the
+gcov.php.net server. The server would then store the files in the
+www/other_platforms/username folder and generate the graphs.
+To make this work few work is needed in the web interface (just
+complete the path prefix thing) and do a simple data receiver.
+
+
+Questions?
+----------
+Just drop a mail to nlopess.
+
+
+/* vim: set tw=70: */
