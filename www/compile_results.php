@@ -54,7 +54,7 @@ HTML;
 		foreach ($fileentry as $entry) {
 			$function = htmlspecialchars($entry[0]);
 			$line     = htmlspecialchars($entry[1]);
-			$type     = htmlspecialchars($entry[2]);
+			$type     = make_error_highlight($entry[2]);
 			$msg      = htmlspecialchars($entry[3]);
 			$lxrlink  = make_lxr_link($path, $line);
 			$cvslink  = make_cvs_link($path, $line);

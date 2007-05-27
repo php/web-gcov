@@ -284,8 +284,22 @@ HTML;
 }
 
 
+function make_error_highlight($type)
+{
+	if ($type === 'error') {
+		return '<b>error</b>';
+	} else {
+		return htmlspecialchars($type);
+	}
+}
+
+
 function make_lxr_link($path, $line)
 {
+	if ($path{0} === '/') {
+		return '';
+	}
+
 	if (strpos($path, 'Zend/') !== false) {
 		$path = str_replace('Zend/','ZendEngine2/', $path);
 		$link = "http://lxr.php.net/source/{$path}#{$line}";
@@ -299,6 +313,10 @@ function make_lxr_link($path, $line)
 
 function make_cvs_link($path, $line)
 {
+	if ($path{0} === '/') {
+		return $line;
+	}
+
 	if (strpos($path, 'Zend/') !== false) {
 		$module = $GLOBALS['version'] === 'PHP_4_4' ? 'Zend' : 'ZendEngine2';
 		$path   = str_replace('Zend/', '', $path);
