@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.3 2007-02-07 11:46:15 nlopess Exp $
+#   $Id: cron.sh,v 1.4 2007-07-17 15:43:58 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -115,7 +115,7 @@ do
 			./configure > /dev/null
 		fi
 
-		if ( make > /dev/null 2> ${TMPDIR}/php_build.log ); then
+		if ( make ${MAKEOPTS} > /dev/null 2> ${TMPDIR}/php_build.log ); then
 
 			MAKESTATUS=pass
 
