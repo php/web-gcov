@@ -37,14 +37,16 @@ KEY `build_datetime` (`build_datetime`)
 
 DROP TABLE IF EXISTS `remote_builds`;
 CREATE TABLE `remote_builds` (
-`user_id` bigint(20) NOT NULL auto_increment,
+`user_id` int(11) NOT NULL auto_increment,
 `user_name` varchar(20) collate latin1_general_ci NOT NULL,
-`user_pass` varchar(50) collate latin1_general_ci NOT NULL,
-`user_email` varchar(40) collate latin1_general_ci NOT NULL,
-`last_build_xml` longtext collate latin1_general_ci NOT NULL,
-`last_user_os` char(30) collate latin1_general_ci NOT NULL,
-`last_user_os_version` char(8) collate latin1_general_ci NOT NULL,
-PRIMARY KEY  (`user_id`)
+`user_pass` varchar(32) collate latin1_general_ci NOT NULL,
+`user_email` varchar(50) collate latin1_general_ci,
+`last_build_xml` longtext collate latin1_general_ci,
+`last_user_os` varchar(100) collate latin1_general_ci,
+`last_user_os_version` varchar(50) collate latin1_general_ci,
+PRIMARY KEY  (`user_id`),
+KEY `user_name` (`user_name`),
+KEY `last_user_os` (`last_user_os`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Store general build information submitted from users';
 
 -- --------------------------------------------------------
