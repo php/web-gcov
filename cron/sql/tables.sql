@@ -18,7 +18,7 @@ CREATE TABLE `local_builds` (
 `version_id` int(11) NOT NULL,
 `build_datetime` datetime NOT NULL,
 `build_numerrors` int(11) NOT NULL,
-`build_numwarnings` int(11) NOT NULL,
+`build_numwarnings` int(11),
 `build_numfailures` int(11),
 `build_numleaks` int(11),
 `build_percent_code_coverage` float,
