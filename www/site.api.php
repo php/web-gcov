@@ -65,13 +65,19 @@ function time_diff($time, $abs=false)
 	}
 
 	if ($time < 60) {
-		return "$time seconds";
-	}
-	elseif ($time < 3600) {
-		return intval($time/60) . ' minutes';
+		$unit = 'second';
+	} elseif ($time < 3600) {
+		$time = intval($time/60);
+		$unit = 'minute';
+	} elseif ($time < 172800) { // 2 days
+		$time = intval($time/3600);
+		$unit = 'hour';
 	} else {
-		return intval($time/3600) . ' hours';
+		$time = intval($time/86400);
+		$unit = 'day';
 	}
+
+	return "$time $unit" . ($time > 1 ? 's' : '');
 }
 
 
