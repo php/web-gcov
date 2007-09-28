@@ -17,19 +17,33 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.4 2007-07-17 15:43:58 nlopess Exp $
+#   $Id: cron.sh,v 1.5 2007-09-28 22:58:00 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
 export CCACHE_DISABLE=1
 
 # Called either on error or successful completion
-remove_pid_file()
+remove_pid_files()
 {
 	rm -f "$PIDFILE"
+	rm -f "$GLOBALPIDFILE"
 }
 trap remove_pid_file EXIT
 
+# the file with the pid of this process
+GLOBALPIDFILE="${PHPROOT}/build.pid"
+
+# check if we are alone. if not, quit.
+if [ -f ${GLOBALPIDFILE} ]; then
+	if ( ps -A | grep `cat "$GLOBALPIDFILE"` > /dev/null ); then
+		echo -n "Process already running with PID: "
+		cat ${GLOBALPIDFILE}
+		exit 1
+	fi
+fi
+
+echo $$ > ${GLOBALPIDFILE}
 
 # file that contains the PHP version tags
 FILENAME=tags.inc
@@ -149,10 +163,13 @@ do
 
 		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG} ${BUILD_TIME}
 
-		remove_pid_file
+		rm -f "$PIDFILE"
 
 	fi # End verify build PHP version
 done
+
+
+remove_pid_files
 
 
 # display an error if the tag doesn't exist
