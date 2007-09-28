@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.5 2007-09-28 22:58:00 nlopess Exp $
+#   $Id: cron.sh,v 1.6 2007-09-28 23:07:04 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -29,7 +29,7 @@ remove_pid_files()
 	rm -f "$PIDFILE"
 	rm -f "$GLOBALPIDFILE"
 }
-trap remove_pid_file EXIT
+trap remove_pid_files EXIT
 
 # the file with the pid of this process
 GLOBALPIDFILE="${PHPROOT}/build.pid"
