@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.6 2007-09-28 23:07:04 nlopess Exp $
+#   $Id: cron.sh,v 1.7 2007-10-02 19:28:39 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -36,7 +36,7 @@ GLOBALPIDFILE="${PHPROOT}/build.pid"
 
 # check if we are alone. if not, quit.
 if [ -f ${GLOBALPIDFILE} ]; then
-	if ( ps -A | grep `cat "$GLOBALPIDFILE"` > /dev/null ); then
+	if ( ps -p `cat "$GLOBALPIDFILE"` > /dev/null ); then
 		echo -n "Process already running with PID: "
 		cat ${GLOBALPIDFILE}
 		exit 1
