@@ -17,19 +17,11 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.7 2007-10-02 19:28:39 nlopess Exp $
+#   $Id: cron.sh,v 1.8 2007-10-13 11:25:18 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
 export CCACHE_DISABLE=1
-
-# Called either on error or successful completion
-remove_pid_files()
-{
-	rm -f "$PIDFILE"
-	rm -f "$GLOBALPIDFILE"
-}
-trap remove_pid_files EXIT
 
 # the file with the pid of this process
 GLOBALPIDFILE="${PHPROOT}/build.pid"
@@ -169,7 +161,7 @@ do
 done
 
 
-remove_pid_files
+rm -f "$GLOBALPIDFILE"
 
 
 # display an error if the tag doesn't exist
