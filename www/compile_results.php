@@ -54,11 +54,12 @@ HTML;
 		foreach ($fileentry as $entry) {
 			$function = htmlspecialchars($entry[0]);
 			$line     = htmlspecialchars($entry[1]);
-			$type     = make_error_highlight($entry[2]);
+			$type     = $entry[2];
 			$msg      = htmlspecialchars($entry[3]);
 			$lxrlink  = make_lxr_link($path, $line);
 			$cvslink  = make_cvs_link($path, $line);
 			$funclink = make_lxr_func_link($function);
+			$pretty_type = make_error_highlight($type);
 
 			++$stats[$type];
 
@@ -66,7 +67,7 @@ HTML;
 <tr>
  <td>$cvslink $lxrlink</td>
  <td>$funclink</td>
- <td>$type: $msg</td>
+ <td>$pretty_type: $msg</td>
 </tr>
 HTML;
 
