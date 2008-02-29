@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.8 2007-10-13 11:25:18 nlopess Exp $
+#   $Id: cron.sh,v 1.9 2008-02-29 20:31:12 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -125,7 +125,7 @@ do
 
 			MAKESTATUS=pass
 
-			TEST_PHP_ARGS="-U -n -q --keep-all"
+			TEST_PHP_ARGS="-U -q --keep-all"
 
 			# only run valgrind testing if it is available
 			if (valgrind --version >/dev/null 2>&1 && test "$VALGRIND" ); then
