@@ -1,0 +1,31 @@
+PHPROOT=/var/php_gcov
+
+# copied from cron.sh
+
+# the file with the pid of this process
+GLOBALPIDFILE="${PHPROOT}/build.pid"
+
+# check if we are alone. if not, quit.
+if [ -f ${GLOBALPIDFILE} ]; then
+        if ( ps -p `cat "$GLOBALPIDFILE"` > /dev/null ); then
+#               echo -n "Process already running with PID: "
+                cat ${GLOBALPIDFILE}
+                exit 1
+        fi
+fi
+
+
+#hack to update PECL extensions
+cd /var/php_gcov/PHP_5_3/ext/memcache && cvs -q up
+
+
+#get oracle XE environment vars
+. /usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin/oracle_env.sh
+
+
+#this should be covered by cvsclean nowadays
+#cd /var/php_gcov
+#find -name '*.gcda' -o -name '*.gcno' -o -name '*.da' -o -name '*.bb' -o -name '*.bbg' -o -name '*.mem' | xargs -n 1024 rm -f
+
+cd /local/Web/sites/php-gcov-web/cron
+./cron.sh > nohup.out 2>&1

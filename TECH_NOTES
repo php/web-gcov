@@ -14,15 +14,11 @@ This is where the valgrind suppression file lives, where you need to
 change the config.nice files (to add/remove extensions) and where the
 build logs are saved.
 
-To run a build you to call one of the /home/nlopess/run-* files. These
-files do some cleanup before calling the cron.sh script and also sets
+To run a build you to call the /home/nlopess/cronjob script. This
+file do some cleanup before calling the cron.sh script and also set
 some environment variables. Probably you'll also want to run the
 script with the 'nlopess' user, so that you don't run in weird
 permission problems.
-
-There is also a /var/php-gcov directory, but it isn't currently used.
-This is where the previous gcov.php.net site lives. Please don't touch
-this.
 
 
 Master vs client
