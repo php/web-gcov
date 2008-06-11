@@ -37,8 +37,8 @@ if (!$raw_data) {
 		$data   = $data[$file];
 		$file   = htmlspecialchars($file);
 		$title  = htmlspecialchars($data[0]);
-		$script = highlight_php_numbered($data[2]);
-		$report = htmlspecialchars($data[3]);
+		$script = highlight_php_numbered($data[1]);
+		$report = htmlspecialchars($data[2]);
 
 		$appvars['page']['title'] = "PHP: $version Valgrind Report for $file";
 		$appvars['page']['head']  = "Valgrind Report for $file ('$title')";
@@ -78,7 +78,6 @@ HTML;
 </tr>
 <tr>
  <td><b>File</b></td>
- <td><b>Type</b></td>
  <td><b>Name</b></td>
 </tr>
 HTML;
@@ -87,7 +86,6 @@ HTML;
 		$content .= <<< HTML
 <tr>
  <td><a href="/viewer.php?version=$version&amp;func=valgrind&amp;file=$urlfile">$file</a></td>
- <td>$type</td>
  <td>$title</td>
 </tr>
 HTML;

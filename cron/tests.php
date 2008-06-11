@@ -26,7 +26,7 @@
 $fail_tests = array();
 $skip_tests = array();
 $valgrind   = array();
-$tests_re = '/\r(?P<status>[A-Z&]+)(?::(?P<testtype>[UN]))? (?P<title>.+) \[(?P<file>[^\]]+\.phpt)\](?: reason:[\s:.]+(?P<reason>.+))?/';
+$tests_re = '/\r(?P<status>[A-Z&]+) (?P<title>.+) \[(?P<file>[^\]]+\.phpt)\](?: reason:[\s:.]+(?P<reason>.+))?/S';
 
 preg_match_all($tests_re, $data, $tests, PREG_SET_ORDER);
 
@@ -41,13 +41,6 @@ foreach ($tests as $test) {
 
 	$report_file = $base;
 
-	if (isset($test['testtype']) && $test['testtype'] === 'U') {
-		$testtype = 'Unicode';
-		$report_file .= 'u.';
-	} else {
-		$testtype = 'Native';
-	}
-
 	// Failed tests provide more content then passed tests
 	if (strpos($status, 'FAIL') !== false) {
 		$difference = @file_get_contents($report_file.'diff');
@@ -57,15 +50,14 @@ foreach ($tests as $test) {
 
 		++$totalnumfailures;
 
-		$fail_tests[$test['file']] = array($testtype, $title, $difference, $expected, $output, $script);
-	
+		$fail_tests[$test['file']] = array($title, $difference, $expected, $output, $script);
 	}
 
 	if (strpos($status, 'LEAK') !== false) {
 		$report = @file_get_contents($report_file.'mem');
 		$script = @file_get_contents($base.'php');
 
-		$valgrind[$test['file']] = array($title, $testtype, $script, $report);
+		$valgrind[$test['file']] = array($title, $script, $report);
 	}
 
 	if (strpos($status, 'SKIP') !== false) {

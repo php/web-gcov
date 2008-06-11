@@ -36,11 +36,11 @@ if (!$raw_data) {
 	if (isset($data[$file])) {
 		$data   = $data[$file];
 		$file   = htmlspecialchars($file);
-		$title  = htmlspecialchars($data[1]);
-		$diff   = htmlspecialchars($data[2]);
-		$exp    = htmlspecialchars($data[3]);
-		$output = htmlspecialchars($data[4]);
-		$script = highlight_php_numbered($data[5]);
+		$title  = htmlspecialchars($data[0]);
+		$diff   = htmlspecialchars($data[1]);
+		$exp    = htmlspecialchars($data[2]);
+		$output = htmlspecialchars($data[3]);
+		$script = highlight_php_numbered($data[4]);
 
 		$appvars['page']['title'] = "PHP: $version Test Failure Report for $file";
 		$appvars['page']['head']  = "Test Failure Report for $file ('$title')";
@@ -73,8 +73,7 @@ HTML;
 		$dir     = htmlspecialchars(dirname($path));
 		$file    = htmlspecialchars(basename($path));
 		$urlfile = htmlspecialchars(urlencode($path));
-		$type    = htmlspecialchars($entry[0]);
-		$title   = htmlspecialchars($entry[1]);
+		$title   = htmlspecialchars($entry[0]);
 
 		if ($dir !== $old_dir) {
 			$old_dir = $dir;
@@ -84,7 +83,6 @@ HTML;
 </tr>
 <tr>
  <td><b>File</b></td>
- <td><b>Type</b></td>
  <td><b>Name</b></td>
 </tr>
 HTML;
@@ -93,7 +91,6 @@ HTML;
 		$content .= <<< HTML
 <tr>
  <td><a href="/viewer.php?version=$version&amp;func=tests&amp;file=$urlfile">$file</a></td>
- <td>$type</td>
  <td>$title</td>
 </tr>
 HTML;
