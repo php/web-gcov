@@ -60,13 +60,14 @@ ext/ming/ming.o(.text+0xc115): In function `zim_swfmovie_namedAnchor':
 /p2/var/php_gcov/PHP_5_2/ext/ming/ming.c:2259: undefined reference to `SWFMovie_foo'
 ext/ming/ming.o(.text+0x851): In function `zif_ming_setSWFCompression':
 /p2/var/php_gcov/PHP_5_2/ext/ming/ming.c:154: undefined reference to `Ming_setSWFCompression'
+/var/php_gcov/PHP_HEAD/ext/mbstring/mbstring.c:89:18: error: pcre.h: No such file or directory
 ";
 
 // Regular expression to select the error and warning information
 // tuned for gcc 3.4, 4.0 and 4.1
 $gcc_regex = '/^((.+)(\(\.[a-z]+\+0x[[:xdigit:]]+\))?: In function [`\'](\w+)\':\s+)?'.
-	'((?(1)(?(3)[^:\n]+|\2)|[^:\n]+)):(\d+): (?:(error|warning):\s+)?(.+)'.
-	str_repeat('(?:\s+\5:(\d+): (?:(error|warning):\s+)?(.+))?', 99). // capture up to 100 errors
+	'((?(1)(?(3)[^:\n]+|\2)|[^:\n]+)):(\d+)(?::\d+)?: (?:(error|warning):\s+)?(.+)'.
+	str_repeat('(?:\s+\5:(\d+)(?::\d+)?: (?:(error|warning):\s+)?(.+))?', 99). // capture up to 100 errors
 	'/mS';
 
 
