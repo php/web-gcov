@@ -260,7 +260,7 @@ function check_function($name, $txt, $offset)
 
 					case '+':
 					case '*':
-						if (version_compare(VERSION, '6', 'ge')) {
+						if (version_compare(VERSION, '5.3', 'ge')) {
 							if ($varargs) {
 								error("A varargs specifier can only be used once. repeated char at column $i");
 							} else {
@@ -311,7 +311,7 @@ function recurse($path)
 		$txt = preg_replace(array('@//.*@S', '@/\*.*\*/@SsUe'), array('', 'preg_replace("/[^\r\n]+/S", "", \'$0\')'), $txt);
 
 
-		$split = preg_split('/PHP_(?:NAMED_)?(?:FUNCTION|METHOD)\s*\((\w+(?:,\s*\w+)?)\)/S', $txt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
+		$split = preg_split('/(?:PHP|SPL|ZIPARCHIVE)_(?:NAMED_)?(?:FUNCTION|METHOD)\s*\((\w+(?:,\s*\w+)?)\)/S', $txt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
 
 		if (count($split) < 2) continue; // no functions defined on this file
 		array_shift($split); // the first part isn't relevant
