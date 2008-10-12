@@ -125,10 +125,6 @@ while($stmt && $row = $stmt->fetch(PDO::FETCH_NUM))
 <li>If you would like to be involved please start by visiting the <a href="http://qa.php.net/">PHP QA website</a> and read the section on <a href="http://qa.php.net/howtohelp.php">How You Can Help</a>.</li>
 <li>You can also read the section on <a href="http://qa.php.net/write-test.php">how to write tests</a> to help us improve the testing process on any areas you see not covered.</li>
 </ul>
-<h2>Downloads</h2>
-<ul>
-<li><a href="downloads/PHP_4_4-gcov.diff.txt.bz2">PHP 4.4 patch</a> used by our testing process</li>
-</ul>
 </p>
 </td>
 </tr>
