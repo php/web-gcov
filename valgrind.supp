@@ -1,0 +1,252 @@
+{
+   zlib deflate 1
+   Memcheck:Cond
+   obj:/usr/lib/libz.so.*
+   obj:/usr/lib/libz.so.*
+   fun:deflate
+}
+
+{
+   zlib deflate 2
+   Memcheck:Cond
+   fun:deflate
+}
+
+{
+   aspell 1
+   Memcheck:Cond
+   obj:/usr/lib/libaspell.so.*
+}
+
+{
+   aspell 2
+   Memcheck:Value4
+   obj:/usr/lib/libaspell.so.*
+}
+
+{
+   xpm
+   Memcheck:Cond
+   fun:xpmParseData
+   fun:XpmReadFileToXpmImage
+}
+
+{
+   sqlite2
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:pager_write_pagelist
+   fun:sqlitepager_commit
+   fun:fileBtreeCommit
+   fun:sqliteVdbeExec
+}
+
+{
+   openssl 1
+   Memcheck:Value4
+   fun:BN_*
+}
+
+{
+   openssl 2
+   Memcheck:Cond
+   fun:BN_*
+}
+
+{
+   openssl 3
+   Memcheck:Value4
+   fun:DES_*
+}
+
+{
+   openssl 4
+   Memcheck:Value4
+   fun:EVP_*
+}
+
+{
+   openssl 5
+   Memcheck:Value4
+   fun:PEM_*
+}
+
+{
+   openssl 6
+   Memcheck:Value4
+   fun:bn_sub_words
+}
+
+{
+   openssl 7
+   Memcheck:Cond
+   fun:memset
+   fun:BN_lshift
+}
+
+{
+   openssl 8
+   Memcheck:Cond
+   fun:memchr
+   fun:OPENSSL_cleanse
+}
+
+{
+   openssl 9
+   Memcheck:Value4
+   fun:ASN1_*
+}
+
+{
+   openssl 10
+   Memcheck:Cond
+   fun:memcpy
+   fun:ASN1_STRING_set
+}
+
+{
+   openssl 11
+   Memcheck:Value4
+   fun:memcpy
+   fun:ASN1_STRING_set
+}
+
+{
+   openssl 12
+   Memcheck:Cond
+   fun:memcpy
+   fun:c2i_ASN1_OBJECT
+}
+
+{
+   openssl 13
+   Memcheck:Value4
+   fun:memcpy
+   fun:c2i_ASN1_OBJECT
+}
+
+{
+   openssl-lib
+   Memcheck:Cond
+   obj:/lib/libcrypto.so.*
+}
+
+{
+   openssl-lib 2
+   Memcheck:Value4
+   obj:/lib/libcrypto.so.*
+}
+
+{
+   firebird 1
+   Memcheck:Param
+   socketcall.send(msg)
+   fun:send
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 2
+   Memcheck:Value4
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 3
+   Memcheck:Cond
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 4
+   Memcheck:Value4
+   fun:*
+   fun:*
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 5
+   Memcheck:Cond
+   fun:*
+   fun:*
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 6
+   Memcheck:Cond
+   fun:*
+   fun:*
+   fun:*
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 7
+   Memcheck:Cond
+   fun:*
+   fun:*
+   fun:*
+   fun:*
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 8
+   Memcheck:Param
+   open(filename)
+   fun:open64
+   fun:gds__msg_open
+   fun:gds__msg_lookup
+   fun:gds__msg_format
+   obj:/opt/firebird/lib/libfbclient.so.*
+}
+
+{
+   firebird 9
+   Memcheck:Value4
+   fun:memset
+   fun:isc_dsql_prepare
+}
+
+{
+   oracleXE 1
+   Memcheck:Cond
+   obj:/usr/lib/oracle/xe/app/oracle/product/*/server/lib/libclntsh.so.*
+}
+
+{
+   oracleXE 2
+   Memcheck:Cond
+   obj:/usr/lib/oracle/xe/app/oracle/product/*/server/lib/libnnz*.so
+}
+
+{
+   oracleXE 3
+   Memcheck:Value4
+   obj:/usr/lib/oracle/xe/app/oracle/product/*/server/lib/libnnz*.so
+}
+
+{
+   oracleXE 4
+   Memcheck:Value4
+   fun:*
+   obj:/usr/lib/oracle/xe/app/oracle/product/*/server/lib/libclntsh.so.*
+}
+
+{
+   oracleXE+icc
+   Memcheck:Cond
+   fun:_intel_fast_memcmp
+}
+
+{
+   libc exit+oracleXE
+   Memcheck:Free
+   fun:free
+   fun:free_mem
+   fun:__libc_freeres
+   fun:_vgnU_freeres
+}
