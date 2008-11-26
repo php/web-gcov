@@ -4,3 +4,7 @@ TODO
  - replace usage of std::map with LLVM's data structures
  - fix currently XFAILed tests
  - write more tests
+ - add support for zend_get_parameters_ex()
+ - check the args of our printf-style functions: zend_throw_exception_ex, zend_error,
+   zend_printf, php_printf, php_error_docref*, spprintf, ...
+ - check if zend_restore_error_handling() is called after zend_replace_error_handling()
