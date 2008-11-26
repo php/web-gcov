@@ -1,0 +1,16 @@
+README
+======
+
+This directory contains a patch for LLVM clang's static analyzer to add
+support for PHP/Zend's API.
+It was mostly developed by Arnaud Le Blanc and it's available under clang's
+license (University of Illinois/NCSA Open Source License).
+
+
+Installation
+============
+ - Compile LLVM + Clang from SVN (instruction in their website)
+ - patch Clang's sources with:
+    'cd /path/to/llvm/tools/clang && patch -po < patch.txt'
+ - link the tests dir to /path/to/llvm/tools/clang/tests/PHP
+ - make + make test or make report

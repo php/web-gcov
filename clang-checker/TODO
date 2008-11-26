@@ -1,0 +1,6 @@
+TODO
+====
+ - cleanup remaining FIXMEs in the code
+ - replace usage of std::map with LLVM's data structures
+ - fix currently XFAILed tests
+ - write more tests

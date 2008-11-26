@@ -1,0 +1,419 @@
+Index: include/clang/Basic/DiagnosticKinds.def
+===================================================================
+--- include/clang/Basic/DiagnosticKinds.def	(revision 60102)
++++ include/clang/Basic/DiagnosticKinds.def	(working copy)
+@@ -1541,4 +1541,17 @@
+ DIAG(err_object_size_invalid_argument, ERROR,
+      "argument to __builtin_object_size must be a constant integer")
+ 
++
++// PHP
++DIAG(warn_zpp_duplicated_specifier, WARNING,
++    "duplicated specifier '%0'")
++
++DIAG(warn_zpp_non_preceded_specifier, WARNING,
++    "'%0' specifier must be preceded")
++
++DIAG(warn_zpp_invalid_specifier, WARNING,
++    "specifier '%0' cannot be applied to '%1'")
++
++
++
+ #undef DIAG
+Index: lib/Analysis/GRSimpleVals.h
+===================================================================
+--- lib/Analysis/GRSimpleVals.h	(revision 60102)
++++ lib/Analysis/GRSimpleVals.h	(working copy)
+@@ -75,6 +75,8 @@
+   static void GeneratePathDiagnostic(PathDiagnostic& PD, ASTContext& Ctx,
+                                      ExplodedNode<GRState>* N);
+   
++  const GRState* InvalidateArg(GRStateManager& StateMgr, const GRState* St, Expr* CE);
++
+ protected:
+   
+   // Equality operators for Locs.
+Index: lib/Analysis/GRSimpleVals.cpp
+===================================================================
+--- lib/Analysis/GRSimpleVals.cpp	(revision 60102)
++++ lib/Analysis/GRSimpleVals.cpp	(working copy)
+@@ -385,6 +385,19 @@
+ // Transfer function for function calls.
+ //===----------------------------------------------------------------------===//
+ 
++const GRState* GRSimpleVals::InvalidateArg(GRStateManager& StateMgr, const GRState* St, Expr* CE) {
++
++    SVal V = StateMgr.GetSVal(St, CE);
++
++    if (isa<loc::MemRegionVal>(V))
++      St = StateMgr.BindLoc(St, cast<Loc>(V), UnknownVal());
++    else if (isa<nonloc::LocAsInteger>(V))
++      St = StateMgr.BindLoc(St, cast<nonloc::LocAsInteger>(V).getLoc(),
++                            UnknownVal());
++
++    return St;
++}
++
+ void GRSimpleVals::EvalCall(ExplodedNodeSet<GRState>& Dst,
+                             GRExprEngine& Eng,
+                             GRStmtNodeBuilder<GRState>& Builder,
+@@ -393,20 +406,91 @@
+   
+   GRStateManager& StateMgr = Eng.getStateManager();
+   const GRState* St = Builder.GetState(Pred);
+-  
+-  // Invalidate all arguments passed in by reference (Locs).
++  CallExpr::arg_iterator I = CE->arg_begin(), E = CE->arg_end();
++  do {
++    DeclRefExpr *DRExpr = NULL;
++    FunctionDecl *FDecl = NULL;
++    IdentifierInfo *FInfo = NULL;
++    const char * name;
++    unsigned length;
++    unsigned format_idx = 0;
+ 
+-  for (CallExpr::arg_iterator I = CE->arg_begin(), E = CE->arg_end();
+-        I != E; ++I) {
++    if (ImplicitCastExpr *IcExpr = dyn_cast<ImplicitCastExpr>(CE->getCallee()))
++     DRExpr = dyn_cast<DeclRefExpr>(IcExpr->getSubExpr());
++    else 
++     DRExpr = dyn_cast<DeclRefExpr>(CE->getCallee());
++    if (!DRExpr) break;
+ 
+-    SVal V = StateMgr.GetSVal(St, *I);
+-    
+-    if (isa<loc::MemRegionVal>(V))
+-      St = StateMgr.BindLoc(St, cast<Loc>(V), UnknownVal());
+-    else if (isa<nonloc::LocAsInteger>(V))
+-      St = StateMgr.BindLoc(St, cast<nonloc::LocAsInteger>(V).getLoc(),
+-                            UnknownVal());
+-    
++    if (!(FDecl = dyn_cast<FunctionDecl>(DRExpr->getDecl())))
++      break;
++
++    if (!(FInfo = FDecl->getIdentifier()))
++      break;
++
++    name = FInfo->getName();
++    length = FInfo->getLength();
++
++    if (length == sizeof("zend_parse_parameters")-1 && memcmp("zend_parse_parameters", name, length) == 0) {
++            format_idx = 1;
++    } else if (length == sizeof("zend_parse_parameters_ex")-1 && memcmp("zend_parse_parameters_ex", name, length) == 0) {
++            format_idx = 2;
++    } else {
++      break;
++    }
++
++    Expr *OrigFormatExpr = CE->getArg(format_idx)->IgnoreParenCasts();
++    StringLiteral *FExpr = dyn_cast<StringLiteral>(OrigFormatExpr);
++    if (!FExpr)  // FIXME: support simple things like a ? "x" : "y"
++      break;
++
++    const char * const Str = FExpr->getStrData();
++    const unsigned StrLen = FExpr->getByteLength();
++    unsigned StrIdx = 0;
++
++    for (++I; I != E && format_idx-- > 0; ++I);
++
++    for (; StrIdx < StrLen; ++StrIdx)
++    {
++      switch(Str[StrIdx]) {
++        case 'f':
++        case 's':
++        case 'O':
++        case '+':
++        case '*':
++          St = InvalidateArg(StateMgr, St, *I);
++          ++I;
++          /* no break */
++        case 'a':
++        case 'b':
++        case 'C':
++        case 'd':
++        case 'h':
++        case 'l':
++        case 'o':
++        case 'r':
++        case 'z':
++        case 'Z':
++          St = InvalidateArg(StateMgr, St, *I);
++          ++I;
++          break;
++        case '/':
++        case '!':
++          break;
++        case '|': // start of optional vars
++          StrIdx = StrLen;
++          continue;
++        default:
++          assert(0);
++          return;
++      }
++    }
++    for (; I != E; ++I) {}
++  } while (0);
++
++  // Invalidate all remaining arguments passed in by reference (Locs).
++
++  for (; I != E; ++I) {
++    St = InvalidateArg(StateMgr, St, *I);
+   }
+   
+   // Make up a symbol for the return value of this function.  
+Index: lib/Sema/SemaChecking.cpp
+===================================================================
+--- lib/Sema/SemaChecking.cpp	(revision 60102)
++++ lib/Sema/SemaChecking.cpp	(working copy)
+@@ -20,6 +20,7 @@
+ #include "clang/Lex/Preprocessor.h"
+ #include "clang/Basic/Diagnostic.h"
+ #include "SemaUtil.h"
++#include <map>
+ using namespace clang;
+ 
+ /// CheckFunctionCall - Check a direct function call for various correctness
+@@ -108,6 +109,13 @@
+     }
+     
+     CheckPrintfArguments(TheCall.get(), HasVAListArg, format_idx);       
++  } else if (i == id_zend_parse_parameters || i == id_zend_parse_parameters_ex) {
++    unsigned format_idx = 0;
++    switch(i) {
++    case id_zend_parse_parameters:     format_idx = 1; break;
++    case id_zend_parse_parameters_ex:  format_idx = 2; break;
++    }
++    CheckZendParseParametersArguments(TheCall.get(), format_idx);
+   }
+   
+   return TheCall.take();
+@@ -991,3 +999,169 @@
+     Diag(loc, diag::warn_floatingpoint_eq)
+       << lex->getSourceRange() << rex->getSourceRange();
+ }
++
++/// Get a QualType by its name (e.g. "char***", "double")
++QualType Sema::GetType(const char * name) {
++  std::string FullName(name);
++  std::string Name = FullName.substr(0, FullName.find_first_of(" *"));
++  IdentifierTable &IT = PP.getIdentifierTable();
++  IdentifierInfo * II = &IT.get(Name);
++  QualType QT = BuiltinTypes[Name];
++  if (QT.isNull()) {
++    Decl * D = LookupDecl(II, Decl::IDNS_Ordinary, 0, false);
++    if (!D) {
++      return QT;
++    }
++    QT = Context.getTypeDeclType(cast<TypeDecl>(D));
++    if (QT.isNull()) {
++      return QT;
++    }
++  }
++  size_t pos = -1;
++  while ((pos = FullName.find('*', pos+1)) != std::string::npos) {
++    QT = Context.getPointerType(QT);
++  }
++  return QT;
++}
++
++void
++Sema::CheckZendParseParametersArguments(CallExpr *TheCall, unsigned format_idx) {
++  Expr *Fn = TheCall->getCallee();
++
++  // CHECK: function is called with no format string.
++  if (format_idx >= TheCall->getNumArgs()) {
++    Diag(TheCall->getRParenLoc(), diag::warn_printf_missing_format_string)
++      << Fn->getSourceRange();
++    return;
++  }
++
++  Expr *OrigFormatExpr = TheCall->getArg(format_idx)->IgnoreParenCasts();
++
++  // CHECK: format string is not a string literal.
++  StringLiteral *FExpr = dyn_cast<StringLiteral>(OrigFormatExpr);
++
++  if (FExpr == NULL) {
++    Diag(TheCall->getArg(format_idx)->getLocStart(), diag::warn_printf_not_string_constant)
++      << OrigFormatExpr->getSourceRange();
++    return;
++  }
++
++  // Str - The format string.  NOTE: this is NOT null-terminated!
++  const char * const Str = FExpr->getStrData();
++  const unsigned StrLen = FExpr->getByteLength();
++  unsigned StrIdx;
++
++  unsigned ArgIdx = format_idx+1;
++
++  unsigned Optional = 0;
++  unsigned VarArgs = 0;
++
++  std::string Specifiers("!/|&%");
++
++  std::map<char,std::string> SpecifierPreds;
++  SpecifierPreds['/'] = std::string("rz");
++  SpecifierPreds['!'] = std::string("aCfhoOrstzZ");
++
++  std::map<char, std::vector<QualType> > Formats;
++
++  Formats['a'].push_back(GetType("zval**"));
++  Formats['o'] = Formats['a'];
++  Formats['r'] = Formats['a'];
++  Formats['z'] = Formats['a'];
++  Formats['b'].push_back(GetType("zend_bool*"));
++  Formats['C'].push_back(GetType("zend_class_entry**"));
++  Formats['d'].push_back(GetType("double*"));
++  Formats['f'].push_back(GetType("zend_fcall_info*"));
++  Formats['f'].push_back(GetType("zend_fcall_info_cache*"));
++  Formats['h'].push_back(GetType("HashTable**"));
++  Formats['l'].push_back(GetType("long*"));
++  Formats['O'].push_back(GetType("zval**"));
++  Formats['O'].push_back(GetType("zend_class_entry*"));
++  Formats['s'].push_back(GetType("char**"));
++  Formats['s'].push_back(GetType("int*"));
++  Formats['Z'].push_back(GetType("zval***"));
++  // TODO check PHP version
++  Formats['+'].push_back(GetType("zval****"));
++  Formats['+'].push_back(GetType("int*"));
++  Formats['*'] = Formats['+'];
++
++  for(StrIdx = 0; StrIdx < StrLen; ++StrIdx) {
++    switch(Str[StrIdx]) {
++      case '\0':
++        Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_printf_format_string_contains_null_char)
++          << OrigFormatExpr->getSourceRange();
++        return;
++      // CHECK: specifiers
++      case '|':
++        if (Optional++) {
++          Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_zpp_duplicated_specifier)
++            << std::string(&Str[StrIdx], 1)
++            << FExpr->getSourceRange();
++        }
++        break;
++      case '/':
++      case '!':
++      {
++        unsigned tmpStrIdx = StrIdx;
++        while (tmpStrIdx-- > 0 && Specifiers.find(Str[tmpStrIdx]) != std::string::npos) {
++          if (Str[tmpStrIdx] == Str[StrIdx]) {
++            Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_zpp_duplicated_specifier)
++              << std::string(&Str[StrIdx], 1)
++              << FExpr->getSourceRange();
++          }
++        }
++        if (tmpStrIdx == (size_t)-1) {
++          Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_zpp_non_preceded_specifier)
++            << std::string(&Str[StrIdx], 1)
++            << FExpr->getSourceRange();
++          break;
++        }
++        if (SpecifierPreds[Str[StrIdx]].find(Str[tmpStrIdx]) == std::string::npos) {
++          Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_zpp_invalid_specifier)
++            << std::string(&Str[StrIdx], 1)
++            << std::string(&Str[tmpStrIdx], 1)
++            << FExpr->getSourceRange();
++        }
++        break;
++      }
++      case '+':
++      case '*':
++        if (VarArgs++) {
++          Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_zpp_duplicated_specifier)
++            << std::string(&Str[StrIdx], 1)
++            << FExpr->getSourceRange();
++        }
++        /* no break */
++      // CHECK: Argument type
++      default: {
++        std::map<char, std::vector<QualType> >::const_iterator FI = Formats.find(Str[StrIdx]);
++        if (FI == Formats.end()) {
++          Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_printf_invalid_conversion)
++            << std::string(&Str[StrIdx], 1)
++            << FExpr->getSourceRange();
++          return;
++        }
++        std::vector<QualType> Format = FI->second;
++        for(std::vector<QualType>::const_iterator it = Format.begin();
++            it < Format.end(); ++it)
++        {
++          if (ArgIdx >= TheCall->getNumArgs()) {
++            Diag(PP.AdvanceToTokenCharacter(FExpr->getLocStart(), StrIdx+1), diag::warn_printf_insufficient_data_args)
++              << FExpr->getSourceRange();
++            return;
++          }
++          QualType QT = *it;
++          assert(!QT.isNull());
++
++          Expr * Arg = TheCall->getArg(ArgIdx++);
++          AssignConvertType ConvTy = CheckAssignmentConstraints(Arg->getType(), QT);
++          DiagnoseAssignmentResult(ConvTy, Arg->getExprLoc(), QT, Arg->getType(), Arg, "passing");
++        }
++      }
++    }
++  }
++  if (ArgIdx < TheCall->getNumArgs()) {
++    Diag(TheCall->getArg(ArgIdx)->getExprLoc(), diag::warn_printf_too_many_data_args)
++      << TheCall->getArg(ArgIdx)->getSourceRange();
++  }
++}
+Index: lib/Sema/Sema.cpp
+===================================================================
+--- lib/Sema/Sema.cpp	(revision 60102)
++++ lib/Sema/Sema.cpp	(working copy)
+@@ -138,7 +138,15 @@
+   KnownFunctionIDs[id_vsnprintf]     = &IT.get("vsnprintf");
+   KnownFunctionIDs[id_vsnprintf_chk] = &IT.get("__builtin___vsnprintf_chk");
+   KnownFunctionIDs[id_vprintf]       = &IT.get("vprintf");
++  KnownFunctionIDs[id_zend_parse_parameters]    = &IT.get("zend_parse_parameters");
++  KnownFunctionIDs[id_zend_parse_parameters_ex] = &IT.get("zend_parse_parameters_ex");
+ 
++  // BuiltinTypes lookup
++  BuiltinTypes["char"]   = Context.CharTy;
++  BuiltinTypes["int"]    = Context.IntTy;
++  BuiltinTypes["long"]   = Context.LongTy;
++  BuiltinTypes["double"] = Context.DoubleTy;
++
+   StdNamespace = 0;
+   TUScope = 0;
+   if (getLangOptions().CPlusPlus)
+Index: lib/Sema/Sema.h
+===================================================================
+--- lib/Sema/Sema.h	(revision 60102)
++++ lib/Sema/Sema.h	(working copy)
+@@ -25,6 +25,7 @@
+ #include "llvm/ADT/SmallPtrSet.h"
+ #include "llvm/ADT/OwningPtr.h"
+ #include <vector>
++#include <map>
+ 
+ namespace llvm {
+   class APSInt;
+@@ -185,6 +186,8 @@
+     id_vsprintf,
+     id_vsprintf_chk,
+     id_vprintf,
++    id_zend_parse_parameters,
++    id_zend_parse_parameters_ex,
+     id_num_known_functions
+   };
+   
+@@ -223,6 +226,8 @@
+   /// extremely uncommon (only 1% of selectors are "overloaded").
+   llvm::DenseMap<Selector, ObjCMethodList> InstanceMethodPool;
+   llvm::DenseMap<Selector, ObjCMethodList> FactoryMethodPool;
++
++  std::map<std::string, QualType> BuiltinTypes;
+ public:
+   Sema(Preprocessor &pp, ASTContext &ctxt, ASTConsumer &consumer);
+   
+@@ -1360,6 +1365,9 @@
+   bool SemaBuiltinObjectSize(CallExpr *TheCall); 
+   void CheckPrintfArguments(CallExpr *TheCall,
+                             bool HasVAListArg, unsigned format_idx);
++  QualType GetType(const char * type);
++  void CheckZendParseParametersArguments(CallExpr *TheCall, 
++                                         unsigned format_idx);
+   void CheckReturnStackAddr(Expr *RetValExp, QualType lhsType,
+                             SourceLocation ReturnLoc);
+   void CheckFloatComparison(SourceLocation loc, Expr* lex, Expr* rex);
