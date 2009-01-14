@@ -42,9 +42,10 @@ $appvars['site']['sidebarsubitems_localbuilds'] = array(
 		'compile-results' => 'compile_results',
 		'graphs' => 'graph',
 		'parameter-parsing' => 'params',
-		'skipped-tests' => 'skip',
 		'test-failures' => 'tests',
 		'valgrind' => 'valgrind',
+		'skipped-tests' => 'skip',
+		'tested-functions' => 'tested_functions',
 		'system' => 'system',
 	);
 

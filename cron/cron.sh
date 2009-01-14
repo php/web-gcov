@@ -17,7 +17,7 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.10 2008-06-11 17:58:20 nlopess Exp $
+#   $Id: cron.sh,v 1.11 2009-01-14 20:07:11 nlopess Exp $
 
 source ./config.sh
 export LC_ALL=C
@@ -154,6 +154,11 @@ do
 		BUILD_TIME=$[`date +%s` - ${BEGIN}]
 
 		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG} ${BUILD_TIME}
+
+		# run find_tested script from source dir to give relative paths in output
+		cd ${PHPSRC}
+		php ${WORKDIR}/find_tested.php . > "${TMPDIR}/tested_functions.${PHPTAG}.tmp"
+		mv "${TMPDIR}/tested_functions.${PHPTAG}.tmp" ${OUTDIR}/tested_functions.inc
 
 		rm -f "$PIDFILE"
 

@@ -88,6 +88,11 @@ $func_array = array(
 			'pagetitle' => 'PHP: System Info',
 			'pagehead' => 'System Info'
 		),
+	'tested_functions' =>
+		array(
+			'pagetitle' => 'PHP: Tested Funtions for '.$version,
+			'pagehead' => 'Tested Functions'
+		),
 	'tests' =>
 		array(
 			'pagetitle' => 'PHP: Test Failures for '.$version,
