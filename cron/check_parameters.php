@@ -58,6 +58,12 @@ if (version_compare(VERSION, '6', 'ge')) {
 	$API_params['U'] = $API_params['u'];
 }
 
+// specific to PHP >= 5.3
+if (version_compare(VERSION, '5.3', 'ge')) {
+	$API_params['H'] = $API_params['h']; // array and object (HASH_OF)
+}
+
+
 $check_params = array();
 
 /** reports an error, according to its level */
