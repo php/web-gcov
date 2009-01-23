@@ -56,11 +56,13 @@ if (version_compare(VERSION, '6', 'ge')) {
 	$API_params['T'] = $API_params['t'];
 	$API_params['u'] = array('UChar**', 'int*'); // unicode
 	$API_params['U'] = $API_params['u'];
+	$API_params['x'] = array('zstr*');
 }
 
 // specific to PHP >= 5.3
 if (version_compare(VERSION, '5.3', 'ge')) {
-	$API_params['H'] = $API_params['h']; // array and object (HASH_OF)
+	$API_params['A'] = $API_params['a']; // array or object (zval *)
+	$API_params['H'] = $API_params['h']; // array or object (HASH_OF)
 }
 
 
