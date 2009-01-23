@@ -56,7 +56,7 @@ if (version_compare(VERSION, '6', 'ge')) {
 	$API_params['T'] = $API_params['t'];
 	$API_params['u'] = array('UChar**', 'int*'); // unicode
 	$API_params['U'] = $API_params['u'];
-	$API_params['x'] = array('zstr*');
+	$API_params['x'] = array('zstr*', 'int*');
 }
 
 // specific to PHP >= 5.3
