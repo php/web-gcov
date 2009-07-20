@@ -84,14 +84,15 @@ do
 		BUILT_SOME=1
 		BEGIN=`date +%s`
 
-		CVSTAG=${PHPTAG}
 		OUTDIR=${OUTROOT}/${PHPTAG}
 		PHPSRC=${PHPROOT}/${PHPTAG}
 		TMPDIR=${PHPROOT}/tmp/${PHPTAG}
 		PIDFILE=${OUTDIR}/build.pid
 
-		if [ "${CVSTAG}" = "PHP_HEAD" ]; then
-			CVSTAG="HEAD"
+		if [ "${PHPTAG}" = "PHP_HEAD" ]; then
+			SVNDIR="trunk"
+		else
+			SVNDIR="branches/${PHPTAG}"
 		fi
 
 		mkdir -p $OUTDIR
@@ -102,16 +103,12 @@ do
 		cd ${PHPROOT}
 		if [ -d ${PHPTAG} ]; then
 			cd ${PHPTAG}
-			cvs -q up -Pd
-			# CVS doesn't update the Zend dir automatically
-			cd Zend
-			cvs -q up -Pd
-			cd ..
+			svn up
 		else
-			cvs -q -d ${CVSROOT} co -d ${PHPTAG} -r ${CVSTAG} php-src
+			svn co "http://svn.php.net/repository/php/php-src/${SVNDIR}" ${PHPTAG}
 			cd ${PHPTAG}
 		fi
-		./cvsclean
+		./vcsclean
 		./buildconf --force > /dev/null
 
 		if [ -x ./config.nice ]; then
