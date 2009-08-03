@@ -250,3 +250,12 @@
    fun:__libc_freeres
    fun:_vgnU_freeres
 }
+
+{
+   OCIEnvCreate
+   Memcheck:Cond
+   fun:kpummpin
+   fun:kpuenvcr
+   fun:OCIEnvCreate
+   fun:zm_startup_pdo_oci
+}
