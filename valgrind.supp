@@ -1,14 +1,7 @@
 {
-   zlib deflate 1
+   zlib deflate
    Memcheck:Cond
-   obj:/usr/lib/libz.so.*
-   obj:/usr/lib/libz.so.*
-   fun:deflate
-}
-
-{
-   zlib deflate 2
-   Memcheck:Cond
+   ...
    fun:deflate
 }
 
@@ -22,13 +15,6 @@
    aspell 2
    Memcheck:Value4
    obj:/usr/lib/libaspell.so.*
-}
-
-{
-   xpm
-   Memcheck:Cond
-   fun:xpmParseData
-   fun:XpmReadFileToXpmImage
 }
 
 {
@@ -51,6 +37,7 @@
 {
    openssl 2
    Memcheck:Cond
+   ...
    fun:BN_*
 }
 
@@ -81,20 +68,21 @@
 {
    openssl 7
    Memcheck:Cond
-   fun:memset
-   fun:BN_lshift
-}
-
-{
-   openssl 8
-   Memcheck:Cond
    fun:memchr
    fun:OPENSSL_cleanse
 }
 
 {
-   openssl 9
+   openssl 8
    Memcheck:Value4
+   ...
+   fun:ASN1_*
+}
+
+{
+   openssl 9
+   Memcheck:Cond
+   ...
    fun:ASN1_*
 }
 
@@ -102,38 +90,50 @@
    openssl 10
    Memcheck:Cond
    fun:memcpy
-   fun:ASN1_STRING_set
+   fun:c2i_ASN1_OBJECT
 }
 
 {
    openssl 11
    Memcheck:Value4
    fun:memcpy
-   fun:ASN1_STRING_set
+   fun:c2i_ASN1_OBJECT
 }
 
 {
    openssl 12
    Memcheck:Cond
-   fun:memcpy
-   fun:c2i_ASN1_OBJECT
+   ...
+   fun:ssl3_*
 }
 
 {
    openssl 13
    Memcheck:Value4
-   fun:memcpy
-   fun:c2i_ASN1_OBJECT
+   ...
+   fun:ssl3_*
 }
 
 {
    openssl-lib
    Memcheck:Cond
-   obj:/lib/libcrypto.so.*
+   obj:/lib/libssl.so.*
 }
 
 {
    openssl-lib 2
+   Memcheck:Value4
+   obj:/lib/libssl.so.*
+}
+
+{
+   libcrypto
+   Memcheck:Cond
+   obj:/lib/libcrypto.so.*
+}
+
+{
+   libcrypto 2
    Memcheck:Value4
    obj:/lib/libcrypto.so.*
 }
@@ -149,52 +149,19 @@
 {
    firebird 2
    Memcheck:Value4
+   ...
    obj:/opt/firebird/lib/libfbclient.so.*
 }
 
 {
    firebird 3
    Memcheck:Cond
+   ...
    obj:/opt/firebird/lib/libfbclient.so.*
 }
 
 {
    firebird 4
-   Memcheck:Value4
-   fun:*
-   fun:*
-   obj:/opt/firebird/lib/libfbclient.so.*
-}
-
-{
-   firebird 5
-   Memcheck:Cond
-   fun:*
-   fun:*
-   obj:/opt/firebird/lib/libfbclient.so.*
-}
-
-{
-   firebird 6
-   Memcheck:Cond
-   fun:*
-   fun:*
-   fun:*
-   obj:/opt/firebird/lib/libfbclient.so.*
-}
-
-{
-   firebird 7
-   Memcheck:Cond
-   fun:*
-   fun:*
-   fun:*
-   fun:*
-   obj:/opt/firebird/lib/libfbclient.so.*
-}
-
-{
-   firebird 8
    Memcheck:Param
    open(filename)
    fun:open64
@@ -205,7 +172,7 @@
 }
 
 {
-   firebird 9
+   firebird 5
    Memcheck:Value4
    fun:memset
    fun:isc_dsql_prepare
@@ -237,6 +204,13 @@
 }
 
 {
+   oracleXE 5
+   Memcheck:Overlap
+   fun:_intel_fast_memcpy
+   obj:/usr/lib/oracle/xe/app/oracle/product/*/server/lib/libclntsh.so.*
+}
+
+{
    oracleXE+icc
    Memcheck:Cond
    fun:_intel_fast_memcmp
@@ -245,17 +219,6 @@
 {
    libc exit+oracleXE
    Memcheck:Free
-   fun:free
-   fun:free_mem
-   fun:__libc_freeres
+   ...
    fun:_vgnU_freeres
-}
-
-{
-   OCIEnvCreate
-   Memcheck:Cond
-   fun:kpummpin
-   fun:kpuenvcr
-   fun:OCIEnvCreate
-   fun:zm_startup_pdo_oci
 }
