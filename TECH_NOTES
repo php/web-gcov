@@ -3,7 +3,7 @@ Technical Notes about gcov.php.net
 
 Paths on the server
 -------------------
-The cvs files are located in /local/Web/sites/php-gcov-web
+The SVN files are located in /local/Web/sites/php-gcov-web
 This directory is not updated automatically to allow manual updates of
 stable code only. Remember that breaking the cron scripts is a
 terrible thing that most of time will only be discovered one week
@@ -30,7 +30,7 @@ on its own.
 
 The cron scripts
 ----------------
-The cron script (cron/cron.sh) updates the cvs checkouts, runs
+The cron script (cron/cron.sh) updates the SVN checkouts, runs
 configure and make. Then it calls cron.php with generated log files.
 Each php cron script is in a separated file, to follow a plugin-style
 architecture. Each script then produces a .inc file that consists of
@@ -47,9 +47,9 @@ the database (like how much time the last build toke), and also from
 the files that were created by the cron scripts.
 
 
-Submiting results from external machines
+Submitting results from external machines
 ----------------------------------------
-This feauture doesn't currently work. The idea is to adapt the
+This feature doesn't currently work. The idea is to adapt the
 cron.php file so that it posts the .inc (the serialized data) to the
 gcov.php.net server. The server would then store the files in the
 www/other_platforms/username folder and generate the graphs.
