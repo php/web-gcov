@@ -299,54 +299,64 @@ function make_error_highlight($type)
 	}
 }
 
-
+// Hacked for our change to OpenGrok
 function make_lxr_link($path, $line)
 {
 	if ($path{0} === '/') {
 		return '';
 	}
 
-	if (strpos($path, 'Zend/') !== false) {
-		$path = str_replace('Zend/','ZendEngine2/', $path);
-		$link = "http://lxr.php.net/source/{$path}#{$line}";
-	} else {
-		$link = "http://lxr.php.net/source/php-src/{$path}#{$line}";
+	$version = $GLOBALS['version'];
+	if ($GLOBALS['version'] === 'PHP_HEAD') {
+		$version = 'PHP_TRUNK';
 	}
 
-	return "<a href=\"$link\">[lxr]</a>";
+	$link = "http://php-og.mgdm.net/opengrok/xref/{$version}/{$path}#{$line}";
+	return "<a href=\"$link\">[og]</a>";
 }
 
-
+// Hacked for our change to SVN
 function make_cvs_link($path, $line)
 {
 	if ($path{0} === '/') {
 		return $line;
 	}
 
+	// We no longer need this?
 	if (strpos($path, 'Zend/') !== false) {
 		$module = $GLOBALS['version'] === 'PHP_4_4' ? 'Zend' : 'ZendEngine2';
 		$path   = str_replace('Zend/', '', $path);
 	} else {
 		$module = 'php-src';
 	}
-
-	$cvsbranch = str_replace('PHP_HEAD', 'HEAD', $GLOBALS['version']);
-	return "<a href=\"http://cvs.php.net/viewvc.cgi/$module/$path?view=annotate&amp;pathrev=$cvsbranch#l$line\">$line</a>";
+	
+	if ($GLOBALS['version'] === 'PHP_HEAD') {
+		$link = "http://svn.php.net/viewvc/php/php-src/trunk/{$path}?view=markup#l$line";
+	} else {
+		$link = "http://svn.php.net/viewvc/php/php-src/branches/{$GLOBALS['version']}/{$path}?view=markup#l$line";
+	}
+	
+	return $link;
 }
 
-
+// Hacked for our change to OpenGrok
 function make_lxr_func_link($func)
 {
 	if ($func === '(top level)') {
 		return $func;
 	} else {
-		return "<a href=\"http://lxr.php.net/ident?i=$func\">$func</a>";
+		$version = $GLOBALS['version'];
+		if ($GLOBALS['version'] === 'PHP_HEAD') {
+			$version = 'PHP_TRUNK';
+		}
+		return "<a href=\"http://php-og.mgdm.net/search?refs={$func}&project={$version}\">{$func}</a>";
 	}
 }
 
-
+// Hacked for our change to OpenGrok
 function lxr_broken_links_note()
 {
+	return '';
 	if ($GLOBALS['version'] !== 'PHP_HEAD')
 		return '<p><strong>Note</strong>: the lxr links are made against the HEAD branch, and thus the line numbers may be incorrect.</p>';
 }
