@@ -322,14 +322,6 @@ function make_cvs_link($path, $line)
 		return $line;
 	}
 
-	// We no longer need this?
-	if (strpos($path, 'Zend/') !== false) {
-		$module = $GLOBALS['version'] === 'PHP_4_4' ? 'Zend' : 'ZendEngine2';
-		$path   = str_replace('Zend/', '', $path);
-	} else {
-		$module = 'php-src';
-	}
-	
 	if ($GLOBALS['version'] === 'PHP_HEAD') {
 		$link = "http://svn.php.net/viewvc/php/php-src/trunk/{$path}?view=markup#l$line";
 	} else {
