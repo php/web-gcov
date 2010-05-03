@@ -336,7 +336,7 @@ function make_cvs_link($path, $line)
 		$link = "http://svn.php.net/viewvc/php/php-src/branches/{$GLOBALS['version']}/{$path}?view=markup#l$line";
 	}
 	
-	return $link;
+	return "<a href=\"$link\">$line</a>";
 }
 
 // Hacked for our change to OpenGrok
