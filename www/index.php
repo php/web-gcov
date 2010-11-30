@@ -49,7 +49,7 @@ api_showheader($appvars);
 ?>
 <p>
 This page is dedicated to automatic PHP code coverage testing. On a regular 
-basis current CVS snapshots are being built and tested on this machine. 
+basis current SVN snapshots are being built and tested on this machine. 
 After all tests are done the results are visualized along with a code coverage
 analysis.
 </p>
