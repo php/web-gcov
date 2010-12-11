@@ -40,6 +40,7 @@ $gcc_regex = '/^((.+)(\(\.[a-z]+\+0x[[:xdigit:]]+\))?: In function [`\'](\w+)\':
 preg_match_all($gcc_regex, $data, $data, PREG_SET_ORDER);
 
 $compile_results = array();
+$mail_error = array();
 
 $phpdir_len = strlen($phpdir);
 if ($phpdir[$phpdir_len-1] != '/') {
@@ -65,6 +66,8 @@ foreach ($data as $error) {
 		$msg  = $error[$i+2];
 
 		if ($type === 'error') {
+			// Only send to list error messages
+			$mail_error[$filepath][] = array($function, $line, $msg);
 			++$totalnumerrors;
 		} else {
 			++$totalnumwarnings;
@@ -78,3 +81,21 @@ foreach ($data as $error) {
 ksort($compile_results);
 
 file_put_contents("$outdir/compile_results.inc", serialize($compile_results));
+
+if (!empty($mail_error)) {
+	$mail_message = '';
+
+	foreach ($mail_error as $path => $fileentry) {
+		$mail_message .= sprintf(">>> File: %s\n", $path);
+		
+		foreach ($fileentry as $entry) {
+			$mail_message .= vsprintf("Function: %s:%d (%s)\n", $entry);
+		}
+	}
+	
+	mail('php-qa@lists.php.net',
+		sprintf('[PHP-GCOV] Build error - %s', $phpver),
+		$mail_message,
+		'From: PHP GCOV <php-qa@lists.php.net>',
+		'-f noreply@php.net');
+}
