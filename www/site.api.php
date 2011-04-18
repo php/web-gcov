@@ -311,7 +311,7 @@ function make_lxr_link($path, $line)
 		$version = 'PHP_TRUNK';
 	}
 
-	$link = "http://php-og.mgdm.net/opengrok/xref/{$version}/{$path}#{$line}";
+	$link = "http://lxr.php.net/opengrok/xref/{$version}/{$path}#{$line}";
 	return "<a href=\"$link\">[og]</a>";
 }
 
@@ -341,7 +341,7 @@ function make_lxr_func_link($func)
 		if ($GLOBALS['version'] === 'PHP_HEAD') {
 			$version = 'PHP_TRUNK';
 		}
-		return "<a href=\"http://php-og.mgdm.net/search?refs={$func}&project={$version}\">{$func}</a>";
+		return "<a href=\"http://lxr.php.net/search?refs={$func}&project={$version}\">{$func}</a>";
 	}
 }
 
