@@ -242,7 +242,7 @@ function check_function($name, $txt, $offset)
 
 					// nullable arguments
 					case '!':
-						if (!in_array($last_char, array('a', 'C', 'f', 'h', 'o', 'O', 'r', 's', 't', 'z', 'Z'))) {
+						if (!in_array($last_char, array('a', 'C', 'f', 'h', 'o', 'O', 'p', 'r', 's', 't', 'z', 'Z'))) {
 							error("the '!' specifier cannot be applied to '$last_char'");
 						}
 					break;
@@ -297,7 +297,7 @@ function check_function($name, $txt, $offset)
 function recurse($path)
 {
 	foreach (scandir($path) as $file) {
-		if ($file == '.' || $file == '..' || $file == 'CVS') continue;
+		if ($file == '.' || $file == '..' || $file == '.svn') continue;
 
 		$file = "$path/$file";
 		if (is_dir($file)) {
