@@ -49,22 +49,16 @@ $API_params = array(
 	'Z' => array('zval***') // zval**
 );
 
-// specific to PHP >= 6
-if (version_compare(VERSION, '6', 'ge')) {
-	$API_params['S'] = $API_params['s']; // binary string
-	$API_params['t'] = array('zstr*', 'int*', 'zend_uchar*'); // text
-	$API_params['T'] = $API_params['t'];
-	$API_params['u'] = array('UChar**', 'int*'); // unicode
-	$API_params['U'] = $API_params['u'];
-	$API_params['x'] = array('zstr*', 'int*');
-}
-
 // specific to PHP >= 5.3
 if (version_compare(VERSION, '5.3', 'ge')) {
 	$API_params['A'] = $API_params['a']; // array or object (zval *)
 	$API_params['H'] = $API_params['h']; // array or object (HASH_OF)
 }
 
+// specific to PHP >= 5.4
+if (version_compare(VERSION, '5.4', 'ge')) {
+	$API_params['p'] = $API_params['s']; // a valid path
+}
 
 $check_params = array();
 
