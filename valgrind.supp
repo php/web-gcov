@@ -211,6 +211,14 @@
 }
 
 {
+  oracleXE 6
+  Memcheck:Cond
+  obj:*
+  fun:slpmloc
+  fun:lpmloadpkg
+}
+
+{
    oracleXE+icc
    Memcheck:Cond
    fun:_intel_fast_memcmp
