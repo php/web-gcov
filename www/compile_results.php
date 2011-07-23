@@ -56,7 +56,7 @@ HTML;
 			$line     = htmlspecialchars($entry[1]);
 			$type     = $entry[2];
 			$msg      = htmlspecialchars($entry[3]);
-			$lxrlink  = make_lxr_link($path, $line);
+			$lxrlink  = make_lxr_link($version, $path, $line);
 			$cvslink  = make_cvs_link($path, $line);
 			$funclink = make_lxr_func_link($function);
 			$pretty_type = make_error_highlight($type);

@@ -89,13 +89,22 @@ if (!empty($mail_error)) {
 		$mail_message .= sprintf(">>> File: %s\n", $path);
 		
 		foreach ($fileentry as $entry) {
-			$mail_message .= vsprintf("Function: %s:%d (%s)\n", $entry);
+			$mail_message .= sprintf("Function: %s:%d %s (%s)\n",
+				$entry[0],
+				$entry[1],
+				make_lxr_link($phpver, $path, $entry[1]),
+				$entry[2]);
 		}
+		$mail_message .= "\n\n";
 	}
 	
+	$headers  = "MIME-Version: 1.0\n";
+	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
+	$headers .= "From: PHP GCOV <php-qa@lists.php.net>";
+
 	mail('php-qa@lists.php.net',
-		sprintf('[PHP-GCOV] Build error - %s', $phpver),
+		sprintf('[PHP-GCOV] Build error - %s (%s)', $phpver, date('Y-m-d')),
 		$mail_message,
-		'From: PHP GCOV <php-qa@lists.php.net>',
+		$headers,
 		'-f noreply@php.net');
 }

@@ -54,7 +54,7 @@ HTML;
 			$line     = htmlspecialchars($entry[0]);
 			$function = htmlspecialchars($entry[1]);
 			$msg      = htmlspecialchars($entry[2]);
-			$lxrlink  = make_lxr_link($path, $line);
+			$lxrlink  = make_lxr_link($version, $path, $line);
 			$cvslink  = make_cvs_link($path, $line);
 
 			++$total;

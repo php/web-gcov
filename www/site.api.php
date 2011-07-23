@@ -300,14 +300,13 @@ function make_error_highlight($type)
 }
 
 // Hacked for our change to OpenGrok
-function make_lxr_link($path, $line)
+function make_lxr_link($version, $path, $line)
 {
 	if ($path{0} === '/') {
 		return '';
 	}
 
-	$version = $GLOBALS['version'];
-	if ($GLOBALS['version'] === 'PHP_HEAD') {
+	if ($version === 'PHP_HEAD') {
 		$version = 'PHP_TRUNK';
 	}
 
