@@ -109,7 +109,12 @@ do
 			cd ${PHPTAG}
 		fi
 		./vcsclean
-		./buildconf --force > /dev/null
+
+ 		if [ "${PHPTAG}" = "PHP_5_3" ]; then
+ 			PHP_AUTOCONF=autoconf-2.13 ./buildconf --force > /dev/null
+		else
+			./buildconf --force > /dev/null
+		fi
 
 		if [ -x ./config.nice ]; then
 			./config.nice > /dev/null
