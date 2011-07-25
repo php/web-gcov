@@ -57,6 +57,7 @@ $version_id = 0;	// Start by assuming the version_id is unknown
 $xmlarray = array();
 
 
+require $workdir.'/../www/site.api.php';
 require $workdir.'/config.php';
 require $workdir.'/system.php';
 require $workdir.'/compile_results.php';
