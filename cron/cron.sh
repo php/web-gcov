@@ -155,13 +155,14 @@ do
 
 		BUILD_TIME=$[`date +%s` - ${BEGIN}]
 
-		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG} ${BUILD_TIME}
+		php ${WORKDIR}/cron.php ${TMPDIR} ${OUTDIR} ${PHPSRC} ${MAKESTATUS} ${PHPTAG} ${BUILD_TIME} &
 
 		# run find_tested script from source dir to give relative paths in output
 		cd ${PHPSRC}
-		php ${WORKDIR}/find_tested.php . > "${TMPDIR}/tested_functions.${PHPTAG}.tmp"
-		mv "${TMPDIR}/tested_functions.${PHPTAG}.tmp" ${OUTDIR}/tested_functions.inc
+		php ${WORKDIR}/find_tested.php . > "${TMPDIR}/tested_functions.inc"
+		mv "${TMPDIR}/tested_functions.inc" ${OUTDIR}/tested_functions.inc
 
+		wait
 		rm -f "$PIDFILE"
 
 	fi # End verify build PHP version
