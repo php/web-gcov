@@ -80,7 +80,7 @@ if($makestatus == 'pass')
 		require $workdir.'/tests.php';
 
 		// Grab the code coverage rate
-		if(preg_match('/Overall coverage rate: .+ \((.+)%\)/', $data, $matches))
+		if (preg_match('/Overall coverage rate:.+ lines\.+: ([0-9.]+)%/s', $data, $matches))
 		{
 			$codecoverage_percent = $matches[1];
 		}
