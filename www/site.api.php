@@ -26,7 +26,7 @@
 
 
 // Include other core files
-include 'config.php'; // Includes configuration settings
+include __DIR__.'/config.php'; // Includes configuration settings
 
 // Include the database connection file
 include $appvars['site']['dbcsfile'];
