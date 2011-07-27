@@ -45,6 +45,7 @@
 {
    openssl 2
    Memcheck:Cond
+   ...
    obj:/usr/lib64/libcrypto.so.*
 }
 
@@ -137,5 +138,24 @@
 {
    openssl 17
    Memcheck:Value8
+   obj:/usr/lib64/libcrypto.so.*
+}
+
+
+{
+   openssl 18
+   Memcheck:Param
+   write(buf)
+   ...
+   fun:fflush
+   obj:/usr/lib64/libcrypto.so.*
+}
+
+{
+   openssl 19
+   Memcheck:Param
+   write(buf)
+   ...
+   fun:fclose@@GLIBC_2.2.5
    obj:/usr/lib64/libcrypto.so.*
 }
