@@ -1,139 +1,141 @@
 {
-   zlib deflate
-   Memcheck:Cond
-   ...
-   fun:deflate
-}
-
-{
    aspell 1
-   Memcheck:Cond
-   obj:/usr/lib/libaspell.so.*
+   Memcheck:Value8
+   obj:/usr/lib64/libaspell.so.*
 }
 
 {
    aspell 2
-   Memcheck:Value4
-   obj:/usr/lib/libaspell.so.*
+   Memcheck:Cond
+   obj:/usr/lib64/libaspell.so.*
 }
 
 {
-   sqlite2
+   oracle XE 1
+   Memcheck:Value8
+   obj:/u01/app/oracle/product/*/xe/lib/libclntsh.so.*
+}
+
+{
+   oracle XE 2
    Memcheck:Param
    write(buf)
    fun:__write_nocancel
-   fun:pager_write_pagelist
-   fun:sqlitepager_commit
-   fun:fileBtreeCommit
-   fun:sqliteVdbeExec
+   obj:/u01/app/oracle/product/*/xe/lib/libclntsh.so.*
+}
+
+{
+   oracle XE 3
+   Memcheck:Cond
+   obj:/u01/app/oracle/product/*/xe/lib/libclntsh.so.*
+}
+
+{
+   oracle XE 4
+   Memcheck:Cond
+   obj:/u01/app/oracle/product/*/xe/lib/libnnz11.so
 }
 
 {
    openssl 1
-   Memcheck:Value4
-   fun:BN_*
+   Memcheck:Cond
+   fun:BN_bin2bn
 }
 
 {
    openssl 2
    Memcheck:Cond
-   ...
-   fun:BN_*
+   obj:/usr/lib64/libcrypto.so.*
 }
+
 
 {
    openssl 3
-   Memcheck:Value4
-   fun:DES_*
+   Memcheck:Cond
+   fun:BN_add_word
 }
 
 {
    openssl 4
-   Memcheck:Value4
-   fun:EVP_*
+   Memcheck:Cond
+   fun:BN_sub_word
 }
 
 {
    openssl 5
-   Memcheck:Value4
-   fun:PEM_*
+   Memcheck:Value8
+   fun:BN_num_bits_word
 }
 
 {
    openssl 6
-   Memcheck:Value4
-   fun:bn_sub_words
+   Memcheck:Value8
+   fun:BN_num_bits
 }
 
 {
    openssl 7
-   Memcheck:Cond
-   fun:memchr
-   fun:OPENSSL_cleanse
+   Memcheck:Value8
+   fun:BN_lshift
 }
 
 {
    openssl 8
-   Memcheck:Value4
-   ...
-   fun:ASN1_*
+   Memcheck:Cond
+   fun:memset
+   fun:BN_lshift
 }
 
 {
    openssl 9
-   Memcheck:Cond
-   ...
-   fun:ASN1_*
+   Memcheck:Value8
+   fun:BN_div
 }
 
 {
    openssl 10
-   Memcheck:Cond
-   fun:memcpy
-   fun:c2i_ASN1_OBJECT
+   Memcheck:Value8
+   fun:BN_ucmp
 }
 
 {
    openssl 11
-   Memcheck:Value4
-   fun:memcpy
-   fun:c2i_ASN1_OBJECT
+   Memcheck:Value8
+   fun:bn_sub_words
 }
 
 {
    openssl 12
-   Memcheck:Cond
-   ...
-   fun:ssl3_*
+   Memcheck:Value8
+   fun:BN_rshift
 }
 
 {
    openssl 13
-   Memcheck:Value4
-   ...
-   fun:ssl3_*
+   Memcheck:Value8
+   fun:BN_usub
 }
 
 {
-   openssl-lib
-   Memcheck:Cond
-   obj:/lib/libssl.so.*
+   openssl 14
+   Memcheck:Value8
+   fun:bn_add_words
 }
 
 {
-   openssl-lib 2
-   Memcheck:Value4
-   obj:/lib/libssl.so.*
+   openssl 15
+   Memcheck:Value8
+   fun:BN_uadd
 }
 
 {
-   libcrypto
-   Memcheck:Cond
-   obj:/lib/libcrypto.so.*
+   openssl 16
+   Memcheck:Value8
+   fun:bn_mul_mont
 }
 
 {
-   libcrypto 2
-   Memcheck:Value4
-   obj:/lib/libcrypto.so.*
+   openssl 17
+   Memcheck:Value8
+   obj:/usr/lib64/libcrypto.so.*
 }
