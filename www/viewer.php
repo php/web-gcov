@@ -98,6 +98,11 @@ $func_array = array(
 			'pagetitle' => 'PHP: Test Failures for '.$version,
 			'pagehead' => 'Test Failures'
 		),
+	'expected_tests' =>
+		array(
+			'pagetitle' => 'PHP: Expected Test Failures for '.$version,
+			'pagehead' => 'Expected Test Failures'
+		),
 	'valgrind' =>
 		array(
 			'pagetitle' => 'PHP: Valgrind Reports for '.$version,

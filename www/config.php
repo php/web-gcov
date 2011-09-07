@@ -43,6 +43,7 @@ $appvars['site']['sidebarsubitems_localbuilds'] = array(
 		'graphs' => 'graph',
 		'parameter-parsing' => 'params',
 		'test-failures' => 'tests',
+		'expected-test-failures' => 'expected_tests',
 		'valgrind' => 'valgrind',
 		'skipped-tests' => 'skip',
 		'tested-functions' => 'tested_functions',
@@ -54,6 +55,7 @@ $appvars['site']['sidebarsubitems_otherplatforms'] = array(
 		'compile-results' => 'compile_results',
 		'system' => 'system',
 		'test-failures' => 'tests',
+		'expected-test-failures' => 'expected_tests',
 		'valgrind' => 'valgrind'
 	);
 

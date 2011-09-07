@@ -23,6 +23,7 @@
 // Tests generation file
 // $data: contains the contents of $tmpdir/php_test.log
 
+$xfail_tests = array();
 $fail_tests = array();
 $skip_tests = array();
 $valgrind   = array();
@@ -49,8 +50,12 @@ foreach ($tests as $test) {
 		$script     = @file_get_contents($base.'php');
 
 		++$totalnumfailures;
-
-		$fail_tests[$test['file']] = array($title, $difference, $expected, $output, $script);
+		
+		if (strpos($status, 'XFAIL') !== false) {
+			$xfail_tests[$test['file']] = array($title, $difference, $expected, $output, $script);
+		} else {
+			$fail_tests[$test['file']] = array($title, $difference, $expected, $output, $script);
+		}
 	}
 
 	if (strpos($status, 'LEAK') !== false) {
@@ -71,6 +76,7 @@ foreach ($tests as $test) {
 // sort by filename
 ksort($skip_tests);
 ksort($fail_tests);
+ksort($xfail_tests);
 ksort($valgrind);
 
 $totalnumleaks = count($valgrind);
@@ -78,4 +84,5 @@ $totalnumleaks = count($valgrind);
 // now write the raw data to thw www dir
 file_put_contents("$outdir/skip.inc", serialize($skip_tests));
 file_put_contents("$outdir/fail.inc", serialize($fail_tests));
+file_put_contents("$outdir/xfail.inc", serialize($xfail_tests));
 file_put_contents("$outdir/valgrind.inc", serialize($valgrind));
