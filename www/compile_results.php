@@ -24,7 +24,7 @@ if (!defined('IN_GCOV_CODE')) exit;
 $inputfile = "./$version/compile_results.inc";
 $raw_data  = @file_get_contents($inputfile);
 $data      = unserialize($raw_data);
-$stats     = array('warning' => 0, 'error' => 0);
+$stats     = array('warning' => 0, 'error' => 0, 'note' => 0);
 
 
 if (!$raw_data) {
