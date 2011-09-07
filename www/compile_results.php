@@ -74,11 +74,12 @@ HTML;
 		}
 	}
 
-	$total = $stats['warning'] + $stats['error'];
+	$total = $stats['warning'] + $stats['error'] + $stats['note'];
 
 	$content = <<< HTML
 <p>Number of Errors: $stats[error]<br />
 Number of Warnings: $stats[warning]<br />
+Number of Notes: $stats[note]<br />
 Total: $total</p>
 
 $content
@@ -87,7 +88,7 @@ HTML;
 	$content .= lxr_broken_links_note();
 
 } else {
-	$content = "<p>Congratulations! Currently there are no compiler warnings/errors!</p>\n";
+	$content = "<p>Congratulations! Currently there are no compiler warnings/errors/notes!</p>\n";
 }
 
 $content .= footer_timestamp(@filemtime($inputfile));
