@@ -33,8 +33,8 @@ if ($data === false) {
 // Regular expression to select the error and warning information
 // tuned for gcc 3.4, 4.0 and 4.1
 $gcc_regex = '/^((.+)(\(\.[a-z]+\+0x[[:xdigit:]]+\))?: In function [`\'](\w+)\':\s+)?'.
-	'((?(1)(?(3)[^:\n]+|\2)|[^:\n]+)):(\d+)(?::\d+)?: (?:(error|warning):\s+)?(.+)'.
-	str_repeat('(?:\s+\5:(\d+)(?::\d+)?: (?:(error|warning):\s+)?(.+))?', 99). // capture up to 100 errors
+	'((?(1)(?(3)[^:\n]+|\2)|[^:\n]+)):(\d+)(?::\d+)?: (?:(error|note|warning):\s+)?(.+)'.
+	str_repeat('(?:\s+\5:(\d+)(?::\d+)?: (?:(error|note|warning):\s+)?(.+))?', 99). // capture up to 100 errors
 	'/mS';
 
 preg_match_all($gcc_regex, $data, $data, PREG_SET_ORDER);
