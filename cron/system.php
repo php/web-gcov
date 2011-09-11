@@ -33,7 +33,7 @@ $compilerinfo = $compiler[0];
 
 // Operating System Section
 // Todo: this section need to be revised for systems without the uname command
-$osinfo = `uname -srm`;
+$osinfo = trim(`uname -srm`);
 
 $system_data = array($configureinfo, $compilerinfo, $osinfo);
 
