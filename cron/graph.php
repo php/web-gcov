@@ -74,7 +74,7 @@ function gen_graph($graph_days, $graph_mode_text, $xLabel, $sqlgroup, $date2text
 
 	try
 	{
-		$sql = "SELECT $sqlgroup(build_datetime), avg(build_percent_code_coverage), avg(build_numwarnings), avg(build_numfailures), avg(build_numleaks) FROM local_builds WHERE DATE_SUB(CURDATE() , INTERVAL ? DAY) <= build_datetime AND version_id=? GROUP BY $sqlgroup(build_datetime) ORDER BY build_datetime";
+		$sql = "SELECT $sqlgroup(build_datetime), avg(build_percent_code_coverage), avg(build_numwarnings), avg(build_numfailures+build_numxfailures), avg(build_numleaks) FROM local_builds WHERE DATE_SUB(CURDATE() , INTERVAL ? DAY) <= build_datetime AND version_id=? GROUP BY $sqlgroup(build_datetime) ORDER BY build_datetime";
 		$stmt = $mysqlconn->prepare($sql);
 		$stmt->execute(array($graph_days, $version_id));
 	}

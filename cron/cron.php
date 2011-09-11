@@ -120,8 +120,8 @@ if($is_master)
 	
 		// This data is used mainly for the graph generation
 		$stmt = null;
-		$sql = 'INSERT INTO local_builds (build_id, version_id, build_datetime, build_numerrors, build_numwarnings, build_numfailures, build_numleaks, build_percent_code_coverage, build_os_info, build_compiler_info) '.
-		'VALUES (NULL, :version_id, :build_datetime, :build_numerrors, :build_numwarnings, :build_numfailures, :build_numleaks, :build_percent_code_coverage, :build_os_info, :build_compiler_info) ';
+		$sql = 'INSERT INTO local_builds (build_id, version_id, build_datetime, build_numerrors, build_numwarnings, build_numfailures, build_numleaks, build_percent_code_coverage, build_os_info, build_compiler_info, build_numfailures) '.
+		'VALUES (NULL, :version_id, :build_datetime, :build_numerrors, :build_numwarnings, :build_numfailures, :build_numleaks, :build_percent_code_coverage, :build_os_info, :build_compiler_info, :build_numfailures) ';
 		$stmt = $mysqlconn->prepare($sql);
 
 		$stmt->bindParam(':version_id', $version_id);
@@ -133,6 +133,7 @@ if($is_master)
 		$stmt->bindParam(':build_percent_code_coverage', $codecoverage_percent);
 		$stmt->bindParam(':build_os_info', $osinfo);
 		$stmt->bindParam(':build_compiler_info', $compilerinfo);
+		$stmt->bindParam(':build_numxfailures', $totalnumxfailures);
 		$stmt->execute();
 
 		require $workdir.'/graph.php';

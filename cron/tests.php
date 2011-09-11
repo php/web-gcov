@@ -48,13 +48,15 @@ foreach ($tests as $test) {
 		$expected   = @file_get_contents($report_file.'exp');
 		$output     = @file_get_contents($report_file.'out');
 		$script     = @file_get_contents($base.'php');
-
-		++$totalnumfailures;
 		
 		if (strpos($status, 'XFAIL') !== false) {
 			$xfail_tests[$test['file']] = array($title, $difference, $expected, $output, $script);
+			
+			++$totalnumxfailures;
 		} else {
 			$fail_tests[$test['file']] = array($title, $difference, $expected, $output, $script);
+			
+			++$totalnumfailures;
 		}
 	}
 

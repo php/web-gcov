@@ -38,11 +38,12 @@ $stmt = $mysqlconn->prepare('SELECT * FROM local_builds NATURAL JOIN versions WH
 $stmt->execute(array($version));
 $data = $stmt->fetch();
 
-$c_errors      = $data['build_numerrors'];
-$c_warns       = $data['build_numwarnings'];
-$coverage      = $data['build_percent_code_coverage'];
-$test_failures = $data['build_numfailures'];
-$valgrind      = $data['build_numleaks'];
+$c_errors       = $data['build_numerrors'];
+$c_warns        = $data['build_numwarnings'];
+$coverage       = $data['build_percent_code_coverage'];
+$test_failures  = $data['build_numfailures'];
+$test_xfailures = $data['build_numxfailures'];
+$valgrind       = $data['build_numleaks'];
 
 
 $content = <<< HTML
@@ -67,6 +68,10 @@ if ($coverage !== NULL) {
 
 if ($test_failures !== NULL) {
 	$content .= "<b>Test Failures:</b> $test_failures<br/>\n";
+}
+
+if ($test_xfailures !== NULL) {
+	$content .= "<b>Expected Test Failures:</b> $test_xfailures<br/>\n";
 }
 
 if ($valgrind !== NULL) {
