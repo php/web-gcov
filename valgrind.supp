@@ -37,6 +37,12 @@
 }
 
 {
+   oracle XE 5
+   Memcheck:Value8
+   obj:/u01/app/oracle/product/*/xe/lib/libnnz11.so
+}
+
+{
    openssl 1
    Memcheck:Cond
    fun:BN_bin2bn
