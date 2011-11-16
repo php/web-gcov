@@ -43,6 +43,20 @@
 }
 
 {
+   unixODBC 1
+   Memcheck:Cond
+   ...
+   fun:SQLConnect
+}
+
+{
+   unixODBC 2
+   Memcheck:Cond
+   ...
+   fun:SQLExecute
+}
+
+{
    openssl 1
    Memcheck:Cond
    fun:BN_bin2bn
