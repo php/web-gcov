@@ -3,7 +3,7 @@ Technical Notes about gcov.php.net
 
 Paths on the server
 -------------------
-The SVN files are located in /local/Web/sites/php-gcov-web
+The Git files are located in /local/Web/sites/php-gcov-web
 This directory is not updated automatically to allow manual updates of
 stable code only. Remember that breaking the cron scripts is a
 terrible thing that most of time will only be discovered one week
