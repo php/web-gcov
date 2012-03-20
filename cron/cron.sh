@@ -90,9 +90,9 @@ do
 		PIDFILE=${OUTDIR}/build.pid
 
 		if [ "${PHPTAG}" = "PHP_HEAD" ]; then
-			SVNDIR="trunk"
+			GITBRANCH="master"
 		else
-			SVNDIR="branches/${PHPTAG}"
+			GITBRANCH=`echo "$PHPTAG" | sed 's/_\([0-9]*\)/-\1/' | sed 's/_/./g'`
 		fi
 
 		mkdir -p $OUTDIR
@@ -103,12 +103,13 @@ do
 		cd ${PHPROOT}
 		if [ -d ${PHPTAG} ]; then
 			cd ${PHPTAG}
-			svn up
+			git pull
 		else
-			svn co "http://svn.php.net/repository/php/php-src/${SVNDIR}" ${PHPTAG}
+			git clone http://git.php.net/repository/php-src.git -b $GITBRANCH $PHPTAG
 			cd ${PHPTAG}
 		fi
 		./vcsclean
+		cp "../config.$PHPTAG" config.nice
 
  		if [ "${PHPTAG}" = "PHP_5_3" ]; then
  			PHP_AUTOCONF=autoconf-2.13 ./buildconf --force > /dev/null
