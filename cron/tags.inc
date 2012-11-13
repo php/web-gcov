@@ -1,3 +1,4 @@
 PHP_5_3
 PHP_5_4
+PHP_5_5
 PHP_HEAD
