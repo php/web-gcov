@@ -61,12 +61,13 @@ foreach ($data as $error) {
 
 	// the real data starts at 6th element
 	for ($i = 6; isset($error[$i]); $i += 3) {
-		// skip notes for now. they should be associated with a warning/error.
-		if ($type === 'note')
-			continue;
 		$line = $error[$i];
 		$type = $error[$i+1] ? $error[$i+1] : 'error'; // warning or error (default)
 		$msg  = $error[$i+2];
+
+		// skip notes for now. they should be associated with a warning/error.
+		if ($type === 'note')
+			continue;
 
 		if ($type === 'error') {
 			// Only send to list error messages
