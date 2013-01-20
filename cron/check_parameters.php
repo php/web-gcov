@@ -41,6 +41,7 @@ $API_params = array(
 	'f' => array('zend_fcall_info*', 'zend_fcall_info_cache*'), // function
 	'h' => array('HashTable**'), // array as an HashTable*
 	'l' => array('long*'), // long
+	'L' => array('long*'), // long
 	'o' => array('zval**'), //object
 	'O' => array('zval**', 'zend_class_entry*'), // object of given type
 	'r' => array('zval**'), // resource
@@ -242,21 +243,10 @@ function check_function($name, $txt, $offset)
 
 					// nullable arguments
 					case '!':
-						if (!in_array($last_char, array('a', 'C', 'f', 'h', 'o', 'O', 'p', 'r', 's', 't', 'z', 'Z'))) {
+						// since PHP 5.5, ! is applicable to all params
+						if (version_compare(VERSION, '5.5', 'lt') &&
+						    !in_array($last_char, array('a', 'A', 'C', 'f', 'h', 'H', 'o', 'O', 'p', 'r', 's', 'z', 'Z'))) {
 							error("the '!' specifier cannot be applied to '$last_char'");
-						}
-					break;
-
-					case '&':
-						if (version_compare(VERSION, '6', 'ge')) {
-							if ($last_char == 's' || ($last_last_char == 's' && $last_char == '!')) {
-								check_param($params, ++$j, 'UConverter*', $optional);
-
-							} else {
-								error("the '&' specifier cannot be applied to '$last_char'");
-							}
-						} else {
-							error("unknown char ('&') at column $i");
 						}
 					break;
 
