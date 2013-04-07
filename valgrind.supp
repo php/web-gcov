@@ -179,21 +179,3 @@
    fun:fclose@@GLIBC_2.2.5
    obj:/usr/lib64/libcrypto.so.*
 }
-
-{
-   php_cli ps_title 1
-   Memcheck:Addr8
-   fun:getenv
-   fun:gcov_exit
-   fun:exit
-   fun:main
-}
-
-{
-   php_cli ps_title 2
-   Memcheck:Addr2
-   fun:getenv
-   fun:gcov_exit
-   fun:exit
-   fun:main
-}
