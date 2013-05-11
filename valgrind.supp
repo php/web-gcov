@@ -43,6 +43,12 @@
 }
 
 {
+   oracle XE 6
+   Memcheck:Addr8
+   fun:__intel_new_memcpy
+}
+
+{
    unixODBC 1
    Memcheck:Cond
    ...
