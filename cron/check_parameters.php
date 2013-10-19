@@ -63,7 +63,7 @@ if (version_compare(VERSION, '5.4', 'ge')) {
 
 // specific to PHP >= 5.6
 if (version_compare(VERSION, '5.6', 'ge')) {
-	$API_params['S'] = array('char**', 'zend_str_size*'), // string
+	$API_params['S'] = array('char**', 'zend_str_size*'); // string
 }
 
 $check_params = array();
