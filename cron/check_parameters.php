@@ -61,6 +61,11 @@ if (version_compare(VERSION, '5.4', 'ge')) {
 	$API_params['p'] = $API_params['s']; // a valid path
 }
 
+// specific to PHP >= 5.6
+if (version_compare(VERSION, '5.6', 'ge')) {
+	$API_params['S'] = array('char**', 'zend_str_size*'), // string
+}
+
 $check_params = array();
 
 /** reports an error, according to its level */
