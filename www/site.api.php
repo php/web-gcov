@@ -322,9 +322,10 @@ function make_cvs_link($path, $line)
 	}
 
 	if ($GLOBALS['version'] === 'PHP_HEAD') {
-		$link = "http://svn.php.net/viewvc/php/php-src/trunk/{$path}?view=markup#l$line";
+		$link = "http://git.php.net/?p=php-src.git;a=blob;f=$path;hb=HEAD#l$line";
 	} else {
-		$link = "http://svn.php.net/viewvc/php/php-src/branches/{$GLOBALS['version']}/{$path}?view=markup#l$line";
+		$v = preg_replace('/PHP_(\d+)_(\d+)/', 'PHP-\1.\2', $GLOBALS['version']);
+		$link = "http://git.php.net/?p=php-src.git;a=blob;f=$path;hb=refs/heads/$v#l$line";
 	}
 	
 	return "<a href=\"$link\">$line</a>";
