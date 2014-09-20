@@ -24,7 +24,7 @@
 
 
 define('REPORT_LEVEL', 1); // 0 reports less false-positives. up to level 5.
-define('VERSION', $phpver == 'PHP_HEAD' ? '6' : strtr(substr($phpver, 4), '_', '.'));
+define('VERSION', $phpver == 'PHP_HEAD' ? '7' : strtr(substr($phpver, 4), '_', '.'));
 
 // be sure you have enough memory and stack for PHP. pcre will push the limits!
 ini_set('pcre.backtrack_limit', 10000000);
@@ -35,35 +35,38 @@ ini_set('pcre.backtrack_limit', 10000000);
 
 $API_params = array(
 	'a' => array('zval**'), // array as zval*
+	'A' => array('zval**'), // array or object as zval*
 	'b' => array('zend_bool*'), // boolean
 	'C' => array('zend_class_entry**'), // class
 	'd' => array('double*'), // double
 	'f' => array('zend_fcall_info*', 'zend_fcall_info_cache*'), // function
 	'h' => array('HashTable**'), // array as an HashTable*
+	'H' => array('HashTable**'), // array or object as an HashTable*
 	'l' => array('long*'), // long
 	'L' => array('long*'), // long
 	'o' => array('zval**'), //object
 	'O' => array('zval**', 'zend_class_entry*'), // object of given type
+	'p' => array('char**', 'int*'), // a valid path
 	'r' => array('zval**'), // resource
 	's' => array('char**', 'int*'), // string
 	'z' => array('zval**'), // zval*
 	'Z' => array('zval***') // zval**
 );
 
-// specific to PHP >= 5.3
-if (version_compare(VERSION, '5.3', 'ge')) {
-	$API_params['A'] = $API_params['a']; // array or object (zval *)
-	$API_params['H'] = $API_params['h']; // array or object (HASH_OF)
-}
-
-// specific to PHP >= 5.4
-if (version_compare(VERSION, '5.4', 'ge')) {
-	$API_params['p'] = $API_params['s']; // a valid path
-}
-
 // specific to PHP >= 5.6
 if (version_compare(VERSION, '5.6', 'ge')) {
 	$API_params['S'] = array('char**', 'zend_str_size*'); // string
+}
+
+// specific to PHP >= 7.0
+if (version_compare(VERSION, '7', 'ge')) {
+	$API_params['l'] = array('zend_long*'); // long
+	$API_params['L'] = array('zend_long*'); // long
+	$API_params['p'] = array('char**', 'size_t*'); // a valid path
+	$API_params['P'] = array('zend_string*'); // a valid path
+	$API_params['s'] = array('char**', 'size_t*'); // string
+	$API_params['S'] = array('zend_string*'); // string
+	unset($API_params['Z']); // not supported anymore
 }
 
 $check_params = array();
@@ -239,9 +242,9 @@ function check_function($name, $txt, $offset)
 						}
 					break;
 
-					// separate_zval_if_not_ref
+					// SEPARATE_ZVAL
 					case '/':
-						if (!in_array($last_char, array('r', 'z'))) {
+						if (!in_array($last_char, array('a', 'A', 'h', 'H', 'o', 'O', 'r', 'z'))) {
 							error("the '/' specifier cannot be applied to '$last_char'");
 						}
 					break;
@@ -257,16 +260,16 @@ function check_function($name, $txt, $offset)
 
 					case '+':
 					case '*':
-						if (version_compare(VERSION, '5.3', 'ge')) {
-							if ($varargs) {
-								error("A varargs specifier can only be used once. repeated char at column $i");
+						if ($varargs) {
+							error("A varargs specifier can only be used once. repeated char at column $i");
+						} else {
+							if (version_compare(VERSION, '7', 'ge')) {
+								check_param($params, ++$j, 'zval**', $optional);
 							} else {
 								check_param($params, ++$j, 'zval****', $optional);
-								check_param($params, ++$j, 'int*', $optional);
-								$varargs = true;
 							}
-						} else {
-							error("unknown char ('$char') at column $i");
+							check_param($params, ++$j, 'int*', $optional);
+							$varargs = true;
 						}
 					break;
 
