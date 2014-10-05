@@ -63,9 +63,9 @@ if (version_compare(VERSION, '7', 'ge')) {
 	$API_params['l'] = array('zend_long*'); // long
 	$API_params['L'] = array('zend_long*'); // long
 	$API_params['p'] = array('char**', 'size_t*'); // a valid path
-	$API_params['P'] = array('zend_string*'); // a valid path
+	$API_params['P'] = array('zend_string**'); // a valid path
 	$API_params['s'] = array('char**', 'size_t*'); // string
-	$API_params['S'] = array('zend_string*'); // string
+	$API_params['S'] = array('zend_string**'); // string
 	unset($API_params['Z']); // not supported anymore
 }
 
