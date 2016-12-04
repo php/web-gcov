@@ -299,6 +299,12 @@ function make_error_highlight($type)
 	}
 }
 
+function version_to_git_tag($version) {
+	if ($version === 'PHP_HEAD')
+		return 'PHP-MASTER';
+	return preg_replace('/PHP_(\d+)_(\d+)/', 'PHP-\1.\2', $version);
+}
+
 // Hacked for our change to OpenGrok
 function make_lxr_link($version, $path, $line)
 {
@@ -306,11 +312,8 @@ function make_lxr_link($version, $path, $line)
 		return '';
 	}
 
-	if ($version === 'PHP_HEAD') {
-		$version = 'PHP_TRUNK';
-	}
-
-	$link = "http://lxr.php.net/opengrok/xref/{$version}/{$path}#{$line}";
+	$version = version_to_git_tag($version);
+	$link = "http://lxr.php.net/xref/{$version}/{$path}#{$line}";
 	return "<a href=\"$link\">[og]</a>";
 }
 
@@ -324,7 +327,7 @@ function make_cvs_link($path, $line)
 	if ($GLOBALS['version'] === 'PHP_HEAD') {
 		$link = "http://git.php.net/?p=php-src.git;a=blob;f=$path;hb=HEAD#l$line";
 	} else {
-		$v = preg_replace('/PHP_(\d+)_(\d+)/', 'PHP-\1.\2', $GLOBALS['version']);
+		$v = version_to_git_tag($GLOBALS['version']);
 		$link = "http://git.php.net/?p=php-src.git;a=blob;f=$path;hb=refs/heads/$v#l$line";
 	}
 	
@@ -337,10 +340,7 @@ function make_lxr_func_link($func)
 	if ($func === '(top level)') {
 		return $func;
 	} else {
-		$version = $GLOBALS['version'];
-		if ($GLOBALS['version'] === 'PHP_HEAD') {
-			$version = 'PHP_TRUNK';
-		}
+		$version = version_to_git_tag($GLOBALS['version']);
 		return "<a href=\"http://lxr.php.net/search?refs={$func}&project={$version}\">{$func}</a>";
 	}
 }
