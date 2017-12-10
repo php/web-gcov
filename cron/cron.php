@@ -43,6 +43,7 @@ $totalnumwarnings = 0;	// Total number of warnings (compile_errors.php)
 
 $totalnumleaks = NULL;	// Total number of memory leaks (tests.php)
 $totalnumfailures = NULL; // Total number of test failures (tests.php)
+$totalnumxfailures = NULL; // tests.php
 
 $configureinfo = 'N/A';	// Information regarding configure (system.php)
 
