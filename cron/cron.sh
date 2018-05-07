@@ -140,14 +140,16 @@ do
 			export TEST_PHP_ARGS
 
 			# test for lcov support
-			if ( grep lcov Makefile >/dev/null 2>&1 ); then
-				make lcov > ${TMPDIR}/php_test.log
+			if ( grep -q lcov Makefile ); then
+				echo "Doing lcov build" > ${TMPDIR}/php_test.log
+				make lcov >> ${TMPDIR}/php_test.log
 				if [ -d lcov_html ]; then
 					rm -fr ${OUTDIR}/lcov_html
 					mv lcov_html ${OUTDIR}
 				fi
 			else
-				make test > ${TMPDIR}/php_test.log
+				echo "Doing non-lcov build" > ${TMPDIR}/php_test.log
+				make test >> ${TMPDIR}/php_test.log
 			fi
 
 			echo "make successful: ${PHPTAG}"
