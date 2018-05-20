@@ -22,6 +22,7 @@
 source ./config.sh
 export LC_ALL=C
 export CCACHE_DISABLE=1
+export REPORT_EXIT_STATUS=0
 
 # the file with the pid of this process
 GLOBALPIDFILE="${PHPROOT}/build.pid"
