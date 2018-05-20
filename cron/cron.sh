@@ -113,11 +113,7 @@ do
 		git clean -xfd > /dev/null
 		cp "../config.$PHPTAG" config.nice
 
- 		if [ "${PHPTAG}" = "PHP_5_3" ]; then
- 			PHP_AUTOCONF=autoconf-2.13 ./buildconf --force > /dev/null
-		else
-			./buildconf --force > /dev/null
-		fi
+		./buildconf --force > /dev/null
 
 		if [ -x ./config.nice ]; then
 			./config.nice > /dev/null
