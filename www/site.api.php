@@ -19,8 +19,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // File: Core Site API File
 // Desc: contains core display functions, it is essential for all pages to include this file.
 

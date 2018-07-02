@@ -17,8 +17,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: tests.php 261059 2008-06-11 17:50:36Z nlopess $ */
-
 if (!defined('IN_GCOV_CODE')) exit;
 
 $inputfile = "./$version/xfail.inc";

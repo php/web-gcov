@@ -18,8 +18,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // Compile Results generation script
 
 $data = file_get_contents("$tmpdir/php_build.log");

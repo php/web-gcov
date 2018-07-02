@@ -17,8 +17,6 @@
 #  |         Nuno Lopes <nlopess@php.net>                                 |
 #  +----------------------------------------------------------------------+
 
-#   $Id: cron.sh,v 1.11 2009-01-14 20:07:11 nlopess Exp $
-
 source ./config.sh
 export LC_ALL=C
 export CCACHE_DISABLE=1

@@ -18,8 +18,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // This file gathers the essential information regarding the configuration for the build
 
 // Configure Section
