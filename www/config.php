@@ -19,8 +19,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // File: Core Site Configuration File
 // Desc: contains core site settings, this file is essential and always included by the API.
 

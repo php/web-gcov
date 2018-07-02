@@ -18,8 +18,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // Tests generation file
 // $data: contains the contents of $tmpdir/php_test.log
 

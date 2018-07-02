@@ -18,8 +18,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // Name: GCOV Viewer page
 // Desc: page for view PHP version information such as code coverage
 

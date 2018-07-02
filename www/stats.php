@@ -17,8 +17,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id $ */
-
 if (!defined('IN_GCOV_CODE')) exit;
 
 $stmt = $mysqlconn->prepare('SELECT * FROM versions WHERE version_name=?');

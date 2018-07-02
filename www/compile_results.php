@@ -17,8 +17,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 if (!defined('IN_GCOV_CODE')) exit;
 
 $inputfile = "./$version/compile_results.inc";

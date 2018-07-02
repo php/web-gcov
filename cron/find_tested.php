@@ -17,8 +17,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 $usage = <<<USAGE
 
 Usage: php find_tested.php [path_to_test_files] ([extension])

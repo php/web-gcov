@@ -17,8 +17,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // check for zend_parse_parameters*() and related functions usage
 // TODO: add support for zend_get_parameters*()
 

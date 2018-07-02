@@ -18,8 +18,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 // File to generate graphs for a weekly or monthly basis
 
 /*
