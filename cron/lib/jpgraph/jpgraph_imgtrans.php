@@ -4,7 +4,6 @@
 // Description:	Extension for JpGraph to do some simple img transformations
 // Created: 	2003-09-06
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

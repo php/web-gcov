@@ -4,7 +4,6 @@
 // Description: Radar plot extension for JpGraph
 // Created: 	2001-02-04
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

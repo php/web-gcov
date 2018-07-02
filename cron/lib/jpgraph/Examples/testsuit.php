@@ -4,7 +4,6 @@
 // Description:	Run all the example script in current directory
 // Created: 	2002-07-11
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // License:	This code is released under QPL 1.0 
 // Copyright (C) 2001,2002 Johan Persson 

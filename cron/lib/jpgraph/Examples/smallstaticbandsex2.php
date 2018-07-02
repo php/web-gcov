@@ -1,6 +1,5 @@
 <?php
 // Illustration of the different patterns for bands
-// $Id$
 include ("../jpgraph.php");
 include ("../jpgraph_bar.php");
 

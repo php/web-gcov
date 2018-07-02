@@ -4,7 +4,6 @@
 // Description:	Draw a DB schema of the DDDA architecture
 // Created: 	2002-08-25
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // License:     This code is released under QPL
 //              Copyright (C) 2001,2002 Johan Persson

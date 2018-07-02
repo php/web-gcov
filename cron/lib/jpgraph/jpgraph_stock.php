@@ -4,7 +4,6 @@
 // Description:	Stock plot extension for JpGraph
 // Created: 	2003-01-27
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

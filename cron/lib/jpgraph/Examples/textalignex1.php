@@ -1,5 +1,4 @@
 <?php
-// $Id$
 require_once "../jpgraph.php";
 require_once "../jpgraph_canvas.php";
 

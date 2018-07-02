@@ -4,7 +4,6 @@
 // Description:	PHP4 Graph Plotting library. Chinese font conversions
 // Created: 	2003-05-30
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

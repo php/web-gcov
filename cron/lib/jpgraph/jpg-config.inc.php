@@ -4,7 +4,6 @@
 // Description:	Configuration file for JpGraph library
 // Created: 	2004-03-27
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

@@ -4,7 +4,6 @@
 // Description: Collection of non-essential "nice to have" utilities 
 // Created: 	2005-11-20
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

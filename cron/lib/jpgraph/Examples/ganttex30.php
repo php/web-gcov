@@ -1,6 +1,5 @@
 <?php
 // Gantt example 30
-// $Id$
 include ("../jpgraph.php");
 include ("../jpgraph_gantt.php");
 

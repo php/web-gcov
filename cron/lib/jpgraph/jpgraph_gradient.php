@@ -4,7 +4,6 @@
 // Description:	Create a color gradient
 // Created: 	2003-02-01
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

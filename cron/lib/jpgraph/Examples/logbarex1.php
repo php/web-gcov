@@ -1,5 +1,4 @@
 <?php
-// $Id$
 include ("../jpgraph.php");
 include ("../jpgraph_log.php");
 include ("../jpgraph_bar.php");

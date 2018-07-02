@@ -3,7 +3,6 @@
 // Description: Class to handle multiple graphs in the same image
 // Created: 	2006-01-15
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

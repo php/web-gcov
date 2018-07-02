@@ -4,7 +4,6 @@
 // Description: English language file for error messages
 // Created: 	2006-01-25
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

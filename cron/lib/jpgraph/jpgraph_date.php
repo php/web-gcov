@@ -4,7 +4,6 @@
 // Description:	Classes to handle Date scaling
 // Created: 	2005-05-02
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

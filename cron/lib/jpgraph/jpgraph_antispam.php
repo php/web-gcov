@@ -4,7 +4,6 @@
 // Description:	Genarate anti-spam challenge
 // Created: 	2004-10-07
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

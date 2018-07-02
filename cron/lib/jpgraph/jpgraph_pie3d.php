@@ -4,7 +4,6 @@
 // Description: 3D Pie plot extension for JpGraph
 // Created: 	2001-03-24
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

@@ -4,7 +4,6 @@
 // Description: Regression and statistical analysis helper classes
 // Created: 	2002-12-01
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

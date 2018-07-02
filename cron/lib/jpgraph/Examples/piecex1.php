@@ -1,5 +1,4 @@
 <?php
-// $Id
 // Example of pie with center circle
 include ("../jpgraph.php");
 include ("../jpgraph_pie.php");

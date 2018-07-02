@@ -1,5 +1,4 @@
 <?php
-// $Id$
 // Horiontal bar graph with image maps
 include ("../jpgraph.php");
 include ("../jpgraph_bar.php");

@@ -4,7 +4,6 @@
 // Description:	PHP4 Graph Plotting library. Extension module.
 // Created: 	2004-02-18
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

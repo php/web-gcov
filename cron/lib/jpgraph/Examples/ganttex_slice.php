@@ -1,5 +1,4 @@
 <?php
-// $Id$
 // Gantt example with sunday week start and only shows a partial graph
 include ("../jpgraph.php");
 include ("../jpgraph_gantt.php");

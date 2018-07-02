@@ -5,7 +5,6 @@
 //              for all errors.
 // Created: 	2006-02-18
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

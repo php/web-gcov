@@ -4,7 +4,6 @@
 // Description:	Class Jpfile. Handles plotmarks
 // Created: 	2003-06-28
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

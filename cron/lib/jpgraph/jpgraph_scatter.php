@@ -4,7 +4,6 @@
 // Description: Scatter (and impuls) plot extension for JpGraph
 // Created: 	2001-02-11
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

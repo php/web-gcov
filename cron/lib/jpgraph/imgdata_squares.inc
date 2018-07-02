@@ -4,7 +4,6 @@
 // Description:	Base64 encoded images for squares
 // Created: 	2003-03-20
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

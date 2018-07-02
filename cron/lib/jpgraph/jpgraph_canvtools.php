@@ -4,7 +4,6 @@
 // Description:	Some utilities for text and shape drawing on a canvas
 // Created: 	2002-08-23
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================

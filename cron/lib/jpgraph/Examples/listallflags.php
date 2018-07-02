@@ -1,6 +1,5 @@
 <?php
 // List all current supported flags.
-// $Id$
 include "../jpgraph.php";
 include "../jpgraph_flags.php";
 

@@ -4,7 +4,6 @@
 // Description:	Polar plot extension for JpGraph
 // Created: 	2003-02-02
 // Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id$
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================
