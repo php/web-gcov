@@ -108,7 +108,6 @@ do
 			git clone http://git.php.net/repository/php-src.git -b $GITBRANCH $PHPTAG
 			cd ${PHPTAG}
 		fi
-		./vcsclean
 		git clean -xfd > /dev/null
 		cp "../config.$PHPTAG" config.nice
 
