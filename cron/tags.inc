@@ -1,4 +1,5 @@
 PHP_HEAD
+PHP_7_4
 PHP_7_3
 PHP_7_2
 PHP_7_1
