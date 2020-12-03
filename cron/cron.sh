@@ -136,7 +136,7 @@ do
 			# test for lcov support
 			if ( grep -q lcov Makefile ); then
 				echo "Doing lcov build" > ${TMPDIR}/php_test.log
-				make lcov >> ${TMPDIR}/php_test.log
+				make test lcov >> ${TMPDIR}/php_test.log
 				if [ -d lcov_html ]; then
 					rm -fr ${OUTDIR}/lcov_html
 					mv lcov_html ${OUTDIR}
