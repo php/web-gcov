@@ -306,7 +306,7 @@ function version_to_git_tag($version) {
 // Hacked for our change to OpenGrok
 function make_lxr_link($version, $path, $line)
 {
-	if ($path{0} === '/') {
+	if ($path[0] === '/') {
 		return '';
 	}
 
@@ -318,17 +318,17 @@ function make_lxr_link($version, $path, $line)
 // Hacked for our change to SVN
 function make_cvs_link($path, $line)
 {
-	if ($path{0} === '/') {
+	if ($path[0] === '/') {
 		return $line;
 	}
 
 	if ($GLOBALS['version'] === 'PHP_HEAD') {
-		$link = "http://git.php.net/?p=php-src.git;a=blob;f=$path;hb=HEAD#l$line";
+        $link = "https://github.com/php/php-src/blob/master/$path#L$line";
 	} else {
 		$v = version_to_git_tag($GLOBALS['version']);
-		$link = "http://git.php.net/?p=php-src.git;a=blob;f=$path;hb=refs/heads/$v#l$line";
+        $link = "https://github.com/php/php-src/blob/$v/$path#L$line";
 	}
-	
+
 	return "<a href=\"$link\">$line</a>";
 }
 

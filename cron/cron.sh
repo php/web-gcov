@@ -105,7 +105,7 @@ do
 			git reset --hard
 			git pull
 		else
-			git clone http://git.php.net/repository/php-src.git -b $GITBRANCH $PHPTAG
+			git clone https://github.com/php/php-src.git -b $GITBRANCH $PHPTAG
 			cd ${PHPTAG}
 		fi
 		git clean -xfd > /dev/null
